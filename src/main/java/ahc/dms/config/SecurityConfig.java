@@ -1,0 +1,123 @@
+package ahc.dms.config;
+
+import ahc.dms.security.CustomUserDetailsService;
+import ahc.dms.security.JwtAuthEntryPoint;
+import ahc.dms.security.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+@Configuration
+@EnableWebSecurity
+@EnableWebMvc
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private JwtAuthEntryPoint jwtAuthEntryPoint;
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+
+    /*
+    * permitAll() allows all requests on the specified path WITHOUT DISABLING SECURITY FILTERS.
+    * ensures logging, session management, CSRF protection functionalities remains active.
+    * Eg- useful for login pages where some Security features, such as CSRF tokens, are required.
+     */
+    public static final String[] PUBLIC_URLS = {
+            "/blog/auth/**"
+    };
+
+    public static final String[] WEB_IGNORES = {
+            "/swagger-ui/**",
+            "/v3/api-docs*/**",
+            "/resources/static/**"
+    };
+
+    /*
+     * Main security configuration
+     * Defines endpoint access rules and JWT filter setup
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> request
+                        //.requestMatchers(new AntPathRequestMatcher("/blog/auth/**")).permitAll()
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthEntryPoint))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                //.httpBasic(Customizer.withDefaults()) // required when auth details are sent using forms
+                // Set custom authentication provider
+                .authenticationProvider(authenticationProvider())
+                // Add JWT filter before Spring Security's default filter
+                .addFilterBefore(this.jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    /*
+     * Password encoder bean (uses BCrypt hashing)
+     */
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /*
+     * Authentication provider registers UserDetailsService and PasswordEncoder
+     */
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+    /*
+     * Authentication manager bean : required for programmatic authentication (e.g., in /generateToken)
+     * Eg- used in login method inside AuthController
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+
+    /*
+    * Excludes the security filter chain for specific paths, such as static resources.
+    * Useful for paths where no security processing is needed,
+    * such as serving static assets like images, CSS, and JavaScript files.
+    * it’s important to note that Security features, such as logging or CSRF tokens,
+    * won’t be available for these paths.
+    * Caveat : More specific patterns should be defined before more general ones to ensure proper matching.
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(WEB_IGNORES);
+    }
+
+}
