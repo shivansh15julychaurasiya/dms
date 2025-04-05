@@ -45,6 +45,7 @@ public class JwtTokenHelper {
                 .signWith(key)
                 .compact();
 
+        System.out.println("token : " + token);
         //if jwtToken (expired or non-expired) already exists then renew jwtToken
         //else create new entry for jwtToken
         TokenDto existingTokenDto = tokenService.findTokenByUsername(userDetails.getUsername());

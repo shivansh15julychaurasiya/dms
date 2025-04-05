@@ -41,7 +41,7 @@ public class SecurityConfig {
     * Eg- useful for login pages where some Security features, such as CSRF tokens, are required.
      */
     public static final String[] PUBLIC_URLS = {
-            "/blog/auth/**"
+            "/dms/auth/login"
     };
 
     public static final String[] WEB_IGNORES = {
@@ -60,7 +60,6 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        //.requestMatchers(new AntPathRequestMatcher("/blog/auth/**")).permitAll()
                         .requestMatchers(PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
