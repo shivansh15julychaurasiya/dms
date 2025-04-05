@@ -1,10 +1,7 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.payload.JwtAuthRequest;
-import ahc.dms.payload.JwtAuthResponse;
-import ahc.dms.payload.TokenDto;
-import ahc.dms.payload.UserDto;
+import ahc.dms.payload.*;
 import ahc.dms.dao.services.TokenService;
 import ahc.dms.dao.services.UserService;
 import ahc.dms.exceptions.ApiException;
@@ -15,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -84,5 +82,11 @@ public class AuthController {
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse> resetUserPassword(@RequestBody UserDto userDto){
+        UserDto updatedUser = userService.resetPassword(userDto.getUserId(), userDto.getPassword());
+        return new ResponseEntity<>(new ApiResponse("password has been reset", true), HttpStatus.OK);
+    }
 
 }
