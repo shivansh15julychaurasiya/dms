@@ -5,7 +5,7 @@ import ahc.dms.dao.entities.Role;
 import ahc.dms.dao.entities.User;
 import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
-import ahc.dms.dao._payloads.UserDto;
+import ahc.dms.payload.UserDto;
 import ahc.dms.dao.respositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;

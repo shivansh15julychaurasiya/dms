@@ -1,6 +1,6 @@
 package ahc.dms.exceptions;
 
-import ahc.dms.dao._payloads.ApiResponse;
+import ahc.dms.payload.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

@@ -1,4 +1,4 @@
-package ahc.dms.dao._payloads;
+package ahc.dms.payload;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

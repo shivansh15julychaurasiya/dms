@@ -1,11 +1,10 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao._payloads.*;
-import ahc.dms.dao._payloads.JwtAuthRequest;
-import ahc.dms.dao._payloads.JwtAuthResponse;
-import ahc.dms.dao._payloads.TokenDto;
-import ahc.dms.dao._payloads.UserDto;
+import ahc.dms.payload.JwtAuthRequest;
+import ahc.dms.payload.JwtAuthResponse;
+import ahc.dms.payload.TokenDto;
+import ahc.dms.payload.UserDto;
 import ahc.dms.dao.services.TokenService;
 import ahc.dms.dao.services.UserService;
 import ahc.dms.exceptions.ApiException;

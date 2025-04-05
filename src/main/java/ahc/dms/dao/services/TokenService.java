@@ -1,6 +1,6 @@
 package ahc.dms.dao.services;
 
-import ahc.dms.dao._payloads.TokenDto;
+import ahc.dms.payload.TokenDto;
 import ahc.dms.dao.entities.Token;
 import ahc.dms.dao.respositories.TokenRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;

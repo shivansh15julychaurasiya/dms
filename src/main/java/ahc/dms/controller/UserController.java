@@ -1,7 +1,7 @@
 package ahc.dms.controller;
 
-import ahc.dms.dao._payloads.ApiResponse;
-import ahc.dms.dao._payloads.UserDto;
+import ahc.dms.payload.ApiResponse;
+import ahc.dms.payload.UserDto;
 import ahc.dms.dao.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

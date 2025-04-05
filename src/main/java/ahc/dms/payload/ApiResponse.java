@@ -1,4 +1,4 @@
-package ahc.dms.dao._payloads;
+package ahc.dms.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDto {
+public class ApiResponse {
 
-    private int commentId;
-    private String content;
+    private String message;
+    private boolean status;
 
 }
