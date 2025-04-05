@@ -41,7 +41,8 @@ public class SecurityConfig {
     * Eg- useful for login pages where some Security features, such as CSRF tokens, are required.
      */
     public static final String[] PUBLIC_URLS = {
-            "/dms/auth/login"
+            "/dms/auth/login",
+            "/actuator/**"
     };
 
     public static final String[] WEB_IGNORES = {
