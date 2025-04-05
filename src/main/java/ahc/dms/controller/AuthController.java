@@ -72,8 +72,7 @@ public class AuthController {
         String token = authHeader.substring(7);
         String username = this.jwtTokenHelper.getUsernameFromToken(token);
         TokenDto tokenDto = tokenService.findToken(token, username);
-        tokenDto.setTokenStatus(false);
-        TokenDto revokedToken = tokenService.saveToken(tokenDto);
+        TokenDto revokedToken = tokenService.revokeToken(tokenDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
