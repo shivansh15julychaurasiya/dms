@@ -69,9 +69,13 @@ public class JwtTokenHelper {
         final String username = getUsernameFromToken(token);
         //check username and token expiry
         boolean validToken = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        //check token status from db
-        TokenDto existingToken = tokenService.findTokenByUsername(userDetails.getUsername());
-        return (validToken && existingToken.isTokenStatus());
+        //if toke is valid
+        if (validToken) {
+            //check token status from db
+            TokenDto existingToken = tokenService.findToken(token, userDetails.getUsername());
+            return (existingToken != null) && existingToken.isTokenStatus();
+        }
+        return false;
     }
 
     //GET ALL CLAIM FROM TOKEN
