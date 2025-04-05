@@ -75,7 +75,7 @@ public class AuthController {
         TokenDto revokedToken = tokenService.revokeToken(tokenDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setToken(token);
+        jwtAuthResponse.setToken(revokedToken.getJwtToken());
         jwtAuthResponse.setMessage(AppConstants.JWT_REVOKED);
 
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
