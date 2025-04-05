@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/blog/users")
+@RequestMapping("/dms/users")
 public class UserController {
 
     @Autowired
