@@ -39,3 +39,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+src/main/frontend/
+src/main/java/.DS_Store
+src/main/java/ahc/.DS_Store
+src/main/java/ahc/dms/.DS_Store
+src/main/java/ahc/dms/dao/.DS_Store
