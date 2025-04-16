@@ -15,7 +15,8 @@ import java.util.Date;
 public class Token {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_seq")
+    @SequenceGenerator(name = "token_seq", sequenceName = "token_sequence", allocationSize = 1)
     @Column(name = "token_id")
     private Long tokenId;
 
