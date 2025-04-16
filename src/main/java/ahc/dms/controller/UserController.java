@@ -41,8 +41,10 @@ public class UserController {
         return new ResponseEntity<>(new ApiResponse("user deleted", true), HttpStatus.OK);
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public ResponseEntity<List<UserDto>> getAllUsers(){
+        System.out.println(userService.getAllUsers());
         return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
     }
 
