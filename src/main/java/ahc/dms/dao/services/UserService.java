@@ -52,6 +52,7 @@ public class UserService {
     public UserDto updateUser(UserDto userDto, Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
+        user.setLoginId(userDto.getLoginId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setAbout(userDto.getAbout());

@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 username = this.jwtTokenHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
-                System.out.println("unable to get username");
+                System.out.println("unable to get user");
             } catch (ExpiredJwtException e) {
                 System.out.println("jwt token expired");
             } catch (MalformedJwtException e) {
@@ -69,7 +69,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 System.out.println("invalid jwt token");
             }
         } else {
-            System.out.println("username is null or context is not null");
+            System.out.println("user is null or context is not null");
         }
 
         filterChain.doFilter(request, response);
