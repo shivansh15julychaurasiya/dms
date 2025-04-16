@@ -1,11 +1,14 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
+import ahc.dms.dao.services.OtpLogService;
 import ahc.dms.payload.*;
 import ahc.dms.dao.services.TokenService;
 import ahc.dms.dao.services.UserService;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.security.JwtTokenHelper;
+import ahc.dms.utils.OtpHelper;
+import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +30,13 @@ public class AuthController {
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
     @Autowired
+    private OtpHelper otpHelper;
+    @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private OtpLogService otpLogService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -83,9 +90,17 @@ public class AuthController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse> resetUserPassword(@RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto){
         UserDto updatedUser = userService.resetPassword(userDto.getUserId(), userDto.getPassword());
-        return new ResponseEntity<>(new ApiResponse("password has been reset", true), HttpStatus.OK);
+        //return new ResponseEntity<>(new ApiResponse("password has been reset", true), HttpStatus.OK);
+        return ResponseEntity.ok(ResponseUtil.success(null, "password has been reset"));
+    }
+
+    @PostMapping("/login-otp")
+    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto otpDto){
+        OtpDto loginOtp = otpHelper.generateLoginOtp(userService.getUserByLoginId(otpDto.getLoginId()).getPhone());
+        otpLogService.saveOtp(loginOtp);
+        return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
     }
 
 }

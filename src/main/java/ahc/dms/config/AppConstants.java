@@ -15,4 +15,6 @@ public class AppConstants {
     public static final String JWT_CREATED="Created";
     public static final String JWT_REVOKED="Revoked";
 
+    public static final String URI_LOGIN_OTP="http://103.234.185.173/api/swsendnk.asp";
+
 }

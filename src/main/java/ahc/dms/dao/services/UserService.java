@@ -67,6 +67,11 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
+    public UserDto getUserByLoginId(String loginId) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId));
+        return modelMapper.map(user, UserDto.class);
+    }
+
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());

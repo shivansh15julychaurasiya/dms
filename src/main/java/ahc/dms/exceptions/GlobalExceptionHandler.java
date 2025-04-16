@@ -1,6 +1,7 @@
 package ahc.dms.exceptions;
 
 import ahc.dms.payload.ApiResponse;
+import ahc.dms.utils.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,10 +16,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
+    public ResponseEntity<ApiResponse<?>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         String message = ex.getMessage();
-        ApiResponse apiResponse = new ApiResponse(message, false);
-        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,9 +35,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse> apiExceptionHandler(ApiException ex) {
-        String message = ex.getMessage();
-        ApiResponse apiResponse = new ApiResponse(message, false);
-        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.error(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
 }

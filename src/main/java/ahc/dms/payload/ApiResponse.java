@@ -1,17 +1,15 @@
 package ahc.dms.payload;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApiResponse {
+import java.util.List;
 
-    private String message;
+@Data
+public class ApiResponse<T> {
+
     private boolean status;
+    private String message;
+    private T data;
+    private long timestamp;
 
 }

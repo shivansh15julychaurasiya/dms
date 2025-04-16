@@ -3,6 +3,8 @@ package ahc.dms.controller;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.services.UserService;
+import ahc.dms.utils.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,9 +38,12 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer userId){
+    public ResponseEntity<ApiResponse<?>> deleteUser(
+            @PathVariable("userId") Integer userId,
+            HttpServletRequest request
+    ){
         userService.deleteUser(userId);
-        return new ResponseEntity<>(new ApiResponse("user deleted", true), HttpStatus.OK);
+        return ResponseEntity.ok(ResponseUtil.success(null, "user deleted"));
     }
 
     @GetMapping("/")
