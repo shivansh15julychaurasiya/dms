@@ -20,7 +20,7 @@ public class Token {
     private Long tokenId;
 
     private String jwtToken;
-    private String username;
+    private String loginId;
     private Date expirationDate;
     private boolean tokenStatus;
 
