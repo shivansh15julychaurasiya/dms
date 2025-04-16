@@ -23,16 +23,17 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
-    @Column(name = "login_id", nullable = false, length=100)
+    @Column(name = "login_id", nullable = false, length=100, unique = true)
     private String loginId;
     @Column(name = "name", nullable = false, length=100)
     private String name;
-    @Column(name = "email", nullable = false, length=100)
+    @Column(name = "email", nullable = false, length=100, unique = true)
     private String email;
     @Column(name = "password", nullable = false, length=100)
     private String password;
     private String about;
 
+    // Whoever owns the foreign key column gets the @JoinColumn annotation.
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_mid", referencedColumnName = "user_id"),

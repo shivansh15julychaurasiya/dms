@@ -20,8 +20,12 @@ public class Token {
     private Long tokenId;
 
     private String jwtToken;
-    private String loginId;
     private Date expirationDate;
     private boolean tokenStatus;
+
+
+    @OneToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    @JoinColumn(name = "login_mid", referencedColumnName = "login_id")
+    private User user;
 
 }
