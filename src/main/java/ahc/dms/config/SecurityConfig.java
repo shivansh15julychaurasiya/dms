@@ -47,7 +47,7 @@ public class SecurityConfig {
      */
     public static final String[] PUBLIC_URLS = {
             "/dms/auth/login",
-            "/dms/auth/login-otp",
+            "/dms/auth/send-otp",
             "/actuator/**"
     };
 

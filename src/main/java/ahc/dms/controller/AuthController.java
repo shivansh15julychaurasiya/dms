@@ -93,20 +93,25 @@ public class AuthController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
         UserDto updatedUser = userService.resetPassword(userDto.getUserId(), userDto.getPassword());
         //return new ResponseEntity<>(new ApiResponse("password has been reset", true), HttpStatus.OK);
         return ResponseEntity.ok(ResponseUtil.success(null, "password has been reset"));
     }
 
-    @PostMapping("/login-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto otpDto) throws JsonProcessingException {
-        System.out.println("otpdto : "+otpDto);
+    @PostMapping("/send-otp")
+    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) throws JsonProcessingException {
+        System.out.println("otpDto : " + requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
-        OtpDto loginOtp = otpHelper.sendLoginOtp(userService.getUserByLoginId(otpDto.getLoginId()).getPhone(), otp);
-        loginOtp.setLoginId(otpDto.getLoginId());
-        System.out.println(loginOtp);
-        otpLogService.saveOtp(loginOtp);
+        UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
+        OtpDto otpLog = otpLogService.getOtpLogByLoginIdAndOtpType(requestOtp.getLoginId(), requestOtp.getOtpType());
+        otpHelper.sendLoginOtp(savedUser.getPhone(), otp);
+        otpLog.setOtpValue(otp);
+        otpLog.setLoginId(requestOtp.getLoginId());
+        otpLog.setPhone(requestOtp.getPhone());
+        otpLog.setOtpType(requestOtp.getOtpType());
+        otpLog.setOtpStatus(true);
+        otpLogService.saveOtp(otpLog);
         return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
     }
 

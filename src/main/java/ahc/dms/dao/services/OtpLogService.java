@@ -22,8 +22,9 @@ public class OtpLogService {
         return modelMapper.map(newOtp, OtpDto.class);
     }
 
-    public OtpDto findOtpByLoginId(String loginId) {
-        return modelMapper.map(otpLogRepository.findByLoginId(loginId), OtpDto.class);
+    public OtpDto getOtpLogByLoginIdAndOtpType(String loginId, String otpType) {
+        OtpLog otpLog = otpLogRepository.findByLoginIdAndOtpType(loginId, otpType).orElse(new OtpLog());
+        return modelMapper.map(otpLog, OtpDto.class);
     }
 
 }

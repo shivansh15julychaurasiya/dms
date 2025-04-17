@@ -1,6 +1,7 @@
 package ahc.dms.utils;
 
 import ahc.dms.config.AppConstants;
+import ahc.dms.exceptions.ApiException;
 import ahc.dms.payload.OtpDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,7 @@ public class OtpHelper {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     //username=&pass=&sender=HCALLD&sendto=8601837554&templateID=&message=OTP
-    public OtpDto sendLoginOtp(String phone, String otp) {
+    public void sendLoginOtp(String phone, String otp) {
         System.out.println("phone : "+phone);
         System.out.println("otp : "+otp);
         //URI
@@ -34,6 +35,12 @@ public class OtpHelper {
 
         String response = restTemplate.getForObject(uri, String.class);
         System.out.println("response = "+response);
+
+        if (!response.contains("success")) {
+            throw new ApiException(response);
+        }
+
+        /*
         OtpDto responseDto;
         try {
             responseDto = objectMapper.readValue(response, OtpDto.class);
@@ -44,6 +51,7 @@ public class OtpHelper {
         //ResponseEntity<OtpDto> response = restTemplate.getForEntity(uri, OtpDto.class);
         //OtpDto responseDto = response.getBody();
         return  responseDto;
+        */
 
     }
 

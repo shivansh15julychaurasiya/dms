@@ -22,6 +22,8 @@ public class OtpLog {
     @Column(name = "login_id", nullable = false)
     private String loginId;
 
+    private String otpValue;
+    private String otpType;
     private LocalDateTime otpExpiry;
     private boolean otpStatus;
 
