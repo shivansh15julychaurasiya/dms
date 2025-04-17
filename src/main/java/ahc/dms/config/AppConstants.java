@@ -21,6 +21,6 @@ public class AppConstants {
     public static final String LOGIN_OTP_SENDER="HCALLD";
     public static final String LOGIN_OTP_TEMPLATE_ID="1107168551150460623";
     public static final String LOGIN_OTP_MSG_BEGIN="OTP to login in DMS : ";
-    public static final String LOGIN_OTP_MSG_END="- Allahabad High Court";
+    public static final String LOGIN_OTP_MSG_END=" - Allahabad High Court";
 
 }
