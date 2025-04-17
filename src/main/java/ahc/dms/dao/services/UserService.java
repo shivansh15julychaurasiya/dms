@@ -31,6 +31,8 @@ public class UserService {
     @Transactional
     public UserDto registerNewUser(UserDto userDto) {
 
+        System.out.println("user dto");
+        System.out.println(userDto.toString());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User user = modelMapper.map(userDto, User.class);
 

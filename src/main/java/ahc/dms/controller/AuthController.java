@@ -48,7 +48,7 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login-password")
-    public ResponseEntity<JwtAuthResponse> loginUsingPassword(@RequestBody JwtAuthRequest request) {
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingPassword(@RequestBody JwtAuthRequest request) {
 
         logger.info("inside login-password controller");
         try {
@@ -58,8 +58,7 @@ public class AuthController {
                             request.getPassword()
                     ));
         } catch (BadCredentialsException e) {
-            logger.info("user is disabled");
-            throw new ApiException("Invalid username or password");
+            return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
@@ -69,7 +68,7 @@ public class AuthController {
         jwtAuthResponse.setToken(token);
         jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
 
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
 
     }
 
@@ -87,19 +86,19 @@ public class AuthController {
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setToken(token);
             jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "login successful"));
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged-in successful"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserDto userDto) {
         UserDto registeredUserDto = userService.registerNewUser(userDto);
-        return new ResponseEntity<>(registeredUserDto, HttpStatus.CREATED);
+        return ResponseEntity.ok(ResponseUtil.success(registeredUserDto, "User created successfully"));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<JwtAuthResponse> logoutUser(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> logoutUser(HttpServletRequest request) {
 
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
@@ -111,15 +110,14 @@ public class AuthController {
         jwtAuthResponse.setToken(revokedToken.getJwtToken());
         jwtAuthResponse.setMessage(AppConstants.JWT_REVOKED);
 
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged out successfully"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
         UserDto updatedUser = userService.resetPassword(userDto.getUserId(), userDto.getPassword());
-        //return new ResponseEntity<>(new ApiResponse("password has been reset", true), HttpStatus.OK);
-        return ResponseEntity.ok(ResponseUtil.success(null, "password has been reset"));
+        return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 
     @PostMapping("/request-otp")
