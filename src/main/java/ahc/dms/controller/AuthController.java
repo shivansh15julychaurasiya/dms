@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @RestController
@@ -46,10 +47,10 @@ public class AuthController {
     private UserService userService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) {
+    @PostMapping("/login-password")
+    public ResponseEntity<JwtAuthResponse> loginUsingPassword(@RequestBody JwtAuthRequest request) {
 
-        logger.info("inside login controller");
+        logger.info("inside login-password controller");
         try {
             this.authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
@@ -70,6 +71,25 @@ public class AuthController {
 
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/login-otp")
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingOtp(@RequestBody JwtAuthRequest request) {
+
+        logger.info("inside login-otp controller");
+
+        boolean authStatus = otpLogService.verifyLoginOtp(request.getUsername(), request.getOtp());
+        if (authStatus) {
+            //returns anonymousUser since session creation policy is stateless
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+            String token = this.jwtTokenHelper.generateToken(userDetails);
+
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(token);
+            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "login successful"));
+        }
+        return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
     @PostMapping("/register")
@@ -102,7 +122,7 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.success(null, "password has been reset"));
     }
 
-    @PostMapping("/send-otp")
+    @PostMapping("/request-otp")
     public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) throws JsonProcessingException {
         System.out.println("otpDto : " + requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
@@ -114,6 +134,7 @@ public class AuthController {
         otpLog.setPhone(requestOtp.getPhone());
         otpLog.setOtpType(requestOtp.getOtpType());
         otpLog.setOtpStatus(true);
+        otpLog.setOtpExpiry(LocalDateTime.now());
         otpLogService.saveOtp(otpLog);
         return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
     }

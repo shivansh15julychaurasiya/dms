@@ -1,5 +1,6 @@
 package ahc.dms.dao.services;
 
+import ahc.dms.config.AppConstants;
 import ahc.dms.dao.entities.OtpLog;
 import ahc.dms.dao.respositories.OtpLogRepository;
 import ahc.dms.payload.OtpDto;
@@ -27,4 +28,7 @@ public class OtpLogService {
         return modelMapper.map(otpLog, OtpDto.class);
     }
 
+    public boolean verifyLoginOtp(String loginId, String otp) {
+        return otpLogRepository.findByLoginIdAndOtpTypeAndOtpValue(loginId, AppConstants.OTP_TYPE_LOGIN, otp).isPresent();
+    }
 }
