@@ -52,7 +52,10 @@ public class AuthController {
         logger.info("inside login controller");
         try {
             this.authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    ));
         } catch (BadCredentialsException e) {
             logger.info("user is disabled");
             throw new ApiException("Invalid username or password");
