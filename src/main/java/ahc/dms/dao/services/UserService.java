@@ -85,8 +85,8 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserDto resetPassword(Integer userId, String password) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
+    public UserDto resetPassword(String loginId, String password) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new ResourceNotFoundException("User", " Login Id ", loginId));
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         return modelMapper.map(user, UserDto.class);

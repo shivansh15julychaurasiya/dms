@@ -5,16 +5,13 @@ import ahc.dms.dao.services.OtpLogService;
 import ahc.dms.payload.*;
 import ahc.dms.dao.services.TokenService;
 import ahc.dms.dao.services.UserService;
-import ahc.dms.exceptions.ApiException;
 import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -113,15 +110,15 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged out successfully"));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
-        UserDto updatedUser = userService.resetPassword(userDto.getUserId(), userDto.getPassword());
+        UserDto updatedUser = userService.resetPassword(userDto.getLoginId(), userDto.getPassword());
         return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 
     @PostMapping("/request-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) {
         System.out.println("otpDto : " + requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
@@ -135,6 +132,17 @@ public class AuthController {
         otpLog.setOtpExpiry(LocalDateTime.now());
         otpLogService.saveOtp(otpLog);
         return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
+    }
+
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<ApiResponse<?>> verifyResetOtp(@RequestBody JwtAuthRequest request) {
+
+        logger.info("inside verify-reset-otp controller");
+        boolean authStatus = otpLogService.verifyResetOtp(request.getUsername(), request.getOtp());
+        if (authStatus) {
+            return ResponseEntity.ok(ResponseUtil.success(null, "Otp verified successfully"));
+        }
+        return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
 }

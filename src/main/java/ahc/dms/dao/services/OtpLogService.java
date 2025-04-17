@@ -31,4 +31,8 @@ public class OtpLogService {
     public boolean verifyLoginOtp(String loginId, String otp) {
         return otpLogRepository.findByLoginIdAndOtpTypeAndOtpValue(loginId, AppConstants.OTP_TYPE_LOGIN, otp).isPresent();
     }
+
+    public boolean verifyResetOtp(String loginId, String otp) {
+        return otpLogRepository.findByLoginIdAndOtpTypeAndOtpValue(loginId, AppConstants.OTP_TYPE_RESET, otp).isPresent();
+    }
 }
