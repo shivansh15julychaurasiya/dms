@@ -9,6 +9,7 @@ import ahc.dms.exceptions.ApiException;
 import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping("/dms/auth")
@@ -97,8 +100,12 @@ public class AuthController {
     }
 
     @PostMapping("/login-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto otpDto){
-        OtpDto loginOtp = otpHelper.generateLoginOtp(userService.getUserByLoginId(otpDto.getLoginId()).getPhone());
+    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto otpDto) throws JsonProcessingException {
+        System.out.println("otpdto : "+otpDto);
+        String otp = String.valueOf(new Random().nextInt(9000) + 1000);
+        OtpDto loginOtp = otpHelper.sendLoginOtp(userService.getUserByLoginId(otpDto.getLoginId()).getPhone(), otp);
+        loginOtp.setLoginId(otpDto.getLoginId());
+        System.out.println(loginOtp);
         otpLogService.saveOtp(loginOtp);
         return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
     }

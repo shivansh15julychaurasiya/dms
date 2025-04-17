@@ -15,6 +15,12 @@ public class AppConstants {
     public static final String JWT_CREATED="Created";
     public static final String JWT_REVOKED="Revoked";
 
-    public static final String URI_LOGIN_OTP="http://103.234.185.173/api/swsendnk.asp";
+    public static final String LOGIN_OTP_URI="http://103.234.185.173/api/swsendnk.asp";
+    public static final String LOGIN_OTP_USERNAME="HCALLD";
+    public static final String LOGIN_OTP_PASSWORD="44312074";
+    public static final String LOGIN_OTP_SENDER="HCALLD";
+    public static final String LOGIN_OTP_TEMPLATE_ID="1107168551150460623";
+    public static final String LOGIN_OTP_MSG_BEGIN="OTP to login in DMS : ";
+    public static final String LOGIN_OTP_MSG_END="- Allahabad High Court";
 
 }
