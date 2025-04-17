@@ -110,13 +110,6 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged out successfully"));
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
-        UserDto updatedUser = userService.resetPassword(userDto.getLoginId(), userDto.getPassword());
-        return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
-    }
-
     @PostMapping("/request-otp")
     public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) {
         System.out.println("otpDto : " + requestOtp);
@@ -140,9 +133,23 @@ public class AuthController {
         logger.info("inside verify-reset-otp controller");
         boolean authStatus = otpLogService.verifyResetOtp(request.getUsername(), request.getOtp());
         if (authStatus) {
-            return ResponseEntity.ok(ResponseUtil.success(null, "Otp verified successfully"));
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+            String token = this.jwtTokenHelper.generateToken(userDetails);
+
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(token);
+            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Otp verified successfully"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
+    }
+
+    //@PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
+        UserDto updatedUser = userService.resetPassword(userDto.getLoginId(), userDto.getPassword());
+        return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 
 }

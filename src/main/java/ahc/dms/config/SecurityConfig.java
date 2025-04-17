@@ -49,7 +49,7 @@ public class SecurityConfig {
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
             "/dms/auth/request-otp",
-            "/dms/auth/reset-password",
+            "/dms/auth/verify-reset-otp",
             "/actuator/**"
     };
 
