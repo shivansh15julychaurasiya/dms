@@ -1,5 +1,6 @@
 package ahc.dms.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -42,4 +43,15 @@ public class UserDto {
     private String about;
 
     private Set<RoleDto> roles = new HashSet<>();
+
+    @JsonIgnore
+    public String getPassword(){
+        return this.password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password){
+        this.password = password;
+    }
+
 }

@@ -9,6 +9,7 @@ import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ModelMapper modelMapper;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login-password")
@@ -63,6 +66,7 @@ public class AuthController {
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
         jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+        jwtAuthResponse.setUser(modelMapper.map(userDetails, UserDto.class));
 
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
 
