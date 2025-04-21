@@ -1,3 +1,7 @@
+### Frontend ###
+frontend/dist/
+frontend/node_modules
+
 ### Custom ###
 .mvn/
 images/

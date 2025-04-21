@@ -1,0 +1,41 @@
+
+/* Animation style */
+.custom-top-right-modal {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    margin: 0;
+    max-width: 400px;
+    z-index: 1055;
+  }
+
+  .modal-backdrop.show {
+    opacity: 0.5;
+  }
+
+  .shimmer-text {
+    background: linear-gradient(
+      90deg,
+rgb(31, 218, 71) 0%,
+      #00bfff 40%,
+rgb(167, 14, 154) 80%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% center;
+    }
+    100% {
+      background-position: -200% center;
+    }
+  }
+
+
+
+ 
+
