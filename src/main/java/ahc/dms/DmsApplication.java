@@ -17,7 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 @SpringBootApplication
-public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
+//public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
+public class DmsApplication implements CommandLineRunner{
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
