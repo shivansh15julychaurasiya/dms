@@ -1,6 +1,7 @@
 ### Frontend ###
 frontend/dist/
 frontend/node_modules
+logs
 
 ### Custom ###
 .mvn/
