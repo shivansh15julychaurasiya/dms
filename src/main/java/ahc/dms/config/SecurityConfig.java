@@ -48,6 +48,7 @@ public class SecurityConfig {
     public static final String[] PUBLIC_URLS = {
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
+            "/dms/auth/register",
             "/dms/auth/request-otp",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"

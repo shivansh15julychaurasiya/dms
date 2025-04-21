@@ -11,9 +11,18 @@ import java.util.Date;
 public class CaseFileDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "cfd_seq_gen",            // Logical name for the generator
+            sequenceName = "cfd_sequence",   // Actual DB sequence name
+            allocationSize = 1               // Optional: defaults to 50; 1 = increment by 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "cfd_seq_gen"
+    )
     @Column(name = "fd_id")
     private Long cfdId;
+
 
     @Column(name="case_type")
     private Long caseType;

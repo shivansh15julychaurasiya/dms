@@ -11,10 +11,10 @@ import EditProfile from "./components/EditProfile";
 import ManageCauseList from "./components/ManageCauseList";
 import Register from "./components/Register";
 import UserDashboard from "./components/UserDashboard";
-import ResetPassword from "./ResetPassword";
+import ResetPassword from "./components/ResetPassword";
 
 export default function App() {
-  
+
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "logout") {

@@ -6,6 +6,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import "../../src/assets/styles.css";
 import { isTokenExpired } from "../auth/authUtils";
 import { useNavigate } from "react-router-dom";
+import { fetchUsers, deleteUser, handleFormSubmit } from '../services/axios'; // Import the functions
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -18,37 +19,6 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const usersPerPage = 5;
 
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token || isTokenExpired(token)) {
-        localStorage.removeItem("token");
-        navigate("dms/home/login");
-        return;
-      }
-
-      const res = await fetch("http://localhost:8081/dms/users/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.status === 401) {
-        localStorage.removeItem("token");
-        navigate("dms/home/login");
-        return;
-      }
-
-      if (!res.ok) throw new Error("Failed to fetch users");
-
-      const data = await res.json();
-      setUsers(data);
-    } catch (err) {
-      console.error(err.message);
-      setError("Error loading users. You may not be authorized.");
-    }
-  };
-
   useEffect(() => {
     const checkTokenAndFetch = () => {
       const token = localStorage.getItem("token");
@@ -56,7 +26,7 @@ const UserDashboard = () => {
         localStorage.removeItem("token");
         navigate("/home/login");
       } else {
-        fetchUsers();
+        fetchUsers(setUsers, setError, navigate); // Fetch users
       }
     };
 
@@ -75,23 +45,8 @@ const UserDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const deleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-    try {
-      const res = await fetch(`http://localhost:8081/dms/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to delete user");
-
-      setUsers(users.filter((user) => user.userId !== userId));
-    } catch (err) {
-      console.error(err.message);
-      alert("Could not delete user.");
-    }
+  const deleteHandler = async (userId) => {
+    await deleteUser(userId, users, setUsers, setError, navigate); // Call the delete function
   };
 
   const handleView = (user) => {
@@ -124,48 +79,8 @@ const UserDashboard = () => {
     setSelectedUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-
-    const url =
-      modalMode === "edit"
-        ? `http://localhost:8081/dms/users/${selectedUser.userId}`
-        : "http://localhost:8081/dms/auth/register";
-
-    const method = modalMode === "edit" ? "PUT" : "POST";
-
-    const headers = {
-      "Content-Type": "application/json",
-    };
-
-    if (modalMode === "edit") {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    try {
-      const res = await fetch(url, {
-        method,
-        headers,
-        body: JSON.stringify(selectedUser),
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) {
-          setError("Unauthorized. You do not have permission to create a user.");
-        } else {
-          setError("Failed to save user.");
-        }
-        throw new Error("Failed to save user");
-      }
-
-      fetchUsers();
-      setShowModal(false);
-    } catch (err) {
-      console.error(err.message);
-      alert("Failed to save user.");
-    }
+  const handleFormSubmitLocal = async (e) => {
+    await handleFormSubmit(e, selectedUser, modalMode, users, setUsers, setError, setShowModal); // Submit the form
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -245,7 +160,7 @@ const UserDashboard = () => {
                         </button>
                         <button
                           className="btn btn-danger btn-sm px-2"
-                          onClick={() => deleteUser(user.userId)}
+                          onClick={() => deleteHandler(user.userId)}
                           title="Delete"
                         >
                           <i className="bi bi-trash"></i>
@@ -306,7 +221,7 @@ const UserDashboard = () => {
         </Modal.Header>
         <Modal.Body>
           {selectedUser && (
-            <Form onSubmit={handleFormSubmit}>
+            <Form onSubmit={handleFormSubmitLocal}>
               <Form.Group className="mb-3">
                 <Row>
                   <Col>
@@ -363,34 +278,20 @@ const UserDashboard = () => {
                   <Col>
                     <Form.Label>About</Form.Label>
                     <Form.Control
+                      as="textarea"
                       name="about"
                       value={selectedUser.about}
                       onChange={handleFormChange}
                       disabled={modalMode === "view"}
                     />
                   </Col>
-
-                  {modalMode === "create" && (
-                    <Col>
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control
-                        type="password"
-                        name="password"
-                        value={selectedUser.password}
-                        onChange={handleFormChange}
-                        required
-                      />
-                    </Col>
-                  )}
                 </Row>
               </Form.Group>
 
               {modalMode !== "view" && (
-                <div className="d-flex justify-content-end">
-                  <Button variant="primary" type="submit">
-                    {modalMode === "edit" ? "Update" : "Create"}
-                  </Button>
-                </div>
+                <Button variant="primary" type="submit">
+                  {modalMode === "edit" ? "Save Changes" : "Create User"}
+                </Button>
               )}
             </Form>
           )}
