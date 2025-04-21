@@ -20,8 +20,14 @@ public class User implements UserDetails {
 
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(
+            name = "user_seq",
+            sequenceName = "user_sequence", // This is the name of the DB sequence
+            allocationSize = 1 // Optional: 1 means no batch caching
+    )
     private int userId;
+
 
     @Column(name = "login_id", nullable = false, length=100, unique = true)
     private String loginId;

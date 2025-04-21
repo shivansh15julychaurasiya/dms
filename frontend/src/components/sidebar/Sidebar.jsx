@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaFileAlt, FaCalendarAlt, FaChartBar, FaBars } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../assets/styles.css"; // ✅ External CSS
+import "../../assets/styles.css"; //  External CSS
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -61,6 +61,22 @@ const Sidebar = () => {
                       className="nav-link text-dark px-2"
                     >
                       Search
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      to="/home/userdashboard"
+                      className="nav-link text-dark px-2"
+                    >
+                      Manage Users
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      to="/home/managecauselist"
+                      className="nav-link text-dark px-2"
+                    >
+                      Manage CauseList
                     </Link>
                   </li>
                   <li className="nav-item">
