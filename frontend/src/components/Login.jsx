@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Link, useNavigate } from "react-router-dom";
-import loginUser from "../services/axios"; // Your custom axios function for login
+import { loginUser } from "../services/axios"; // Your custom axios function for login
 
 const Login = () => {
   const [formData, setFormData] = useState({ loginId: "", password: "" });
   const [errorMsg, setErrorMsg] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Correctly using useNavigate hook
 
   // Function to handle form input changes
   const handleChange = (e) => {
@@ -24,16 +24,15 @@ const Login = () => {
 
     try {
       // Attempt to log the user in using the loginUser function
-      const { data } = await loginUser(formData.loginId, formData.password);
+      const { data } = await loginUser(formData.loginId, formData.password, setErrorMsg, navigate);
 
       // Assuming the response contains token and user data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to the user dashboard
-      navigate("/home/userdashboard");
     } catch (err) {
-      console.error(err.message);
+
+      console.log(err.message);
       setErrorMsg("Invalid credentials. Please try again.");
     }
   };

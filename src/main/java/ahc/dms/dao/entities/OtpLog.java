@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class OtpLog {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "otp_seq")
+    @SequenceGenerator(name = "otp_seq", sequenceName = "otp_sequence", allocationSize = 1)
     @Column(name = "otp_id")
     private Long otpId;
 

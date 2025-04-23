@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./sidebar/Sidebar";
 import Navbar from "./navbar/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Form, Row, Col } from "react-bootstrap";
 import "../../src/assets/styles.css";
 import { isTokenExpired } from "../auth/authUtils";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, deleteUser, handleFormSubmit } from '../services/axios'; // Import the functions
+import { fetchUsers, deleteUser } from '../services/axios'; // Removed handleFormSubmit
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState("view");
   const [selectedUser, setSelectedUser] = useState(null);
 
   const navigate = useNavigate();
@@ -26,14 +25,11 @@ const UserDashboard = () => {
         localStorage.removeItem("token");
         navigate("/home/login");
       } else {
-        fetchUsers(setUsers, setError, navigate); // Fetch users
+        fetchUsers(setUsers, setError, navigate);
       }
     };
 
-    // Initial check
     checkTokenAndFetch();
-
-    // Re-check every 10 seconds
     const intervalId = setInterval(() => {
       const token = localStorage.getItem("token");
       if (!token || isTokenExpired(token)) {
@@ -46,41 +42,12 @@ const UserDashboard = () => {
   }, []);
 
   const deleteHandler = async (userId) => {
-    await deleteUser(userId, users, setUsers, setError, navigate); // Call the delete function
+    await deleteUser(userId, users, setUsers, setError, navigate);
   };
 
   const handleView = (user) => {
     setSelectedUser(user);
-    setModalMode("view");
     setShowModal(true);
-  };
-
-  const handleEdit = (user) => {
-    setSelectedUser({ ...user });
-    setModalMode("edit");
-    setShowModal(true);
-  };
-
-  const handleCreate = () => {
-    setSelectedUser({
-      name: "",
-      email: "",
-      about: "",
-      password: "",
-      phone: "",
-      login_id: "",
-    });
-    setModalMode("create");
-    setShowModal(true);
-  };
-
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedUser((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFormSubmitLocal = async (e) => {
-    await handleFormSubmit(e, selectedUser, modalMode, users, setUsers, setError, setShowModal); // Submit the form
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -99,10 +66,7 @@ const UserDashboard = () => {
         <Navbar />
         <div className="container-fluid p-4">
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h4 className="shimmer-text">Admin User Management</h4>
-            <Button variant="primary" onClick={handleCreate}>
-              Create User
-            </Button>
+            <h4 className="shimmer-text"> Welcome To User Dashboard</h4>
           </div>
 
           {error && <div className="alert alert-danger">{error}</div>}
@@ -152,13 +116,6 @@ const UserDashboard = () => {
                           <i className="bi bi-eye"></i>
                         </button>
                         <button
-                          className="btn btn-warning btn-sm px-2 me-2"
-                          onClick={() => handleEdit(user)}
-                          title="Edit"
-                        >
-                          <i className="bi bi-pencil-square"></i>
-                        </button>
-                        <button
                           className="btn btn-danger btn-sm px-2"
                           onClick={() => deleteHandler(user.userId)}
                           title="Delete"
@@ -183,24 +140,18 @@ const UserDashboard = () => {
             <nav>
               <ul className="pagination justify-content-center">
                 <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={prevPage}>
-                    Previous
-                  </button>
+                  <button className="page-link" onClick={prevPage}>Previous</button>
                 </li>
                 {[...Array(totalPages)].map((_, i) => (
                   <li
                     key={i + 1}
                     className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
                   >
-                    <button className="page-link" onClick={() => paginate(i + 1)}>
-                      {i + 1}
-                    </button>
+                    <button className="page-link" onClick={() => paginate(i + 1)}>{i + 1}</button>
                   </li>
                 ))}
                 <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={nextPage}>
-                    Next
-                  </button>
+                  <button className="page-link" onClick={nextPage}>Next</button>
                 </li>
               </ul>
             </nav>
@@ -208,42 +159,23 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* View-Only Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title className="shimmer-text">
-            {modalMode === "view"
-              ? "User Details"
-              : modalMode === "edit"
-              ? "Edit User"
-              : "Create User"}
-          </Modal.Title>
+          <Modal.Title className="shimmer-text">User Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedUser && (
-            <Form onSubmit={handleFormSubmitLocal}>
+            <Form>
               <Form.Group className="mb-3">
                 <Row>
                   <Col>
                     <Form.Label>Name</Form.Label>
-                    <Form.Control
-                      name="name"
-                      value={selectedUser.name}
-                      onChange={handleFormChange}
-                      disabled={modalMode === "view"}
-                      required
-                    />
+                    <Form.Control value={selectedUser.name} disabled />
                   </Col>
                   <Col>
                     <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      value={selectedUser.email}
-                      onChange={handleFormChange}
-                      disabled={modalMode === "view"}
-                      required
-                    />
+                    <Form.Control value={selectedUser.email} disabled />
                   </Col>
                 </Row>
               </Form.Group>
@@ -252,47 +184,19 @@ const UserDashboard = () => {
                 <Row>
                   <Col>
                     <Form.Label>Phone</Form.Label>
-                    <Form.Control
-                      name="phone"
-                      value={selectedUser.phone}
-                      onChange={handleFormChange}
-                      disabled={modalMode === "view"}
-                      required={modalMode === "create"}
-                    />
+                    <Form.Control value={selectedUser.phone} disabled />
                   </Col>
                   <Col>
-                    <Form.Label>Employee ID (login_id)</Form.Label>
-                    <Form.Control
-                      name="login_id"
-                      value={selectedUser.login_id}
-                      onChange={handleFormChange}
-                      disabled={modalMode === "view"}
-                      required={modalMode === "create"}
-                    />
+                    <Form.Label>Employee ID</Form.Label>
+                    <Form.Control value={selectedUser.login_id} disabled />
                   </Col>
                 </Row>
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Row>
-                  <Col>
-                    <Form.Label>About</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      name="about"
-                      value={selectedUser.about}
-                      onChange={handleFormChange}
-                      disabled={modalMode === "view"}
-                    />
-                  </Col>
-                </Row>
+                <Form.Label>About</Form.Label>
+                <Form.Control as="textarea" value={selectedUser.about} disabled />
               </Form.Group>
-
-              {modalMode !== "view" && (
-                <Button variant="primary" type="submit">
-                  {modalMode === "edit" ? "Save Changes" : "Create User"}
-                </Button>
-              )}
             </Form>
           )}
         </Modal.Body>

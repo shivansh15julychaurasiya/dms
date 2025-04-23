@@ -92,7 +92,7 @@ const ProfileCard = () => {
               </>
             ) : (
               // Replace <a> with <Link> for client-side navigation
-              <Link to="/dms/home/login" className="btn btn-outline-primary rounded-pill px-4">
+              <Link to="/home/login" className="btn btn-outline-primary rounded-pill px-4">
                 Login
               </Link>
             )}
