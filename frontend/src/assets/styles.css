@@ -35,6 +35,15 @@ rgb(167, 14, 154) 80%
     }
   }
 
+  .register-background {
+  background-image: url('/path-to-your-highcourt-image.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
 
 
  

@@ -1,148 +1,151 @@
+// axios.js (refactored with utils/constants extraction)
+
 import axios from "axios";
+import { getRoleRedirectPath, showAlert } from "../utils/helpers";
+import { API_BASE_URL } from "../utils/constants";
 
-const apiUrl = "http://localhost:8081/dms"; // Base API URL
-
-// Create an axios instance for API requests
+// Axios instance
 const axiosInstance = axios.create({
-  baseURL: apiUrl,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Login function
-export const loginUser = async (loginId, password, setErrorMsg, navigate) => {
-  const allowedRoles = ["ROLE_ADMIN", "ROLE_USER", "ROLE_ECOURT"];
-
-  try {
-    const response = await axiosInstance.post("/auth/login-password", {
-      username: loginId,
-      password: password,
-    });
-
-    const { token, user } = response.data.data;
-    const role = user.roles[0].name.trim(); // Ensure role is correctly trimmed
-
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("role",role);
-
-    // Check if the role is allowed
-    if (!allowedRoles.includes(role)) {
-      navigate("/home/unauthorize"); // Redirect to unauthorized route
-    } else {
-      // Redirect based on role
-      switch (role) {
-        case "ROLE_ADMIN":
-          navigate("/home/admindashboard"); // Admin dashboard path
-          break;
-        case "ROLE_USER":
-          navigate("/home/userdashboard"); // User dashboard path
-          break;
-        case "ROLE_MANAGER":
-          navigate("/home/managerdashboard"); // Manager dashboard path
-          break;
-        default:
-          navigate("/home/unauthorize"); // Default to unauthorized route
-      }
-    }
-
-  } catch (error) {
-    console.error("Login error:", error);
-    setErrorMsg("Invalid email or password");
-    alert("Login failed.");
-  }
-};
-
-// Token expiry checker
+// Helper: Token expiration
 export const isTokenExpired = (token) => {
   try {
-    const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Math.floor(Date.now() / 1000);
-    return decodedToken.exp < currentTime;
-  } catch (error) {
-    console.error("Token decode error:", error);
+    const decoded = JSON.parse(atob(token.split(".")[1]));
+    return decoded.exp < Math.floor(Date.now() / 1000);
+  } catch {
     return true;
   }
 };
 
-// Fetch all users
-export const fetchUsers = async (setUsers, setError, navigate) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token || isTokenExpired(token)) {
-      localStorage.removeItem("token");
-      navigate("/home/login");
-      return;
-    }
-
-    const res = await axiosInstance.get("/users/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setUsers(res.data);
-  } catch (err) {
-    console.error("Fetch users error:", err);
-    setError("Error loading users. You may not be authorized.");
-  }
+// Reusable error handler
+const handleError = (err, fallbackMsg) => {
+  console.error(fallbackMsg, err);
+  showAlert(fallbackMsg);
 };
 
-// Delete a user
-export const deleteUser = async (userId, users, setUsers, setError, navigate) => {
+// Login user
+export const loginUser = (loginId, password, setErrorMsg, navigate) => {
+  axiosInstance
+    .post("/auth/login-password", { username: loginId, password })
+    .then((res) => {
+      const { token, user } = res.data.data;
+      const role = user.roles[0].name.trim();
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", role);
+
+      navigate(getRoleRedirectPath(role));
+    })
+    .catch(() => {
+      setErrorMsg("Invalid email or password");
+      handleError(null, "Login failed.");
+    });
+};
+
+// Fetch users
+export const fetchUsers = (setUsers, setError, navigate) => {
+  const token = localStorage.getItem("token");
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem("token");
+    navigate("/home/login");
+    return;
+  }
+
+  axiosInstance
+    .get("/users/", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => setUsers(res.data))
+    .catch(() => setError("Error loading users. You may not be authorized."));
+};
+
+// Delete user
+export const deleteUser = (userId, users, setUsers) => {
   if (!window.confirm("Are you sure you want to delete this user?")) return;
 
-  try {
-    await axiosInstance.delete(`/users/${userId}`, {
+  axiosInstance
+    .delete(`/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    });
-
-    setUsers(users.filter((user) => user.userId !== userId));
-  } catch (err) {
-    console.error("Delete user error:", err);
-    alert("Could not delete user.");
-  }
+    })
+    .then(() => {
+      setUsers(users.filter((user) => user.userId !== userId));
+    })
+    .catch((err) => handleError(err, "Could not delete user."));
 };
 
-// Create or update a user
-export const handleFormSubmit = async (
+// Create or update user
+export const handleFormSubmit = (
   e,
   selectedUser,
-  modalMode,
+  mode,
   users,
   setUsers,
   setError,
-  setShowModal
+  setShowModal,
+  navigate
 ) => {
   e.preventDefault();
-
   const token = localStorage.getItem("token");
+  const url = mode === "edit" ? `/users/${selectedUser.userId}` : "/auth/register";
+  const method = mode === "edit" ? "put" : "post";
 
-  const url =
-    modalMode === "edit"
-      ? `/users/${selectedUser.userId}`
-      : "/auth/register";  // Use relative paths based on the base URL
+  axiosInstance({
+    method,
+    url,
+    data: selectedUser,
+    headers: {
+      "Content-Type": "application/json",
+      ...(mode === "edit" && { Authorization: `Bearer ${token}` }),
+    },
+  })
+    .then(() => fetchUsers(setUsers, setError, navigate))
+    .then(() => setShowModal(false))
+    .catch((err) => handleError(err, "Failed to save user."));
+};
 
-  const method = modalMode === "edit" ? "put" : "post";
-
-  try {
-    await axiosInstance({
-      method,
-      url,
-      data: selectedUser,
-      headers: {
-        "Content-Type": "application/json",
-        ...(modalMode === "edit" && { Authorization: `Bearer ${token}` }),
-      },
+// Forgot Password - Send OTP
+export const requestOtp = (loginId, setMessage, setOtpSent, setTimer) => {
+  axiosInstance
+    .post("/auth/request-otp", {
+      login_id: loginId,
+      otp_type: "Reset",
+    })
+    .then((res) => {
+      console.log(res);
+      setMessage("OTP has been sent successfully!");
+      setTimeout(() => setMessage(""), 3000);
+      setOtpSent(true);
+      setTimer(120);
+    })
+    .catch((err) => {
+      console.error(err);
+      setMessage("Failed to send OTP. Please check the Login ID.");
     });
+};
 
-    await fetchUsers(setUsers, setError, () => {});
-    setShowModal(false);
-  } catch (err) {
-    console.error("Save user error:", err);
-    alert("Failed to save user.");
-  }
+// Forgot Password - Verify OTP
+export const verifyOtp = (loginId, otp, setMessage, navigate) => {
+  axiosInstance
+    .post("/auth/verify-reset-otp", {
+      username: loginId,
+      otp: otp,
+    })
+    .then((res) => {
+      const token = res.data.data.token;
+      localStorage.setItem("token", token);
+      navigate("/home/reset");
+      setMessage("OTP has been verified successfully!");
+    })
+    .catch((err) => {
+      console.error(err);
+      setMessage("Failed to verify OTP. Please check the Login ID.");
+    });
 };

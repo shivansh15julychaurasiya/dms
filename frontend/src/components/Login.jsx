@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/axios"; // Your custom axios function for login
 
@@ -33,7 +32,7 @@ const Login = () => {
     } catch (err) {
 
       console.log(err.message);
-      setErrorMsg("Invalid credentials. Please try again.");
+      // setErrorMsg("Invalid credentials. Please try again.");
     }
   };
 

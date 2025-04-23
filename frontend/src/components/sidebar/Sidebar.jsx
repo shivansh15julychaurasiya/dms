@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaFileAlt, FaCalendarAlt, FaChartBar, FaBars } from "react-icons/fa";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "../../assets/styles.css";
 
 const Sidebar = () => {

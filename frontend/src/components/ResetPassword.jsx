@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+
 import { Link, useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
@@ -33,6 +32,7 @@ const ResetPassword = () => {
           },
         }
       );
+      console.log(response)
 
       setMessage("Password has been reset successfully!");
       setTimeout(() => navigate("/home/login"), 1000); // Redirect after 2s

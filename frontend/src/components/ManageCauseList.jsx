@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "./navbar/Navbar";
 import Sidebar from "./sidebar/Sidebar";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const ManageCauseList = () => {
   return (

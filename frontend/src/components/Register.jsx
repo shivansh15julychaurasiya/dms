@@ -1,41 +1,41 @@
 import React, { useState } from "react";
-import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+} from "reactstrap";
+// For background image and styling
+import "../assets/styles.css";
+
 
 const Register = () => {
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     about: "",
     password: "",
+    phone: "",
+    login_id: "",
   });
 
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await axios.post("http://localhost:8081/dms/auth/register", formData);
-      console.log("Registration successful:", response.data);
-      alert("Registration successful! Please login.");
-      navigate("/home/login");
-    } catch (error) {
-      console.error("Error during registration:", error.response?.data || error.message);
-      alert("Registration failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    console.log(formData);
   };
-
   const wrapperStyle = {
     height: "100vh",
     backgroundImage:
@@ -46,99 +46,111 @@ const Register = () => {
     alignItems: "center",
     justifyContent: "center",
   };
-
   const cardStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     padding: "2rem",
-    borderRadius: "1.5rem",
-    maxWidth: "450px",
+    borderRadius: "2rem",
+    maxWidth: "550px",
     width: "100%",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
   };
-
-  const btnStyle = {
-    backgroundColor: "#6c63ff",
-    border: "none",
-  };
-
-  const btnHoverStyle = {
-    backgroundColor: "#574fd6",
-  };
-
   return (
-    <div style={wrapperStyle}>
-      <div style={cardStyle}>
-        <h2 className="text-center mb-2">
-          <i className="bi bi-person-plus-fill me-2"></i>Register
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">Full Name</label>
-            <input
-              type="text"
-              className="form-control"
-              id="name"
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email Address</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="about" className="form-label">About</label>
-            <textarea
-              className="form-control"
-              id="about"
-              rows="3"
-              placeholder="Tell us about yourself"
-              value={formData.about}
-              onChange={handleChange}
-            ></textarea>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="d-grid">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={btnStyle}
-              onMouseOver={(e) => (e.target.style.backgroundColor = btnHoverStyle.backgroundColor)}
-              onMouseOut={(e) => (e.target.style.backgroundColor = btnStyle.backgroundColor)}
-              disabled={loading}
-            >
-              {loading ? "Registering..." : <><i className="bi bi-person-check-fill me-1"></i> Register</>}
-            </button>
-          </div>
-          <div className="text-center mt-3 text-dark">
-            Already have an account?{" "}
-            <Link to="/home/login" className="text-decoration-none fw-bold">
-              Login here
-            </Link>
-          </div>
-        </form>
-      </div>
+    <div className="registerddd-background"  style={wrapperStyle}>
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Card style={cardStyle}>
+          <CardBody>
+            <h3 className="text-center text-primary mb-4">Create User</h3>
+            <Form onSubmit={handleSubmit}>
+              <Row>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="name">Name</Label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="email">Email</Label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="phone">Phone</Label>
+                    <Input
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="login_id">Employee ID (Login ID)</Label>
+                    <Input
+                      type="text"
+                      name="login_id"
+                      value={formData.login_id}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="password">Password</Label>
+                    <Input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="about">About</Label>
+                    <Input
+                      type="text"
+                      name="about"
+                      value={formData.about}
+                      onChange={handleChange}
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              <div className="text-center mt-3">
+                <Button color="primary" type="submit">
+                  Register
+                </Button>
+              </div>
+            </Form>
+          </CardBody>
+        </Card>
+      </Container>
     </div>
   );
 };

@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 import Home from "./Pages/home/Home";
 import Login from "./components/Login";
@@ -33,10 +36,11 @@ export default function App() {
   }, []);
 
   return (
+    
     <BrowserRouter basename="/dms">
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="" element={<Home />} />
         <Route path="/home/login" element={<Login />} />
         <Route path="/home/register" element={<Register />} />
         <Route path="/home/forgot" element={<ForgotPassword />} />

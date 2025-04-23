@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 // import { PDFViewer } from "@react-pdf/renderer";
 // import PdfComponent from './PdfComponent';
 import Navbar from "./navbar/Navbar";
