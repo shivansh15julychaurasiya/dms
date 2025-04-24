@@ -3,7 +3,7 @@ import React from "react";
 // import PdfComponent from './PdfComponent';
 import Navbar from "../layout/Navbar";
 // import MyDocument
-import FancyAccordion from "../FancyAccordion";
+import FancyAccordion from "../layout/FancyAccordion";
 // import PDFHighlighter from "./pdf/PDFHighlighter";
 import PDFViewer from "../pdf/PDFViewer";
 

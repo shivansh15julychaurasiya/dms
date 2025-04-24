@@ -12,7 +12,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 import Dashboard from "./components/dashboard/DashboardLayout";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import UserDashboard from "./components/dashboard/UserDashboard";
-import Search from "./components/Search";
+import Search from "./components/layout/Search";
 import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./components/ManageCauseList";
 import PDFViewer from "./components/pdf/PDFViewer";
