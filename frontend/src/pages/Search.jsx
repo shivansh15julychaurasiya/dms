@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Form, FormGroup, Input, Button, Table } from 'reactstrap';
-import Sidebar from "./layout/Sidebar"; // Ensure correct path
-import Navbar from "./layout/Navbar";
+import Sidebar from "../components/layout/Sidebar"; // Ensure correct path
+import Navbar from "../components/layout/Navbar";
 
 const Search = () => {
   return (
