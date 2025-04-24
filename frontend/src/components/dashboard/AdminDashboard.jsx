@@ -6,13 +6,15 @@ import {
   PaginationItem,
   PaginationLink,
   Alert,
+  Container,
+  Row,
+  Col,
 } from "reactstrap";
 import Sidebar from "../layout/Sidebar";
 import Navbar from "../layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { isTokenExpired } from "../../services/axios";
+import { isTokenExpired, fetchUsers, deleteUser } from "../../services/axios";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, deleteUser } from "../../services/axios";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -52,21 +54,25 @@ const AdminDashboard = () => {
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
-    <div className="home">
+    <div className="d-flex">
       <Sidebar />
-      <div className="homeContainer">
+      <div className="flex-grow-1">
         <Navbar />
-        <div className="container p-4">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h4 className="text-primary">Admin User Management</h4>
-            <Button color="primary" onClick={() => navigate("/home/register")}>
-              Create User
-            </Button>
-          </div>
+        <Container fluid className="p-4">
+          <Row className="align-items-center mb-3">
+            <Col xs="12" md="6">
+              <h4 className="text-primary">Admin User Management</h4>
+            </Col>
+            <Col xs="12" md="6" className="text-md-end mt-2 mt-md-0">
+              <Button color="primary" onClick={() => navigate("/home/register")}>
+                Create User
+              </Button>
+            </Col>
+          </Row>
 
           {error && <Alert color="danger">{error}</Alert>}
 
-          <Table responsive hover bordered>
+          <Table responsive bordered hover className="mt-3">
             <thead className="table-dark">
               <tr>
                 <th>#</th>
@@ -90,20 +96,17 @@ const AdminDashboard = () => {
                     <td>{user.phone}</td>
                     <td>{user.about}</td>
                     <td>
-                      {user.roles && user.roles.length > 0
-                        ? user.roles.map((role, idx) => (
-                            <span key={role.id}>
-                              {role.name.replace("ROLE_", "")}
-                              {idx < user.roles.length - 1 && ", "}
-                            </span>
-                          ))
+                      {user.roles?.length
+                        ? user.roles
+                            .map((role) => role.name.replace("ROLE_", ""))
+                            .join(", ")
                         : "No Role"}
                     </td>
                     <td>
                       <Button
                         color="warning"
                         size="sm"
-                        className="me-2"
+                        className="me-2 mb-1"
                         onClick={() => console.log("Edit user:", user)}
                       >
                         Edit
@@ -111,6 +114,7 @@ const AdminDashboard = () => {
                       <Button
                         color="danger"
                         size="sm"
+                        className="mb-1"
                         onClick={() => deleteHandler(user.userId)}
                       >
                         Delete
@@ -129,7 +133,7 @@ const AdminDashboard = () => {
           </Table>
 
           {totalPages > 1 && (
-            <Pagination className="justify-content-center">
+            <Pagination className="justify-content-center mt-4">
               <PaginationItem disabled={currentPage === 1}>
                 <PaginationLink
                   previous
@@ -153,7 +157,7 @@ const AdminDashboard = () => {
               </PaginationItem>
             </Pagination>
           )}
-        </div>
+        </Container>
       </div>
     </div>
   );

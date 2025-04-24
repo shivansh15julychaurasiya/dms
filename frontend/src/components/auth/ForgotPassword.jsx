@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Alert,
+} from "reactstrap";
+import { requestOtp, verifyOtp } from "../../services/axios";
 
 const ForgotPassword = () => {
   const [loginId, setLoginId] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [timer, setTimer] = useState(120); // 2 minutes
+  const [timer, setTimer] = useState(120);
   const navigate = useNavigate();
 
-  // Start countdown timer after OTP is sent
   useEffect(() => {
     let interval;
     if (otpSent && timer > 0) {
@@ -24,176 +36,92 @@ const ForgotPassword = () => {
   }, [otpSent, timer]);
 
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
 
-  const handleSendOtp = async (e) => {
+  const handleSendOtp = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/dms/auth/request-otp",
-        {
-          login_id: loginId,
-          otp_type: "Reset",
-        }
-      );
-      console.log(response);
-      setMessage("OTP has been sent successfully!");
-
-      setTimeout(() => setMessage(""), 3000);
-      setOtpSent(true);
-      setTimer(120); // Reset timer
-    } catch (error) {
-      console.error(error);
-      setMessage("Failed to send OTP. Please check the Login ID.");
-    }
+    requestOtp(loginId, setMessage, setOtpSent, setTimer);
   };
 
-  const handleVerifyOtp = async (e) => {
+  const handleVerifyOtp = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/dms/auth/verify-reset-otp",
-        {
-          username: loginId,
-          otp: otp,
-        }
-      );
-      console.log(response.data.data.token);
-      localStorage.setItem("token", response.data.data.token);
-      navigate("/home/reset");
-      setMessage("OTP has been verified successfully!");
-    } catch (error) {
-      console.error(error);
-      setMessage("Failed to verify OTP. Please check the Login ID.");
-    }
+    verifyOtp(loginId, otp, setMessage, navigate);
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        backgroundImage:
-          "url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+    <div className="vh-100 d-flex align-items-center justify-content-center bg-image"
+      style={{ backgroundImage: "url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg')", backgroundSize: "cover" }}
     >
-      <div
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
-          padding: "2rem",
-          borderRadius: "1.5rem",
-          maxWidth: "400px",
-          width: "100%",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-        }}
-      >
-        <h2 className="text-center mb-4">
-          <i className="bi bi-unlock me-2"></i>Forgot Password
-        </h2>
-        <p className="text-muted text-center mb-4">
-          {!otpSent
-            ? "Enter your Login ID to receive an OTP for password reset."
-            : "Enter the OTP sent to your registered contact."}
-        </p>
+      <Container>
+        <Row className="justify-content-center">
+          <Col md={6} lg={5}>
+            <Card className="shadow-lg rounded-4">
+              <CardBody className="p-4 bg-white bg-opacity-75">
+                <h2 className="text-center mb-3">
+                  <i className="bi bi-unlock me-2"></i>Forgot Password
+                </h2>
+                <p className="text-center text-muted mb-4">
+                  {!otpSent
+                    ? "Enter your Login ID to receive an OTP for password reset."
+                    : "Enter the OTP sent to your registered contact."}
+                </p>
 
-        {otpSent && timer > 0 && (
-          <p className="text-center text-muted mb-3">
-            Time remaining: <strong>{formatTime(timer)}</strong>
-          </p>
-        )}
+                {otpSent && timer > 0 && (
+                  <p className="text-center text-muted">
+                    Time remaining: <strong>{formatTime(timer)}</strong>
+                  </p>
+                )}
 
-        <form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}>
-          {!otpSent ? (
-            <div className="mb-3">
-              <label htmlFor="loginId" className="form-label">
-                Login ID:
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="loginId"
-                value={loginId}
-                onChange={(e) => setLoginId(e.target.value)}
-                placeholder="Enter Login ID"
-                required
-              />
-            </div>
-          ) : (
-            <div className="mb-3">
-              <label htmlFor="otp" className="form-label">
-                Enter OTP:
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="otp"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter OTP"
-                required
-                disabled={timer === 0}
-              />
-            </div>
-          )}
+                <Form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}>
+                  <FormGroup>
+                    <Label for="loginId">{otpSent ? "Enter OTP:" : "Login ID:"}</Label>
+                    <Input
+                      type={otpSent ? "text" : "text"}
+                      id={otpSent ? "otp" : "loginId"}
+                      value={otpSent ? otp : loginId}
+                      onChange={(e) => otpSent ? setOtp(e.target.value) : setLoginId(e.target.value)}
+                      placeholder={otpSent ? "Enter OTP" : "Enter Login ID"}
+                      required
+                      disabled={otpSent && timer === 0}
+                    />
+                  </FormGroup>
 
-          <div className="d-grid">
-            {!otpSent ? (
-              <button
-                type="submit"
-                className="btn btn-danger"
-                onMouseOver={(e) =>
-                  (e.target.style.backgroundColor = "#e64949")
-                }
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#ff6b6b")}
-                style={{ backgroundColor: "#ff6b6b", border: "none" }}
-              >
-                <i className="bi bi-envelope-arrow-up me-1"></i> Send Reset OTP
-              </button>
-            ) : timer > 0 ? (
-              <button
-                type="submit"
-                className="btn btn-danger"
-                onMouseOver={(e) =>
-                  (e.target.style.backgroundColor = "#e64949")
-                }
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#ff6b6b")}
-                style={{ backgroundColor: "#ff6b6b", border: "none" }}
-              >
-                <i className="bi bi-shield-lock me-1"></i> Verify OTP
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-warning"
-                onClick={handleSendOtp}
-              >
-                <i className="bi bi-arrow-clockwise me-1"></i> Resend OTP
-              </button>
-            )}
-          </div>
-        </form>
+                  <div className="d-grid">
+                    {!otpSent ? (
+                      <Button color="danger" className="btn-block" type="submit">
+                        <i className="bi bi-envelope-arrow-up me-1"></i> Send Reset OTP
+                      </Button>
+                    ) : timer > 0 ? (
+                      <Button color="danger" className="btn-block" type="submit">
+                        <i className="bi bi-shield-lock me-1"></i> Verify OTP
+                      </Button>
+                    ) : (
+                      <Button color="warning" className="btn-block" type="button" onClick={handleSendOtp}>
+                        <i className="bi bi-arrow-clockwise me-1"></i> Resend OTP
+                      </Button>
+                    )}
+                  </div>
+                </Form>
 
-        {message && (
-          <div className="alert alert-info mt-3 text-center" role="alert">
-            {message}
-          </div>
-        )}
+                {message && (
+                  <Alert color="info" className="mt-3 text-center">
+                    {message}
+                  </Alert>
+                )}
 
-        <div className="text-center mt-3">
-          <Link to="/home/login" className="text-decoration-none">
-            <i className="bi bi-arrow-left me-1"></i> Back to Login
-          </Link>
-        </div>
-      </div>
+                <div className="text-center mt-3">
+                  <Link to="/home/login" className="text-decoration-none">
+                    <i className="bi bi-arrow-left me-1"></i> Back to Login
+                  </Link>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
