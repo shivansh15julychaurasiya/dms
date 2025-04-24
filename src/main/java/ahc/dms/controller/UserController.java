@@ -7,13 +7,11 @@ import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/dms/users")
@@ -23,17 +21,17 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto){
 
         UserDto createdUserDto = userService.createUser(userDto);
-        return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
+        return ResponseEntity.ok(ResponseUtil.success(createdUserDto, "user created"));
 
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {
+    public ResponseEntity<ApiResponse<UserDto>> updateUser(@RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {
         UserDto updatedUser = userService.updateUser(userDto, userId);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,13 +45,15 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
-        return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
+    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(){
+        //return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
+        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(), "user fetched"));
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") Integer userId){
-        return ResponseEntity.ok(userService.getUserById(userId));
+    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Integer userId){
+        //return ResponseEntity.ok(userService.getUserById(userId));
+        return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
     }
 
 }
