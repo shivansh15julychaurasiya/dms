@@ -1,86 +1,70 @@
-// import React, { useState } from 'react';
-import Sidebar from "./layout/Sidebar"; // Make sure Sidebar is in the same folder or adjust path
+import React from 'react';
+import { Container, Row, Col, Form, FormGroup, Input, Button, Table } from 'reactstrap';
+import Sidebar from "./layout/Sidebar"; // Ensure correct path
 import Navbar from "./layout/Navbar";
-import "../Pages/home/home.scss";
 
 const Search = () => {
-  //   const [searchTerm, setSearchTerm] = useState('');
-
-  //   const data = [
-  //     { id: 1, name: 'John Doe', role: 'Lawyer' },
-  //     { id: 2, name: 'Jane Smith', role: 'Judge' },
-  //     { id: 3, name: 'Michael Lee', role: 'Clerk' },
-  //     { id: 4, name: 'Samantha Brown', role: 'Lawyer' },
-  //   ];
-
-  //   const filteredData = data.filter((item) =>
-  //     item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-
   return (
-    <div className="home">
+    <div className="d-flex">
       <Sidebar />
-      <div className="homeContainer">
+      <div className="flex-grow-1">
         <Navbar />
 
-        {/* Main Content */}
-        <div className="container-fluid p-4 ">
-          <div className="header bg-dark mt-2 py-2 rounded">
-            <h className="text-light  mt-2 mb-2 px-3">Search Cause List</h>
+        <Container fluid className="p-4">
+          {/* Header Section */}
+          <div className="bg-dark py-2 rounded mb-4">
+            <h5 className="text-light mt-2 mb-2 px-3">Search Cause List</h5>
           </div>
 
-          <div class="container  mt-4">
-            <form>
-              <div class="row g-3 align-items-center ">
-                {/* <!-- Select Type --> */}
-                <div class="col-md-3 col-sm-6">
-                  <select id="typeSelect" class="form-select">
+          {/* Search Form */}
+          <Form>
+            <Row className="g-3 align-items-center">
+              {/* Select List Type */}
+              <Col md="3" sm="6">
+                <FormGroup>
+                  <Input type="select">
                     <option value="">Select List Type...</option>
                     <option value="civil">Civil</option>
                     <option value="criminal">Criminal</option>
                     <option value="family">Family</option>
-                  </select>
-                </div>
+                  </Input>
+                </FormGroup>
+              </Col>
 
-                {/* <!-- Checkbox --> */}
-                <div class="col-md-3 col-sm-6 d-flex align-items-center">
-                  <div class="form-check mt-2">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="caseCheck"
-                    />
-                    <label class="form-check-label" for="caseCheck">
-                      Transferred
-                    </label>
-                  </div>
-                </div>
+              {/* Transferred Checkbox */}
+              <Col md="3" sm="6" className="d-flex align-items-center">
+                <FormGroup check>
+                  <Input className="form-check-input" type="checkbox" id="caseCheck" />
+                  <label className="form-check-label" htmlFor="caseCheck">
+                    Transferred
+                  </label>
+                </FormGroup>
+              </Col>
 
-                {/* Date picker */}
-                <div class="col-md-3 col-sm-6">
-                  <input type="date" id="dateInput" class="form-control" />
-                </div>
+              {/* Date Picker */}
+              <Col md="3" sm="6">
+                <FormGroup>
+                  <Input type="date" id="dateInput" className="form-control" />
+                </FormGroup>
+              </Col>
 
-                {/* <!-- Submit Button --> */}
-                <div class="col-md-3 col-sm-6 px-5 mt-3">
-                  <button type="submit" class="btn btn-success">
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+              {/* Submit Button */}
+              <Col md="3" sm="6" className="d-flex justify-content-md-end">
+                <Button color="success" size="sm" className="mt-3">Submit</Button>
+              </Col>
+            </Row>
+          </Form>
 
-          {/* Table */}
+          {/* Table Section */}
           <div className="table-responsive mt-3 rounded">
-            <table className="table table-bordered table-striped rounded">
-              <thead className="table-secondary rounded text-center ">
+            <Table bordered striped responsive size="sm" className="text-center align-middle">
+              <thead className="table-secondary rounded">
                 <tr>
                   <th>Sr No</th>
                   <th>Case No</th>
                   <th>Petitioners vs Responders</th>
                   <th>Petitioner Council</th>
-                  <th>Petitioner Council</th>
+                  <th>Respondent Council</th>
                 </tr>
               </thead>
               <tbody>
@@ -92,9 +76,9 @@ const Search = () => {
                   <td>Lorem ipsum dolor sit amet.</td>
                 </tr>
               </tbody>
-            </table>
+            </Table>
           </div>
-        </div>
+        </Container>
       </div>
     </div>
   );
