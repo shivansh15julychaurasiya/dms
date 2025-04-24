@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "./sidebar/Sidebar";
-import Navbar from "./navbar/Navbar";
+import Sidebar from "../layout/Sidebar";
+import Navbar from "../layout/Navbar";
 import { Modal, Form, Row, Col } from "react-bootstrap";
-import "../../src/assets/styles.css";
-import { isTokenExpired } from "../services/axios";
+import "../../assets/styles.css";
+// import { isTokenExpired } from "../services/axios";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, deleteUser } from '../services/axios'; // Removed handleFormSubmit
+import { fetchUsers, deleteUser,isTokenExpired } from "../../services/axios"; // Removed handleFormSubmit
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);

@@ -94,6 +94,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserDto userDto) {
         UserDto registeredUserDto = userService.registerNewUser(userDto);
+        System.out.println(userDto);
         return ResponseEntity.ok(ResponseUtil.success(registeredUserDto, "User created successfully"));
     }
 

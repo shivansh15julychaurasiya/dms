@@ -1,6 +1,6 @@
 // import React, { useState } from 'react';
-import Sidebar from "./sidebar/Sidebar"; // Make sure Sidebar is in the same folder or adjust path
-import Navbar from "./navbar/Navbar";
+import Sidebar from "./layout/Sidebar"; // Make sure Sidebar is in the same folder or adjust path
+import Navbar from "./layout/Navbar";
 import "../Pages/home/home.scss";
 
 const Search = () => {

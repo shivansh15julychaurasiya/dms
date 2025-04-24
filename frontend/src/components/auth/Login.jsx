@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/axios"; // Your custom axios function for login
+import { loginUser } from "../../services/axios" // Your custom axios function for login
 
 const Login = () => {
   const [formData, setFormData] = useState({ loginId: "", password: "" });

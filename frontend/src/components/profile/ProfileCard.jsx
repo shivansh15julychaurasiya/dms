@@ -1,9 +1,11 @@
 // ProfileCard.js
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+// import { useNavigate } from "react-router-dom";
 
 const ProfileCard = () => {
   const [user, setUser] = useState(null);
+  // const navigate = useNavigate();
+
 
   
   // Fetch user data from localStorage on mount
@@ -43,7 +45,9 @@ const ProfileCard = () => {
       
       // Trigger logout across all tabs by setting a value in localStorage
       localStorage.setItem("logout", Date.now().toString());
-      window.location.href = "/dms/home/login"; // Redirect to login page
+      // navigate("/home/login"); // Redirect to login page
+    window.location.href = "/dms/home/login";
+
     }
   };
   
@@ -51,6 +55,10 @@ const ProfileCard = () => {
   const handleProfile = () => {
     window.location.href = "/dms/home/editprofile";
   };
+  const manageLogin=()=>{
+    window.location.href = "/dms/home/login";
+
+  }
 
   return (
     <div className="container d-flex justify-content-center mt-5">
@@ -92,9 +100,8 @@ const ProfileCard = () => {
               </>
             ) : (
               // Replace <a> with <Link> for client-side navigation
-              <Link to="/home/login" className="btn btn-outline-primary rounded-pill px-4">
-                Login
-              </Link>
+              <button className="btn btn-outline-primary rounded-pill px-4" onClick={manageLogin}>Login</button>
+         
             )}
           </div>
         </div>

@@ -2,8 +2,8 @@ import React from "react";
 import "./home.scss";
 
 
-import Sidebar from "../../components/sidebar/Sidebar";
-import Navbar from "../../components/navbar/Navbar";
+import Sidebar from "../../components/layout/Sidebar";
+import Navbar from "../../components/layout/Navbar";
 import Widgets from "../../components/widget/Widgets";
 import TableData from "../../components/table/TableData";
 

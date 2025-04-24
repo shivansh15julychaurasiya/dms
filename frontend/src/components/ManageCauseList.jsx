@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "./navbar/Navbar";
-import Sidebar from "./sidebar/Sidebar";
+import Navbar from "./layout/Navbar";
+import Sidebar from "./layout/Sidebar";
 
 const ManageCauseList = () => {
   return (

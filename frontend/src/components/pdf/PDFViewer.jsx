@@ -3,6 +3,8 @@ import React from "react";
 
 // Core viewer
 import { Viewer } from "@react-pdf-viewer/core";
+import { pdfjs } from 'react-pdf'; // or '@react-pdf/renderer' or similar, depending on your lib
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // Plugins
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";

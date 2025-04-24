@@ -5,20 +5,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import Home from "./Pages/home/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import ForgotPassword from "./components/ForgotPassword";
-import ResetPassword from "./components/ResetPassword";
-import Dashboard from "./components/DashboardLayout";
-import AdminDashboard from "./components/AdminDashboard";
-import UserDashboard from "./components/UserDashboard";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
+import Dashboard from "./components/dashboard/DashboardLayout";
+import AdminDashboard from "./components/dashboard/AdminDashboard";
+import UserDashboard from "./components/dashboard/UserDashboard";
 import Search from "./components/Search";
-import EditProfile from "./components/EditProfile";
+import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./components/ManageCauseList";
 import PDFViewer from "./components/pdf/PDFViewer";
 import UnAuthorize from "./components/UnAuthorize";
 
-import ProtectedRoute from "./components/ProtectedRoute"; // 
+import ProtectedRoute from "./components/auth/ProtectedRoute"; // 
 
 export default function App() {
 

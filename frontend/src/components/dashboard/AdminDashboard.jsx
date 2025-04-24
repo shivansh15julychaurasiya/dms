@@ -7,12 +7,12 @@ import {
   PaginationLink,
   Alert,
 } from "reactstrap";
-import Sidebar from "./sidebar/Sidebar";
-import Navbar from "./navbar/Navbar";
+import Sidebar from "../layout/Sidebar";
+import Navbar from "../layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { isTokenExpired } from "../services/axios";
+import { isTokenExpired } from "../../services/axios";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, deleteUser } from "../services/axios";
+import { fetchUsers, deleteUser } from "../../services/axios";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);

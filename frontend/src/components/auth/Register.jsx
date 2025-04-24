@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { saveUser } from "../../services/axios";
+
 import {
   Container,
   Row,
@@ -10,12 +13,12 @@ import {
   Label,
   Input,
   Button,
+  Alert,
 } from "reactstrap";
-// For background image and styling
-import "../assets/styles.css";
-
+import "../../assets/styles.css"
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,6 +27,7 @@ const Register = () => {
     phone: "",
     login_id: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -32,10 +36,36 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const { name, email, password, phone, about, login_id } = formData;
+
+    if (!name || !email || !password || !phone || !about || !login_id) {
+      setError("All fields are required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Invalid email format.");
+      return;
+    }
+
+    if (password.length < 3) {
+      setError("Password must be at least 3 characters.");
+      return;
+    }
+
+    setError("");
+
+    try {
+      await saveUser(formData, navigate);
+    } catch (err) {
+      setError(err.message);
+    }
   };
+
   const wrapperStyle = {
     height: "100vh",
     backgroundImage:
@@ -46,6 +76,7 @@ const Register = () => {
     alignItems: "center",
     justifyContent: "center",
   };
+
   const cardStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     padding: "2rem",
@@ -54,12 +85,14 @@ const Register = () => {
     width: "100%",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
   };
+
   return (
-    <div className="registerddd-background"  style={wrapperStyle}>
+    <div className="registerddd-background" style={wrapperStyle}>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card style={cardStyle}>
           <CardBody>
             <h3 className="text-center text-primary mb-4">Create User</h3>
+            {error && <Alert color="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col md={6}>
@@ -70,7 +103,7 @@ const Register = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
@@ -82,7 +115,7 @@ const Register = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
@@ -97,7 +130,7 @@ const Register = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
@@ -109,7 +142,7 @@ const Register = () => {
                       name="login_id"
                       value={formData.login_id}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
@@ -124,7 +157,7 @@ const Register = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
@@ -136,7 +169,7 @@ const Register = () => {
                       name="about"
                       value={formData.about}
                       onChange={handleChange}
-                      required
+                      
                     />
                   </FormGroup>
                 </Col>
