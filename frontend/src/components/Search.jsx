@@ -1,7 +1,7 @@
 // import React, { useState } from 'react';
 import Sidebar from "./layout/Sidebar"; // Make sure Sidebar is in the same folder or adjust path
 import Navbar from "./layout/Navbar";
-import "../Pages/home/home.scss";
+import "../pages/home/home.scss";
 
 const Search = () => {
   //   const [searchTerm, setSearchTerm] = useState('');
