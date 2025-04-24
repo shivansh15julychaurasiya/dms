@@ -45,6 +45,18 @@ public class RoleService {
         return roles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
     }
 
+
+    public RoleDto getRoleByRoleId(Integer roleId) {
+        Role role = roleRepository.findByRoleId(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", roleId));
+        return modelMapper.map(role, RoleDto.class);
+    }
+
+
+    public RoleDto getRoleByRoleName(String roleName) {
+        Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException("Role", "Role Name", roleName));
+        return modelMapper.map(role, RoleDto.class);
+    }
+
     public void deleteRole(Integer roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
         roleRepository.delete(role);

@@ -27,17 +27,29 @@ public class RoleController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{roleId}")
     public ResponseEntity<ApiResponse<RoleDto>> updateRole(@Valid @RequestBody RoleDto roleDto, @PathVariable("roleId") Integer roleId) {
         RoleDto updatedRole = roleService.updateRole(roleDto, roleId);
         return ResponseEntity.ok(ResponseUtil.success(updatedRole, "role updated"));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<RoleDto>>> getAllRoles(){
+    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(){
         List<RoleDto> roles = roleService.getAllRoles();
         return ResponseEntity.ok(ResponseUtil.success(roles, "role list"));
+    }
+
+    @GetMapping("/roleId/{roleId}")
+    public ResponseEntity<ApiResponse<RoleDto>> getRoleById(@PathVariable("roleId") Integer roleId) {
+        RoleDto role = roleService.getRoleByRoleId(roleId);
+        return ResponseEntity.ok(ResponseUtil.success(role, "role found"));
+    }
+
+    @GetMapping("/roleName/{roleName}")
+    public ResponseEntity<ApiResponse<RoleDto>> getRoleByName(@PathVariable("roleName") String roleName) {
+        RoleDto role = roleService.getRoleByRoleName(roleName);
+        return ResponseEntity.ok(ResponseUtil.success(role, "role found"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
