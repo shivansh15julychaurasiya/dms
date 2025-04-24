@@ -53,7 +53,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<SimpleGrantedAuthority> authorities = this.roles.stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName()))
+                .map((role) -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
         return authorities;
     }

@@ -7,11 +7,11 @@ import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.respositories.UserRepository;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -47,15 +46,15 @@ public class DmsApplication implements CommandLineRunner{
 		try {
 			Role adminRole = new Role();
 			adminRole.setRoleId(AppConstants.ADMIN_USER);
-			adminRole.setName("ROLE_ADMIN");
+			adminRole.setRoleName("ROLE_ADMIN");
 
 			Role userRole = new Role();
 			userRole.setRoleId(AppConstants.NORMAL_USER);
-			userRole.setName("ROLE_USER");
+			userRole.setRoleName("ROLE_USER");
 
 			List<Role> roles = List.of(adminRole, userRole);
 			List<Role> savedRoles = roleRepository.saveAll(roles);
-			savedRoles.forEach(r -> System.out.println(r.getName()));
+			savedRoles.forEach(r -> System.out.println(r.getRoleName()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
