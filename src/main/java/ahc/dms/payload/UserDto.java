@@ -2,6 +2,7 @@ package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,22 +28,19 @@ public class UserDto {
     @Size(min=4, message = "Must be greater than 4 characters.")
     @JsonProperty("login_id")
     private String loginId;
-
     @Email(message = "Email address not valid")
     private String email;
-
     //@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
     @NotBlank
     @Size(min=4, message = "Must be greater than 4 characters.")
     private String password;
-
     @NotBlank
     private String phone;
-
     @NotBlank
     private String about;
-
-    private Set<RoleDto> roles = new HashSet<>();
+    @JsonProperty("roles")
+    @NotEmpty(message = "At least one role must be specified")
+    private Set<@Valid RoleDto> roles = new HashSet<>();
 
     @JsonIgnore
     public String getPassword(){

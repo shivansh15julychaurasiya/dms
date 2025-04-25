@@ -16,17 +16,9 @@ public class Role {
     @Column(name = "role_name", unique = true, nullable = false)
     private String roleName;
     @Column(nullable = false)
-    private boolean status;
+    private boolean status = true;
 
     @PrePersist
-    public void handleData() {
-        if (this.roleName != null) {
-            //this.roleName = "ROLE_".concat(roleName.toUpperCase());
-            this.status = true;
-            this.roleName = roleName.toUpperCase();
-        }
-    }
-
     @PreUpdate
     public void capitalizeRoleName() {
         if (this.roleName != null) {

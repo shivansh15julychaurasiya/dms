@@ -5,6 +5,7 @@ import ahc.dms.dao.entities.Role;
 import ahc.dms.dao.entities.User;
 import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
+import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.respositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -13,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +49,19 @@ public class UserService {
     @Transactional
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User savedUser = userRepository.save(modelMapper.map(userDto, User.class));
+
+        User user = modelMapper.map(userDto, User.class);
+        if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()){
+            Set<Role> roles = new HashSet<>();
+            for (RoleDto roleDto : userDto.getRoles()) {
+                Role role = roleRepository
+                        .findByRoleId(roleDto.getRoleId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", roleDto.getRoleId()));
+                roles.add(role);
+            }
+            user.setRoles(roles);
+        }
+        User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }
 
