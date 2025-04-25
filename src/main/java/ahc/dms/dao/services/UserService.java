@@ -3,11 +3,14 @@ package ahc.dms.dao.services;
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.entities.Role;
 import ahc.dms.dao.entities.User;
+import ahc.dms.dao.entities.UserRole;
 import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.respositories.UserRepository;
+import ahc.dms.payload.UserRoleDto;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,6 +54,23 @@ public class UserService {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User user = modelMapper.map(userDto, User.class);
+        if (userDto.getUserRole() != null && !userDto.getUserRole().isEmpty()){
+            Set<UserRole> userRoles = new HashSet<>();
+            for (UserRoleDto userRoleDto : userDto.getUserRole()) {
+                Role role = roleRepository
+                        .findByRoleId(userRoleDto.getRoleId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
+                userRoles.add(role);
+            }
+            user.setUserRoles();
+        }
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDto.class);
+    }
+
+    @Transactional
+    public UserDto assignRoles(@Valid UserDto userDto) {
+        User user = modelMapper.map(userDto, User.class);
         if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()){
             Set<Role> roles = new HashSet<>();
             for (RoleDto roleDto : userDto.getRoles()) {
@@ -61,8 +81,6 @@ public class UserService {
             }
             user.setRoles(roles);
         }
-        User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Transactional

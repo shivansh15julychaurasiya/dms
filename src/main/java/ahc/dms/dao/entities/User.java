@@ -42,18 +42,21 @@ public class User implements UserDetails {
     private String about;
 
     // Whoever owns the foreign key column gets the @JoinColumn annotation.
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_mid", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_mid", referencedColumnName = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+//    @JoinTable(name = "user_role",
+//            joinColumns = @JoinColumn(name = "user_mid", referencedColumnName = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_mid", referencedColumnName = "role_id")
+//    )
+//    private Set<Role> roles = new HashSet<>();
+//
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        List<SimpleGrantedAuthority> authorities = this.roles.stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getRoleName()))
+        List<SimpleGrantedAuthority> authorities = this.userRoles.stream()
+                .map((userRole) -> new SimpleGrantedAuthority(userRole.getRoleName()))
                 .collect(Collectors.toList());
         return authorities;
     }
