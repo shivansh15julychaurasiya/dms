@@ -1,7 +1,7 @@
 // axios.js (refactored with utils/constants extraction)
 
 import axios from "axios";
-import { getRoleRedirectPath, showAlert } from "../utils/helpers";
+import {  showAlert } from "../utils/helpers";
 import { API_BASE_URL, API_PATHS } from "../utils/constants";
 
 // Axios instance
@@ -29,24 +29,32 @@ const handleError = (err, fallbackMsg) => {
 };
 
 // Login user
-export const loginUser = (loginId, password, setErrorMsg, navigate) => {
-  axiosInstance
-    .post(API_PATHS.LOGIN, { username: loginId, password })
-    .then((res) => {
-      const { token, user } = res.data.data;
-      const role = user.roles[0].name.trim();
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("role", role);
-
-      navigate(getRoleRedirectPath(role));
-    })
-    .catch(() => {
-      setErrorMsg("Invalid email or password");
-      handleError(null, "Login failed.");
+export const loginUser = async (loginId, password) => {
+  try {
+    const response = await axiosInstance.post(API_PATHS.LOGIN, {
+      username: loginId,
+      password,
     });
+
+    // console.log("Login Response:", response.data.token); // <-- ADD THIS
+    return response.data.data;
+  } catch (error) {
+    console.error("Login failed:", error.response || error.message);
+    throw new Error("Login failed");
+  }
 };
+
+
+
+// export const loginUser = async (loginId, password) => {
+//   const response = await axiosInstance.post(API_PATHS.LOGIN, {
+//     username: loginId,
+//     password,
+//   });
+//   console.log(response.data.data)
+//   return response.data.data;
+// };
+
 
 // Fetch user by ID (renamed to getUserById if needed)
 export const fetchUserById = (userId) => {
@@ -62,24 +70,25 @@ export const fetchUserById = (userId) => {
 };
 
 // Fetch all users
-export const fetchUsers = (setUsers, setError, navigate) => {
-  const token = localStorage.getItem("token");
-  if (!token || isTokenExpired(token)) {
-    localStorage.removeItem("token");
-    navigate("/home/login");
-    return;
-  }
+export const fetchUsers = (setUsers,token) => {
+  // const token = localStorage.getItem("token");
+  // if (!token || isTokenExpired(token)) {
+  //   localStorage.removeItem("token");
+  //   navigate("/home/login");
+  //   return;
+  // }
 
   axiosInstance
     .get(API_PATHS.USERS, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((res) => setUsers(res.data))
-    .catch(() => setError("Error loading users. You may not be authorized."));
+    .catch(() => showAlert("Error loading users. You may not be authorized."))
 };
 
 // Delete user
 export const deleteUser = (userId, users, setUsers) => {
+  showAlert("Are you sure you want to delete this user?")
   if (!window.confirm("Are you sure you want to delete this user?")) return;
 
   axiosInstance

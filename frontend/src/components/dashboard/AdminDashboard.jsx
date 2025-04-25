@@ -1,3 +1,4 @@
+// Import React hooks and required components from Reactstrap and React Router
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -5,49 +6,49 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
-  Alert,
   Container,
   Row,
   Col,
 } from "reactstrap";
-import Sidebar from "../layout/Sidebar";
-import Navbar from "../layout/Navbar";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { isTokenExpired, fetchUsers, deleteUser } from "../../services/axios";
-import { useNavigate } from "react-router-dom";
+
+import Sidebar from "../layout/Sidebar"; // Sidebar component
+import Navbar from "../layout/Navbar";   // Top navigation bar
+import { isTokenExpired, fetchUsers, deleteUser } from "../../services/axios"; // API helper functions
+import { useNavigate } from "react-router-dom"; // For programmatic navigation
+import { useAuth } from "../../context/AuthContext"; // Auth context to access token and logout
 
 const AdminDashboard = () => {
-  const [users, setUsers] = useState([]);
-  const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const { token, logout } = useAuth(); // Access token and logout function from context
+  const [users, setUsers] = useState([]); // State to store list of users
+  const [currentPage, setCurrentPage] = useState(1); // Current pagination page
+  const usersPerPage = 5; // Users to display per page
 
   const navigate = useNavigate();
-  const usersPerPage = 5;
 
+  // On component mount, check token validity and fetch users
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token || isTokenExpired(token)) {
-      localStorage.removeItem("token");
-      navigate("/home/login");
+      logout(); // Logout if token is missing or expired
     } else {
-      fetchUsers(setUsers, setError, navigate);
+      fetchUsers(setUsers, token); // Fetch users from backend
     }
 
+    // Periodic token check every 10 seconds
     const intervalId = setInterval(() => {
-      const token = localStorage.getItem("token");
       if (!token || isTokenExpired(token)) {
-        localStorage.removeItem("token");
-        navigate("/home/login");
+        logout(); // Logout if token expires during session
       }
     }, 10000);
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, []);
 
+  // Delete user handler
   const deleteHandler = async (userId) => {
-    await deleteUser(userId, users, setUsers, setError, navigate);
+    await deleteUser(userId, users, setUsers, navigate);
   };
 
+  // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -55,10 +56,16 @@ const AdminDashboard = () => {
 
   return (
     <div className="d-flex">
+      {/* Sidebar for admin navigation */}
       <Sidebar />
+
       <div className="flex-grow-1">
+        {/* Top Navbar */}
         <Navbar />
+
+        {/* Main content container */}
         <Container fluid className="p-4">
+          {/* Header with title and create user button */}
           <Row className="align-items-center mb-3">
             <Col xs="12" md="6">
               <h4 className="text-primary">Admin User Management</h4>
@@ -70,8 +77,7 @@ const AdminDashboard = () => {
             </Col>
           </Row>
 
-          {error && <Alert color="danger">{error}</Alert>}
-
+          {/* Users table */}
           <Table responsive bordered hover className="mt-3">
             <thead className="table-dark">
               <tr>
@@ -107,7 +113,7 @@ const AdminDashboard = () => {
                         color="warning"
                         size="sm"
                         className="me-2 mb-1"
-                        onClick={() => console.log("Edit user:", user)}
+                        onClick={() => console.log("Edit user:", user)} // Placeholder for edit functionality
                       >
                         Edit
                       </Button>
@@ -132,6 +138,7 @@ const AdminDashboard = () => {
             </tbody>
           </Table>
 
+          {/* Pagination controls */}
           {totalPages > 1 && (
             <Pagination className="justify-content-center mt-4">
               <PaginationItem disabled={currentPage === 1}>

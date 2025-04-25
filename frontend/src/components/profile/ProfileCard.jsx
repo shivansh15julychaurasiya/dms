@@ -1,68 +1,36 @@
-// ProfileCard.js
-import React, { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { isTokenExpired } from "../../utils/helpers";
 
 const ProfileCard = () => {
-  const [user, setUser] = useState(null);
-  // const navigate = useNavigate();
+  const { user, token, logout } = useAuth();
 
-
-  
-  // Fetch user data from localStorage on mount
+  // Auto logout if user/token is missing or token is expired
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser)); // Parse the stored user data from localStorage
-    } else {
-      setUser(null); // If no user data or token, set user to null
+    if (!user || !token || isTokenExpired(token)) {
+      logout();
+      // window.location.href = "/dms/home/login"; // Force redirect to login
     }
-  }, []);
+  }, [user, token, logout]);
 
-
-  
   const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-  
-    try {
-      const res = await fetch("http://localhost:8081/dms/auth/logout", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!res.ok) throw new Error("Token expired or unauthorized");
-  
-      const data = await res.json();
-      console.log("Logout success:", data.message);
-    } catch (error) {
-      console.warn("Logout failed:", error.message);
-    } finally {
-      // Remove token from localStorage
-      localStorage.removeItem("token");
-      
-      // Trigger logout across all tabs by setting a value in localStorage
-      localStorage.setItem("logout", Date.now().toString());
-      // navigate("/home/login"); // Redirect to login page
-    window.location.href = "/dms/home/login";
-
-    }
+    logout();
   };
-  
 
   const handleProfile = () => {
     window.location.href = "/dms/home/editprofile";
   };
-  const manageLogin=()=>{
-    window.location.href = "/dms/home/login";
 
-  }
+  const manageLogin = () => {
+    window.location.href = "/dms/home/login";
+  };
 
   return (
     <div className="container d-flex justify-content-center mt-5">
-      <div className="card p-4 shadow-lg rounded-4" style={{ maxWidth: "400px" }}>
+      <div
+        className="card p-4 shadow-lg rounded-4"
+        style={{ maxWidth: "400px" }}
+      >
         <div className="d-flex flex-column align-items-center text-center">
           <img
             src="https://cdn.pixabay.com/photo/2022/09/08/15/16/cute-7441224_1280.jpg"
@@ -99,9 +67,12 @@ const ProfileCard = () => {
                 </button>
               </>
             ) : (
-              // Replace <a> with <Link> for client-side navigation
-              <button className="btn btn-outline-primary rounded-pill px-4" onClick={manageLogin}>Login</button>
-         
+              <button
+                className="btn btn-outline-primary rounded-pill px-4"
+                onClick={manageLogin}
+              >
+                Login
+              </button>
             )}
           </div>
         </div>

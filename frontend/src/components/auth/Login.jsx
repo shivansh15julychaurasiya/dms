@@ -1,21 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
+  Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, Button, Alert,
 } from "reactstrap";
 import { loginUser } from "../../services/axios";
+import { getRoleRedirectPath, showAlert } from "../../utils/helpers";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({ loginId: "", password: "" });
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
@@ -32,17 +25,12 @@ const Login = () => {
     setErrorMsg("");
 
     try {
-      const { data } = await loginUser(
-        formData.loginId,
-        formData.password,
-        setErrorMsg,
-        navigate
-      );
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-    } catch (err) {
-      console.error(err.message);
+      const { token, user } = await loginUser(formData.loginId, formData.password);
+      login({ token, user });
+      navigate(getRoleRedirectPath(user.roles[0].name.trim()));
+    } catch {
+      showAlert("!!Invalid User ID or Password!!")
+      // setErrorMsg("Invalid User ID or Password.");
     }
   };
 
@@ -55,50 +43,37 @@ const Login = () => {
               <h2 className="text-center text-primary fw-bold mb-4">
                 <i className="bi bi-person-circle me-2"></i>Login
               </h2>
-
               {errorMsg && <Alert color="danger">{errorMsg}</Alert>}
-
               <Form onSubmit={handleLogin}>
                 <FormGroup>
-                  <Label for="loginId" className="fw-bold text-primary">
-                    User ID:
-                  </Label>
+                  <Label for="loginId" className="fw-bold text-primary">User ID:</Label>
                   <Input
                     type="number"
                     id="loginId"
                     name="loginId"
-                    placeholder="Enter User ID"
                     value={formData.loginId}
                     onChange={handleChange}
                     required
                   />
                 </FormGroup>
-
                 <FormGroup>
-                  <Label for="password" className="fw-bold text-primary">
-                    Password:
-                  </Label>
+                  <Label for="password" className="fw-bold text-primary">Password:</Label>
                   <Input
                     type="password"
                     id="password"
                     name="password"
-                    placeholder="Enter password"
                     value={formData.password}
                     onChange={handleChange}
                     required
                   />
                 </FormGroup>
-
                 <div className="d-grid">
                   <Button color="primary" type="submit">
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Button>
                 </div>
-
                 <div className="text-center mt-3">
-                  <Link to="/home/forgot" className="text-danger fw-bold">
-                    Forgot Password?
-                  </Link>
+                  <Link to="/home/forgot" className="text-danger fw-bold">Forgot Password?</Link>
                 </div>
               </Form>
             </CardBody>
