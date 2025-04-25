@@ -34,53 +34,37 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public UserDto registerNewUser(UserDto userDto) {
-
-        System.out.println("user dto");
-        System.out.println(userDto.toString());
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User user = modelMapper.map(userDto, User.class);
-
-        Role role = roleRepository.findById(AppConstants.NORMAL_USER).get();
-        user.getRoles().add(role);
-
-        User newUser = userRepository.save(user);
-        return modelMapper.map(newUser, UserDto.class);
-    }
+//    @Transactional
+//    public UserDto registerNewUser(UserDto userDto) {
+//
+//        System.out.println("user dto");
+//        System.out.println(userDto.toString());
+//        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+//        User user = modelMapper.map(userDto, User.class);
+//
+//        Role role = roleRepository.findById(AppConstants.NORMAL_USER).get();
+//        user.getRoles().add(role);
+//
+//        User newUser = userRepository.save(user);
+//        return modelMapper.map(newUser, UserDto.class);
+//    }
 
     @Transactional
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User user = modelMapper.map(userDto, User.class);
-        if (userDto.getUserRole() != null && !userDto.getUserRole().isEmpty()){
+        if (userDto.getUserRoles() != null && !userDto.getUserRoles().isEmpty()){
             Set<UserRole> userRoles = new HashSet<>();
-            for (UserRoleDto userRoleDto : userDto.getUserRole()) {
+            for (UserRoleDto userRoleDto : userDto.getUserRoles()) {
                 Role role = roleRepository
                         .findByRoleId(userRoleDto.getRoleId())
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
-                userRoles.add(role);
+                user.addRole(role, true);
             }
-            user.setUserRoles();
         }
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
-    }
-
-    @Transactional
-    public UserDto assignRoles(@Valid UserDto userDto) {
-        User user = modelMapper.map(userDto, User.class);
-        if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()){
-            Set<Role> roles = new HashSet<>();
-            for (RoleDto roleDto : userDto.getRoles()) {
-                Role role = roleRepository
-                        .findByRoleId(roleDto.getRoleId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", roleDto.getRoleId()));
-                roles.add(role);
-            }
-            user.setRoles(roles);
-        }
     }
 
     @Transactional

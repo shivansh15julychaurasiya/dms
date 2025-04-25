@@ -28,13 +28,13 @@ public class UserController {
 
     }
 
-    @PostMapping("/assign-roles")
-    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(@Valid @RequestBody UserDto userDto){
-
-        UserDto updatedDto = userService.assignRoles(userDto);
-        return ResponseEntity.ok(ResponseUtil.success(updatedDto, "user created"));
-
-    }
+//    @PostMapping("/assign-roles")
+//    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(@Valid @RequestBody UserDto userDto){
+//
+//        UserDto updatedDto = userService.assignRoles(userDto);
+//        return ResponseEntity.ok(ResponseUtil.success(updatedDto, "user created"));
+//
+//    }
 
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {

@@ -2,6 +2,7 @@ package ahc.dms.dao.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -11,6 +12,7 @@ import lombok.Setter;
 )
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserRole {
 
     @Id
@@ -21,13 +23,13 @@ public class UserRole {
             allocationSize = 1 // Optional: 1 means no batch caching
     )
     @Column(name = "ur_id")
-    private Long userRoleId;
+    private Long urId;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -35,4 +37,9 @@ public class UserRole {
     private boolean status = true;
 
 
+    public UserRole(User user, Role role, boolean status) {
+        this.user = user;
+        this.role = role;
+        this.status = status;
+    }
 }

@@ -21,6 +21,10 @@ public class Role {
     @Column(nullable = false)
     private boolean status = true;
 
+    // Optional reverse mapping
+//    @OneToMany(mappedBy = "role")
+//    private Set<UserRole> userRoles = new HashSet<>();
+
     @PrePersist
     @PreUpdate
     public void capitalizeRoleName() {

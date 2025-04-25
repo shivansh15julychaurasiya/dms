@@ -12,12 +12,14 @@ import lombok.ToString;
 @ToString
 public class UserRoleDto {
 
+    @JsonProperty("ur_id")
+    private int urId;
     @JsonProperty("user_id")
     private int userId;
     @JsonProperty("role_id")
     private int roleId;
-    @JsonProperty("role_name")
-    private String roleName; // Optional, for convenience
+    @JsonProperty("status")
     private boolean status;
+
 
 }

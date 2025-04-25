@@ -35,6 +35,7 @@ public class JwtTokenHelper {
     //GENERATE TOKEN FOR USER
     public String generateToken(UserDetails userDetails) {
 
+        System.out.println("user details object = "+userDetails);
         Map<String, Object> claims = new HashMap<>();
         Date expiration = new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY);
         String token = Jwts.builder()
@@ -49,6 +50,7 @@ public class JwtTokenHelper {
         //if jwtToken (expired or non-expired) already exists then renew jwtToken
         //else create new entry for jwtToken
         TokenDto existingTokenDto = tokenService.findTokenByLoginId(userDetails.getUsername());
+        System.out.println("existing token = "+existingTokenDto);
         if (existingTokenDto!=null) {
             existingTokenDto.setJwtToken(token);
             existingTokenDto.setTokenStatus(true);
@@ -61,6 +63,7 @@ public class JwtTokenHelper {
             tokenDto.setTokenStatus(true);
             tokenService.saveToken(tokenDto);
         }
+        System.out.println("returning token!!!!");
         return token;
     }
 

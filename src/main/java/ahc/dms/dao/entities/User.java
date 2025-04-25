@@ -49,14 +49,20 @@ public class User implements UserDetails {
 //    )
 //    private Set<Role> roles = new HashSet<>();
 //
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
+
+    // Utility method to add roles
+    public void addRole(Role role, boolean status) {
+        UserRole userRole = new UserRole(this, role, status);
+        userRoles.add(userRole);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<SimpleGrantedAuthority> authorities = this.userRoles.stream()
-                .map((userRole) -> new SimpleGrantedAuthority(userRole.getRoleName()))
+                .map((userRole) -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
         return authorities;
     }

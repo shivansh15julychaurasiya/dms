@@ -38,9 +38,12 @@ public class UserDto {
     private String phone;
     @NotBlank
     private String about;
-    @JsonProperty("user_role")
+    @JsonProperty("user_roles")
     @NotEmpty(message = "At least one role must be specified")
-    private Set<@Valid UserRoleDto> userRole = new HashSet<>();
+    private Set<@Valid UserRoleDto> userRoles = new HashSet<>();
+
+    @JsonProperty("roles")
+    private Set<RoleDto> roles = new HashSet<>();
 
     @JsonIgnore
     public String getPassword(){

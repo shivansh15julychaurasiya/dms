@@ -1,6 +1,7 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
+import ahc.dms.dao.entities.User;
 import ahc.dms.dao.services.OtpLogService;
 import ahc.dms.payload.*;
 import ahc.dms.dao.services.TokenService;
@@ -59,8 +60,10 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
+        System.out.println("111111111111111");
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+        System.out.println("2222222222222222");
         String token = this.jwtTokenHelper.generateToken(userDetails);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -91,12 +94,12 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserDto userDto) {
-        UserDto registeredUserDto = userService.registerNewUser(userDto);
-        System.out.println(userDto);
-        return ResponseEntity.ok(ResponseUtil.success(registeredUserDto, "User created successfully"));
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserDto userDto) {
+//        UserDto registeredUserDto = userService.registerNewUser(userDto);
+//        System.out.println(userDto);
+//        return ResponseEntity.ok(ResponseUtil.success(registeredUserDto, "User created successfully"));
+//    }
 
     @GetMapping("/logout")
     public ResponseEntity<ApiResponse<JwtAuthResponse>> logoutUser(HttpServletRequest request) {

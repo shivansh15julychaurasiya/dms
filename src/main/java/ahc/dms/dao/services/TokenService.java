@@ -19,6 +19,7 @@ public class TokenService {
 
     @Transactional
     public TokenDto saveToken(TokenDto tokenDto) {
+        System.out.println("saving token!!!!");
         Token newToken = tokenRepository.save(modelMapper.map(tokenDto, Token.class));
         return modelMapper.map(newToken, TokenDto.class);
     }
