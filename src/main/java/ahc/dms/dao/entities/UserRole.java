@@ -29,7 +29,7 @@ public class UserRole {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
-    private Role roleId;
+    private Role role;
 
     @Column(name = "status", columnDefinition = "boolean default true")
     private boolean status = true;

@@ -49,7 +49,7 @@ public class User implements UserDetails {
 //    )
 //    private Set<Role> roles = new HashSet<>();
 //
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userId")
     private Set<UserRole> userRoles = new HashSet<>();
 
     @Override
