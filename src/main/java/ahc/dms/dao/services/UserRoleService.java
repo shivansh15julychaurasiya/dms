@@ -7,19 +7,11 @@ import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.dao.respositories.UserRepository;
 import ahc.dms.dao.respositories.UserRoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
-import ahc.dms.payload.RoleDto;
-import ahc.dms.payload.UserDto;
 import ahc.dms.payload.UserRoleDto;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserRoleService {

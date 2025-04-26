@@ -41,14 +41,6 @@ public class User implements UserDetails {
     private String password;
     private String about;
 
-    // Whoever owns the foreign key column gets the @JoinColumn annotation.
-//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-//    @JoinTable(name = "user_role",
-//            joinColumns = @JoinColumn(name = "user_mid", referencedColumnName = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_mid", referencedColumnName = "role_id")
-//    )
-//    private Set<Role> roles = new HashSet<>();
-//
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
