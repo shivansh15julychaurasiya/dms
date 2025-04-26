@@ -25,11 +25,17 @@ public class UserRole {
     @Column(name = "ur_id")
     private Long urId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(
+            optional = false,
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(
+            optional = false,
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -42,4 +48,5 @@ public class UserRole {
         this.role = role;
         this.status = status;
     }
+
 }

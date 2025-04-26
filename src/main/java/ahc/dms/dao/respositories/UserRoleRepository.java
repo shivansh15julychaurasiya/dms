@@ -17,14 +17,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 
     // Find by user and role
     Optional<UserRole> findByUserAndRole(User user, Role role);
-
     // Find all active roles for a user
     List<UserRole> findByUserAndStatusTrue(User user);
 
-    // Update status
-    @Modifying
-    @Query("UPDATE UserRole ur SET ur.status = :status WHERE ur.user = :user AND ur.role = :role")
-    void updateStatus(@Param("user") User user,
-                      @Param("role") Role role,
-                      @Param("status") boolean status);
 }

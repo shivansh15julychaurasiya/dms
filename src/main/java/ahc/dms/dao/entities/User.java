@@ -49,7 +49,11 @@ public class User implements UserDetails {
 //    )
 //    private Set<Role> roles = new HashSet<>();
 //
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
     private Set<UserRole> userRoles = new HashSet<>();
 
     // Utility method to add roles

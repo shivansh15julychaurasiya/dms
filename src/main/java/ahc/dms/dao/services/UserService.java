@@ -5,6 +5,7 @@ import ahc.dms.dao.entities.Role;
 import ahc.dms.dao.entities.User;
 import ahc.dms.dao.entities.UserRole;
 import ahc.dms.dao.respositories.RoleRepository;
+import ahc.dms.dao.respositories.UserRoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
@@ -33,6 +34,8 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
 //    @Transactional
 //    public UserDto registerNewUser(UserDto userDto) {
@@ -54,16 +57,26 @@ public class UserService {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User user = modelMapper.map(userDto, User.class);
+        User savedUser = userRepository.save(user);
         if (userDto.getUserRoles() != null && !userDto.getUserRoles().isEmpty()){
             Set<UserRole> userRoles = new HashSet<>();
             for (UserRoleDto userRoleDto : userDto.getUserRoles()) {
+
                 Role role = roleRepository
                         .findByRoleId(userRoleDto.getRoleId())
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
-                user.addRole(role, true);
+
+                // create new userrole
+                UserRole userRole = new UserRole(savedUser, role, true);
+                userRoles.add(userRole);
+                // to maintain bidirectional relationship
+                //savedUser.getUserRoles().add(userRole);
             }
+            userRoleRepository.saveAll(userRoles);
         }
-        User savedUser = userRepository.save(user);
+
+        //return modelMapper.map(userRepository.findById(savedUser.getUserId()).get(), UserDto.class);
+
         return modelMapper.map(savedUser, UserDto.class);
     }
 
