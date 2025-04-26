@@ -72,4 +72,12 @@ public class RoleController {
 
     }
 
+    @PostMapping("/deassign-role")
+    public ResponseEntity<ApiResponse<UserDto>> deassignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
+
+        UserDto updatedUserDto = userRoleService.deassignRole(userRoleDto);
+        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role de-assigned"));
+
+    }
+
 }
