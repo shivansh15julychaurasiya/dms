@@ -5,6 +5,8 @@ import ahc.dms.dao.respositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,9 @@ import java.util.stream.Collectors;
 @Service
 public class RoleService {
 
+    @Autowired
     private final RoleRepository roleRepository;
+    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
     public RoleService(RoleRepository roleRepository){
         this.roleRepository = roleRepository;
@@ -66,6 +70,7 @@ public class RoleService {
 
     //for authentication response, send only active role
     public Set<RoleDto> getActiveRoles(UserDetails userDetails) {
+        logger.info(userDetails.getUsername());
         Set<Role> activeRoles = userDetails.getAuthorities()
                 .stream()
                 .map(grantedAuthority ->

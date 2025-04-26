@@ -120,7 +120,7 @@ public class AuthController {
 
     @PostMapping("/request-otp")
     public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) {
-        System.out.println("otpDto : " + requestOtp);
+        logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
         OtpDto otpLog = otpLogService.getOtpLogByLoginIdAndOtpType(requestOtp.getLoginId(), requestOtp.getOtpType());

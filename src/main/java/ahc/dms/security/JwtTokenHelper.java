@@ -7,6 +7,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ public class JwtTokenHelper {
     @Autowired
     private TokenService tokenService;
     private SecretKey key;
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenHelper.class);
 
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
     // preventing the repeated creation of the key and enhancing performance
@@ -35,7 +38,7 @@ public class JwtTokenHelper {
     //GENERATE TOKEN FOR USER
     public String generateToken(UserDetails userDetails) {
 
-        System.out.println("user details object = "+userDetails);
+        logger.info("user details object = {}", userDetails);
         Map<String, Object> claims = new HashMap<>();
         Date expiration = new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY);
         String token = Jwts.builder()
@@ -46,11 +49,10 @@ public class JwtTokenHelper {
                 .signWith(key)
                 .compact();
 
-        System.out.println("token : " + token);
+        logger.info("token : {}", token);
         //if jwtToken (expired or non-expired) already exists then renew jwtToken
         //else create new entry for jwtToken
         TokenDto existingTokenDto = tokenService.findTokenByLoginId(userDetails.getUsername());
-        System.out.println("existing token = "+existingTokenDto);
         if (existingTokenDto!=null) {
             existingTokenDto.setJwtToken(token);
             existingTokenDto.setTokenStatus(true);
@@ -63,7 +65,7 @@ public class JwtTokenHelper {
             tokenDto.setTokenStatus(true);
             tokenService.saveToken(tokenDto);
         }
-        System.out.println("returning token!!!!");
+        logger.info("returning token!!!!");
         return token;
     }
 
