@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUser } from "../../services/axios";
-
 import {
   Container,
   Row,
@@ -15,7 +14,8 @@ import {
   Button,
   Alert,
 } from "reactstrap";
-import "../../assets/styles.css"
+
+import "../../assets/styles.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -66,123 +66,116 @@ const Register = () => {
     }
   };
 
-  const wrapperStyle = {
-    height: "100vh",
-    backgroundImage:
-      "url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
-
-  const cardStyle = {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    padding: "2rem",
-    borderRadius: "2rem",
-    maxWidth: "550px",
-    width: "100%",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+  const backToDashboard = () => {
+    window.location.href = "/dms/home/admindashboard";
   };
 
   return (
-    <div className="registerddd-background" style={wrapperStyle}>
-      <Container className="d-flex justify-content-center align-items-center min-vh-100">
-        <Card style={cardStyle}>
-          <CardBody>
-            <h3 className="text-center text-primary mb-4">Create User</h3>
-            {error && <Alert color="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
-              <Row>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="name">Name</Label>
-                    <Input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="email">Email</Label>
-                    <Input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
+    <div className="register-background wrapperStyle" style={{ minHeight: "100vh" }}>
+      <Container fluid className="d-flex justify-content-center align-items-center py-4 px-2">
+        <Col xs={12} sm={11} md={8} lg={6} xl={5}>
+          <Card className="cardStyle shadow" style={{ maxHeight: "90vh", overflowY: "auto" }}>
+            <CardBody className="p-4">
+              <h3 className="text-center text-primary mb-4 shimmer-text">Create User</h3>
+              {error && <Alert color="danger">{error}</Alert>}
+              <Form onSubmit={handleSubmit}>
+                <Row>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="name">Name</Label>
+                      <Input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter full name"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="email">Email</Label>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter email address"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
 
-              <Row>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="phone">Phone</Label>
-                    <Input
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="login_id">Employee ID (Login ID)</Label>
-                    <Input
-                      type="text"
-                      name="login_id"
-                      value={formData.login_id}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
+                <Row>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="phone">Phone</Label>
+                      <Input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Enter phone number"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="login_id">Employee ID (Login ID)</Label>
+                      <Input
+                        type="text"
+                        name="login_id"
+                        value={formData.login_id}
+                        onChange={handleChange}
+                        placeholder="Enter login ID"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
 
-              <Row>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="password">Password</Label>
-                    <Input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="about">About</Label>
-                    <Input
-                      type="text"
-                      name="about"
-                      value={formData.about}
-                      onChange={handleChange}
-                      
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
+                <Row>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="password">Password</Label>
+                      <Input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Create a password"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="about">About</Label>
+                      <Input
+                        type="text"
+                        name="about"
+                        value={formData.about}
+                        onChange={handleChange}
+                        placeholder="Short description"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
 
-              <div className="text-center mt-3">
-                <Button color="primary" type="submit">
-                  Register
-                </Button>
-              </div>
-            </Form>
-          </CardBody>
-        </Card>
+                <Row className="mb-2">
+                  <Col xs={12} sm={6} className="mb-2">
+                    <Button color="warning" className="w-100" type="button" onClick={backToDashboard}>
+                      Back to Dashboard
+                    </Button>
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Button color="primary" className="w-100" type="submit">
+                      Register
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
       </Container>
     </div>
   );

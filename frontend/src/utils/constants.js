@@ -7,9 +7,11 @@ export const API_PATHS = {
   USERS: "/users/",
   DELETE_USER: (id) => `/users/${id}`,
   UPDATE_USER: (id) => `/users/${id}`,
+  GET_USER: (id) => `/users/${id}`,
+
   REQUEST_OTP: "/auth/request-otp",
   VERIFY_OTP: "/auth/verify-reset-otp",
-  RESET_PASSWORD: "/home/reset", // for frontend navigation
+  RESET_PASSWORD: "/auth/reset-password", // for frontend navigation
 };
 
 export const ROLE_PATHS = {
