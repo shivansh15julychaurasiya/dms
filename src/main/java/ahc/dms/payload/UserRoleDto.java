@@ -16,7 +16,6 @@ public class UserRoleDto {
     @JsonProperty("ur_id")
     private Integer urId;
     @JsonProperty("user_id")
-    @NotNull
     private Integer userId;
     @JsonProperty("role_id")
     @NotNull
