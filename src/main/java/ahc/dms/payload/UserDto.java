@@ -1,6 +1,7 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
     private int userId;
@@ -45,6 +47,9 @@ public class UserDto {
     @JsonProperty("roles")
     private Set<RoleDto> roles = new HashSet<>();
 
+    // CUSTOM GETTERS AND SETTERS
+
+    // HIDING PASSWORD
     @JsonIgnore
     public String getPassword(){
         return this.password;

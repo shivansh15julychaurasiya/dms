@@ -56,28 +56,34 @@ public class UserService {
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
+        //first save the user to get userid
         User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
+        //preparing to map roles since modelmapper is not able to map nested classes properly
+        Set<RoleDto> roleDtos = new HashSet<>();
+        //if user-roles are provided the add them
         if (userDto.getUserRoles() != null && !userDto.getUserRoles().isEmpty()){
             Set<UserRole> userRoles = new HashSet<>();
             for (UserRoleDto userRoleDto : userDto.getUserRoles()) {
-
                 Role role = roleRepository
                         .findByRoleId(userRoleDto.getRoleId())
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
-
                 // create new userrole
                 UserRole userRole = new UserRole(savedUser, role, true);
                 userRoles.add(userRole);
-                // to maintain bidirectional relationship
-                //savedUser.getUserRoles().add(userRole);
+                //create role dtos for response
+                RoleDto roleDto = modelMapper.map(role, RoleDto.class);
+                roleDtos.add(roleDto);
             }
             userRoleRepository.saveAll(userRoles);
         }
+        //preparing response
+        UserDto savedUserDto = modelMapper.map(savedUser, UserDto.class);
+        savedUserDto.setRoles(roleDtos);
+        savedUserDto.setUserRoles(null);
 
-        //return modelMapper.map(userRepository.findById(savedUser.getUserId()).get(), UserDto.class);
-
-        return modelMapper.map(savedUser, UserDto.class);
+        return savedUserDto;
+        //return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Transactional
