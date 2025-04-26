@@ -59,8 +59,10 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
+        System.out.println("111111111111111");
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+        System.out.println("2222222222222222");
         String token = this.jwtTokenHelper.generateToken(userDetails);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -89,13 +91,6 @@ public class AuthController {
             return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged-in successful"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserDto>> registerUser(@RequestBody UserDto userDto) {
-        UserDto registeredUserDto = userService.registerNewUser(userDto);
-        System.out.println(userDto);
-        return ResponseEntity.ok(ResponseUtil.success(registeredUserDto, "User created successfully"));
     }
 
     @GetMapping("/logout")

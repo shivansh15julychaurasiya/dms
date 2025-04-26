@@ -15,14 +15,16 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // for database errors
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         String message = ex.getMessage();
         return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.NOT_FOUND);
     }
 
+    // for request validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgsNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgsNotValidException(MethodArgumentNotValidException ex) {
         Map<String, String>  response = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError)error).getField();
@@ -30,12 +32,13 @@ public class GlobalExceptionHandler {
             response.put(fieldName, message);
         });
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ResponseUtil.error(response), HttpStatus.BAD_REQUEST);
     }
 
+    // miscellaneous exceptions
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiResponse> apiExceptionHandler(ApiException ex) {
-        return new ResponseEntity<>(ResponseUtil.error(ex.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse<?>> apiExceptionHandler(ApiException ex) {
+        return new ResponseEntity<>(ResponseUtil.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 }

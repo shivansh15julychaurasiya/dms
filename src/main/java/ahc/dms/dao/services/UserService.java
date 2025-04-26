@@ -1,19 +1,24 @@
 package ahc.dms.dao.services;
 
-import ahc.dms.config.AppConstants;
 import ahc.dms.dao.entities.Role;
 import ahc.dms.dao.entities.User;
+import ahc.dms.dao.entities.UserRole;
 import ahc.dms.dao.respositories.RoleRepository;
+import ahc.dms.dao.respositories.UserRoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
+import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.respositories.UserRepository;
-import jakarta.transaction.Transactional;
+import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,27 +32,41 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Transactional
-    public UserDto registerNewUser(UserDto userDto) {
-
-        System.out.println("user dto");
-        System.out.println(userDto.toString());
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User user = modelMapper.map(userDto, User.class);
-
-        Role role = roleRepository.findById(AppConstants.NORMAL_USER).get();
-        user.getRoles().add(role);
-
-        User newUser = userRepository.save(user);
-        return modelMapper.map(newUser, UserDto.class);
-    }
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     @Transactional
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User savedUser = userRepository.save(modelMapper.map(userDto, User.class));
-        return modelMapper.map(savedUser, UserDto.class);
+
+        //first save the user to get userid
+        User user = modelMapper.map(userDto, User.class);
+        User savedUser = userRepository.save(user);
+        //preparing to map roles since modelmapper is not able to map nested classes properly
+        Set<RoleDto> roleDtos = new HashSet<>();
+        //if user-roles are provided the add them
+        if (userDto.getUserRoles() != null && !userDto.getUserRoles().isEmpty()){
+            Set<UserRole> userRoles = new HashSet<>();
+            for (UserRoleDto userRoleDto : userDto.getUserRoles()) {
+                Role role = roleRepository
+                        .findByRoleId(userRoleDto.getRoleId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
+                // create new userrole
+                UserRole userRole = new UserRole(savedUser, role, true);
+                userRoles.add(userRole);
+                //create role dtos for response
+                RoleDto roleDto = modelMapper.map(role, RoleDto.class);
+                roleDtos.add(roleDto);
+            }
+            userRoleRepository.saveAll(userRoles);
+        }
+        //preparing response
+        UserDto savedUserDto = modelMapper.map(savedUser, UserDto.class);
+        savedUserDto.setRoles(roleDtos);
+        savedUserDto.setUserRoles(null);
+
+        return savedUserDto;
+        //return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Transactional

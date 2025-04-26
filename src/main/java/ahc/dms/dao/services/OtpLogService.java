@@ -4,10 +4,10 @@ import ahc.dms.config.AppConstants;
 import ahc.dms.dao.entities.OtpLog;
 import ahc.dms.dao.respositories.OtpLogRepository;
 import ahc.dms.payload.OtpDto;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OtpLogService {
