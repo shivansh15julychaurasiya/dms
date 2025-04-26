@@ -6,10 +6,12 @@ import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,5 +62,19 @@ public class RoleService {
     public void deleteRole(Integer roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
         roleRepository.delete(role);
+    }
+
+    //for authentication response, send only active role
+    public Set<RoleDto> getActiveRoles(UserDetails userDetails) {
+        Set<Role> activeRoles = userDetails.getAuthorities()
+                .stream()
+                .map(grantedAuthority ->
+                        roleRepository.findByRoleName(grantedAuthority.getAuthority()).get())
+                .collect(Collectors.toSet());
+
+        return activeRoles
+                .stream()
+                .map(activeRole -> modelMapper.map(activeRole, RoleDto.class))
+                .collect(Collectors.toSet());
     }
 }

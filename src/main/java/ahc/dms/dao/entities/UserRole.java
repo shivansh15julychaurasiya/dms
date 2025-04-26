@@ -48,5 +48,5 @@ public class UserRole {
         this.role = role;
         this.status = status;
     }
-
+    
 }

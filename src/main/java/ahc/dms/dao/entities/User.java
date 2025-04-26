@@ -57,9 +57,26 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
+        // finding active roles in user-role as well as role (master) entities
+        Set<UserRole> activeUserRoles = new HashSet<>();
+        for (UserRole eachUserRole :  userRoles) {
+            if (eachUserRole.isStatus() && eachUserRole.getRole().isStatus()) {
+                activeUserRoles.add(eachUserRole);
+            }
+        }
+
+        /*
         List<SimpleGrantedAuthority> authorities = this.userRoles.stream()
                 .map((userRole) -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
+
+         */
+        // setting only those roles which are active at user-role and global (role) entity level
+        List<SimpleGrantedAuthority> authorities = activeUserRoles
+                .stream()
+                .map(activeUserRole -> new SimpleGrantedAuthority(activeUserRole.getRole().getRoleName()))
+                .collect(Collectors.toList());
+
         return authorities;
     }
 

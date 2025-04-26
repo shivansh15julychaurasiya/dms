@@ -2,6 +2,7 @@ package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.services.OtpLogService;
+import ahc.dms.dao.services.RoleService;
 import ahc.dms.payload.*;
 import ahc.dms.dao.services.TokenService;
 import ahc.dms.dao.services.UserService;
@@ -22,7 +23,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/dms/auth")
@@ -43,6 +47,8 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private ModelMapper modelMapper;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -59,16 +65,21 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
-        System.out.println("111111111111111");
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
-        System.out.println("2222222222222222");
+        //get only active roles, which are set in user entity
+        Set<RoleDto> activeRoleSet = roleService.getActiveRoles(userDetails);
+        UserDto authUserDto = modelMapper.map(userDetails, UserDto.class);
+        authUserDto.setUserRoles(null);
+        authUserDto.setRoles(activeRoleSet);
+
+
         String token = this.jwtTokenHelper.generateToken(userDetails);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
         jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-        jwtAuthResponse.setUser(modelMapper.map(userDetails, UserDto.class));
+        jwtAuthResponse.setUser(authUserDto);
 
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
 
