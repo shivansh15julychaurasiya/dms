@@ -76,7 +76,7 @@ public class JwtTokenHelper {
         if (validToken) {
             //check token status from db
             TokenDto existingToken = tokenService.findToken(token, userDetails.getUsername());
-            return (existingToken != null) && existingToken.isTokenStatus();
+            return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;
     }

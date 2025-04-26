@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {
+    public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Long userId) {
         UserDto updatedUser = userService.updateUser(userDto, userId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
     }
@@ -40,7 +40,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<?>> deleteUser(
-            @PathVariable("userId") Integer userId,
+            @PathVariable("userId") Long userId,
             HttpServletRequest request
     ){
         userService.deleteUser(userId);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Integer userId){
+    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Long userId){
         //return ResponseEntity.ok(userService.getUserById(userId));
         return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
     }

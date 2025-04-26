@@ -17,6 +17,6 @@ public class TokenDto {
     private String jwtToken;
     private String loginId;
     private Date expirationDate;
-    private boolean tokenStatus;
+    private Boolean tokenStatus;
 
 }

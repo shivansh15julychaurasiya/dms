@@ -37,7 +37,7 @@ public class RoleService {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", "Id", roleId));
 
         role.setRoleName(roleDto.getRoleName());
-        role.setStatus(roleDto.isStatus());
+        role.setStatus(roleDto.getStatus());
         Role updatedRole = roleRepository.save(role);
         return modelMapper.map(updatedRole, RoleDto.class);
     }

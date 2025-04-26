@@ -12,8 +12,8 @@ import lombok.ToString;
 @ToString
 public class RoleDto {
     @JsonProperty("role_id")
-    private int roleId;
+    private Long roleId;
     @JsonProperty("role_name")
     private String roleName;
-    private boolean status;
+    private Boolean status;
 }

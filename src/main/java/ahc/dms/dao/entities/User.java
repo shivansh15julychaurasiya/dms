@@ -26,7 +26,7 @@ public class User implements UserDetails {
             sequenceName = "user_sequence", // This is the name of the DB sequence
             allocationSize = 1 // Optional: 1 means no batch caching
     )
-    private int userId;
+    private Long userId;
 
 
     @Column(name = "login_id", nullable = false, length=100, unique = true)
@@ -60,7 +60,7 @@ public class User implements UserDetails {
         // finding active roles in user-role as well as role (master) entities
         Set<UserRole> activeUserRoles = new HashSet<>();
         for (UserRole eachUserRole :  userRoles) {
-            if (eachUserRole.isStatus() && eachUserRole.getRole().isStatus()) {
+            if (eachUserRole.getStatus() && eachUserRole.getRole().getStatus()) {
                 activeUserRoles.add(eachUserRole);
             }
         }

@@ -70,7 +70,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(UserDto userDto, Integer userId) {
+    public UserDto updateUser(UserDto userDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
         user.setLoginId(userDto.getLoginId());
@@ -83,7 +83,7 @@ public class UserService {
         return modelMapper.map(updatedUser, UserDto.class);
     }
 
-    public UserDto getUserById(Integer userId) {
+    public UserDto getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
         return modelMapper.map(user, UserDto.class);
     }
@@ -99,7 +99,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer userId) {
+    public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
         userRepository.delete(user);
     }

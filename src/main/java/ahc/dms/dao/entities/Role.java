@@ -12,11 +12,11 @@ public class Role {
 
     @Id
     @Column(name = "role_id")
-    private int roleId;
+    private Integer roleId;
     @Column(name = "role_name", unique = true, nullable = false)
     private String roleName;
     @Column(nullable = false)
-    private boolean status = true;
+    private Boolean status = true;
 
     // Optional reverse mapping
 //    @OneToMany(mappedBy = "role")

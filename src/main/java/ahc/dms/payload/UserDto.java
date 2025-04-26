@@ -20,7 +20,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
-    private int userId;
+    private Long userId;
 
     @NotBlank
     @Size(min=4, message = "Must be greater than 4 characters.")

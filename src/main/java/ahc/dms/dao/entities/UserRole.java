@@ -40,7 +40,7 @@ public class UserRole {
     private Role role;
 
     @Column(name = "status", columnDefinition = "boolean default true")
-    private boolean status = true;
+    private Boolean status = true;
 
 
     public UserRole(User user, Role role, boolean status) {

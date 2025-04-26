@@ -1,8 +1,11 @@
 package ahc.dms.payload;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class JwtAuthResponse {
 
     private String token;
