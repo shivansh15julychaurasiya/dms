@@ -1,13 +1,17 @@
 package ahc.dms.dao.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "case_file_details")
-@Data
+@ToString
+@Getter
+@Setter
 public class CaseFileDetails {
 
     @Id
