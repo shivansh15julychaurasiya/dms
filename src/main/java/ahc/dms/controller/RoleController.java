@@ -4,6 +4,7 @@ import ahc.dms.dao.services.RoleService;
 import ahc.dms.dao.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
+import ahc.dms.payload.UserDto;
 import ahc.dms.payload.UserRoleDto;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -64,9 +65,9 @@ public class RoleController {
     }
 
     @PostMapping("/assign-role")
-    public ResponseEntity<ApiResponse<UserRoleDto>> assignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
+    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
 
-        UserRoleDto updatedUserDto = userRoleService.assignRole(userRoleDto);
+        UserDto updatedUserDto = userRoleService.assignRole(userRoleDto);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
 
     }

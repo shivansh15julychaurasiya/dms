@@ -19,5 +19,6 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     Optional<UserRole> findByUserAndRole(User user, Role role);
     // Find all active roles for a user
     List<UserRole> findByUserAndStatusTrue(User user);
-
+    // find active user-role mapping
+    boolean existsByUserAndRoleAndStatusTrue(User user, Role role);
 }
