@@ -68,7 +68,11 @@ public class DmsApplication implements CommandLineRunner {
             userRole.setRoleId(AppConstants.NORMAL_USER);
             userRole.setRoleName("ROLE_USER");
 
-            List<Role> roles = List.of(adminRole, userRole);
+            Role ecourtRole = new Role();
+            ecourtRole.setRoleId(AppConstants.ECOURT_USER);
+            ecourtRole.setRoleName("ROLE_ECOURT");
+
+            List<Role> roles = List.of(adminRole, userRole, ecourtRole);
             List<Role> savedRoles = roleRepository.saveAll(roles);
             savedRoles.forEach(r -> System.out.println(r.getRoleName()));
         } catch (Exception e) {

@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,9 @@ public class UserRoleService {
 
     @Transactional
     public UserDto assignRole(UserRoleDto userRoleDto) {
+
+        if (userRoleDto.getUserId() == null)
+            throw new ApiException("User Id required");
 
         //check for existing user
         User user = userRepository
@@ -80,6 +84,8 @@ public class UserRoleService {
     }
 
     public UserDto deassignRole(UserRoleDto userRoleDto) {
+        if (userRoleDto.getUserId() == null)
+            throw new ApiException("User Id required");
         //check for existing user
         User user = userRepository
                 .findById(userRoleDto.getUserId())
