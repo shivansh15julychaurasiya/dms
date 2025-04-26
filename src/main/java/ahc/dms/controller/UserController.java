@@ -46,8 +46,10 @@ public class UserController {
         return ResponseEntity.ok(ResponseUtil.success(null, "user deleted"));
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public ResponseEntity<List<UserDto>> getAllUsers(){
+        System.out.println(userService.getAllUsers());
         return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
     }
 

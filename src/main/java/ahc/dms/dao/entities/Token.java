@@ -23,12 +23,8 @@ public class Token {
     )
     @Column(name = "token_id")
     private Long tokenId;
-
-
-
     @Column(name = "login_id", nullable = false)
     private String loginId;
-
     private String jwtToken;
     private Date expirationDate;
     private boolean tokenStatus;
