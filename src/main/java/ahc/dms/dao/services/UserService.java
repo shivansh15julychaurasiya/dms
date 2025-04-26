@@ -37,21 +37,6 @@ public class UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-//    @Transactional
-//    public UserDto registerNewUser(UserDto userDto) {
-//
-//        System.out.println("user dto");
-//        System.out.println(userDto.toString());
-//        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-//        User user = modelMapper.map(userDto, User.class);
-//
-//        Role role = roleRepository.findById(AppConstants.NORMAL_USER).get();
-//        user.getRoles().add(role);
-//
-//        User newUser = userRepository.save(user);
-//        return modelMapper.map(newUser, UserDto.class);
-//    }
-
     @Transactional
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));

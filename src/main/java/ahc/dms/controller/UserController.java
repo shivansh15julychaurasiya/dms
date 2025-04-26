@@ -1,8 +1,10 @@
 package ahc.dms.controller;
 
+import ahc.dms.dao.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.services.UserService;
+import ahc.dms.payload.UserRoleDto;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,6 +21,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto){
@@ -27,14 +31,6 @@ public class UserController {
         return ResponseEntity.ok(ResponseUtil.success(createdUserDto, "user created"));
 
     }
-
-//    @PostMapping("/assign-roles")
-//    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(@Valid @RequestBody UserDto userDto){
-//
-//        UserDto updatedDto = userService.assignRoles(userDto);
-//        return ResponseEntity.ok(ResponseUtil.success(updatedDto, "user created"));
-//
-//    }
 
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {

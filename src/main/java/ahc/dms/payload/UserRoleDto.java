@@ -1,6 +1,9 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,13 +16,15 @@ import lombok.ToString;
 public class UserRoleDto {
 
     @JsonProperty("ur_id")
-    private int urId;
+    private Integer urId;
     @JsonProperty("user_id")
-    private int userId;
+    @NotNull
+    private Integer userId;
     @JsonProperty("role_id")
-    private int roleId;
+    @NotNull
+    private Integer roleId;
     @JsonProperty("status")
-    private boolean status;
+    private Boolean status;
 
 
 }

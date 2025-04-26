@@ -1,8 +1,11 @@
 package ahc.dms.controller;
 
 import ahc.dms.dao.services.RoleService;
+import ahc.dms.dao.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
+import ahc.dms.payload.UserDto;
+import ahc.dms.payload.UserRoleDto;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
@@ -57,6 +62,14 @@ public class RoleController {
     public ResponseEntity<ApiResponse<?>> deleteRole(@PathVariable("roleId") Integer roleId){
         roleService.deleteRole(roleId);
         return ResponseEntity.ok(ResponseUtil.success(null, "role deleted"));
+    }
+
+    @PostMapping("/assign-role")
+    public ResponseEntity<ApiResponse<UserRoleDto>> assignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
+
+        UserRoleDto updatedUserDto = userRoleService.assignRole(userRoleDto);
+        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
+
     }
 
 }
