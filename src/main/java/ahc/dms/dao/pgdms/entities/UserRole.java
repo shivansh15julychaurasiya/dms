@@ -15,6 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserRole {
 
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_seq")
     @SequenceGenerator(

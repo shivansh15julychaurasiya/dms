@@ -14,6 +14,9 @@ import java.util.Date;
 @Setter
 public class CaseFileDetails {
 
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
+
     @Id
     @SequenceGenerator(
             name = "cfd_seq_gen",            // Logical name for the generator

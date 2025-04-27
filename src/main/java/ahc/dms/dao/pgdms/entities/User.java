@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
+
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -27,9 +30,6 @@ public class User implements UserDetails {
             allocationSize = 1 // Optional: 1 means no batch caching
     )
     private Long userId;
-
-    @Version  // ← Optimistic lock column
-    private Integer version;
 
     @Column(name = "login_id", nullable = false, length=100, unique = true)
     private String loginId;
