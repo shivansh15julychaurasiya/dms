@@ -50,14 +50,14 @@ public class JwtTokenHelper {
                 .compact();
 
         logger.info("token : {}", token);
-        //if jwtToken (expired or non-expired) already exists then renew jwtToken
-        //else create new entry for jwtToken
         TokenDto existingTokenDto = tokenService.findTokenByLoginId(userDetails.getUsername());
         if (existingTokenDto!=null) {
+            logger.info("renewing token!!!");
             existingTokenDto.setJwtToken(token);
             existingTokenDto.setTokenStatus(true);
             tokenService.saveToken(existingTokenDto);
         } else {
+            logger.info("creating new token!!!");
             TokenDto tokenDto = new TokenDto();
             tokenDto.setJwtToken(token);
             tokenDto.setLoginId(userDetails.getUsername());

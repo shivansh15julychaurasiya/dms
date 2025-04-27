@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -13,9 +16,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class Token {
-
-    @Version  // ← Optimistic lock column
-    private Long version = 0L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_seq")
@@ -33,5 +33,13 @@ public class Token {
     private String jwtToken;
     private Date expirationDate;
     private boolean tokenStatus;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }

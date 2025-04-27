@@ -1,5 +1,6 @@
 package ahc.dms.payload;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -26,5 +27,13 @@ public class OtpDto {
     private String message;
     @JsonProperty("sms_id")
     private String smsId;
+
+    // audit fields
+    @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
 
 }

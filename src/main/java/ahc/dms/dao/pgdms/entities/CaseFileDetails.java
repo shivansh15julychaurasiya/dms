@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -55,14 +58,8 @@ public class CaseFileDetails {
     @Column(name="cr_by")
     private Long crBy;
 
-    @Column(name="cr_date")
-    private Date crDate;
-
     @Column(name="mod_by")
     private Long modBy;
-
-    @Column(name="mod_date")
-    private Date modDate;
 
     @Column(name="disposal_date")
     private Date disposalDate;
@@ -91,5 +88,13 @@ public class CaseFileDetails {
     @Column(name="rc_flag")
     private Boolean rcFlag;
 
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }
