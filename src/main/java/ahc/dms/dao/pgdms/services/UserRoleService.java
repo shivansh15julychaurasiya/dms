@@ -1,11 +1,11 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.entities.User;
-import ahc.dms.dao.entities.UserRole;
-import ahc.dms.dao.respositories.RoleRepository;
-import ahc.dms.dao.respositories.UserRepository;
-import ahc.dms.dao.respositories.UserRoleRepository;
+import ahc.dms.dao.pgdms.entities.Role;
+import ahc.dms.dao.pgdms.entities.User;
+import ahc.dms.dao.pgdms.entities.UserRole;
+import ahc.dms.dao.pgdms.repositories.RoleRepository;
+import ahc.dms.dao.pgdms.repositories.UserRepository;
+import ahc.dms.dao.pgdms.repositories.UserRoleRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
@@ -32,7 +32,7 @@ public class UserRoleService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public UserDto assignRole(UserRoleDto userRoleDto) {
 
         if (userRoleDto.getUserId() == null)

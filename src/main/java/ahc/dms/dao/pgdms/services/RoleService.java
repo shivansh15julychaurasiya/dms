@@ -1,7 +1,7 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.respositories.RoleRepository;
+import ahc.dms.dao.pgdms.entities.Role;
+import ahc.dms.dao.pgdms.repositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
@@ -30,13 +30,13 @@ public class RoleService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public RoleDto createRole(RoleDto roleDto) {
         Role savedRole = roleRepository.save(modelMapper.map(roleDto, Role.class));
         return modelMapper.map(savedRole, RoleDto.class);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public RoleDto updateRole(RoleDto roleDto, Integer roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", "Id", roleId));
 

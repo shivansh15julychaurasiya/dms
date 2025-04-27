@@ -1,8 +1,8 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.entities.OtpLog;
-import ahc.dms.dao.respositories.OtpLogRepository;
+import ahc.dms.dao.pgdms.entities.OtpLog;
+import ahc.dms.dao.pgdms.repositories.OtpLogRepository;
 import ahc.dms.payload.OtpDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class OtpLogService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public OtpDto saveOtp(OtpDto otpDto) {
         OtpLog newOtp = otpLogRepository.save(modelMapper.map(otpDto, OtpLog.class));
         return modelMapper.map(newOtp, OtpDto.class);

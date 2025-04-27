@@ -1,7 +1,7 @@
 package ahc.dms.controller;
 
-import ahc.dms.dao.services.RoleService;
-import ahc.dms.dao.services.UserRoleService;
+import ahc.dms.dao.pgdms.services.RoleService;
+import ahc.dms.dao.pgdms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;

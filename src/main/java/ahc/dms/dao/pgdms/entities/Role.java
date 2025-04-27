@@ -1,4 +1,4 @@
-package ahc.dms.dao.entities;
+package ahc.dms.dao.pgdms.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;

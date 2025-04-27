@@ -1,15 +1,17 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.entities.User;
-import ahc.dms.dao.entities.UserRole;
-import ahc.dms.dao.respositories.RoleRepository;
-import ahc.dms.dao.respositories.UserRoleRepository;
+import ahc.dms.dao.pgdms.entities.Role;
+import ahc.dms.dao.pgdms.entities.User;
+import ahc.dms.dao.pgdms.entities.UserRole;
+import ahc.dms.dao.pgdms.repositories.RoleRepository;
+import ahc.dms.dao.pgdms.repositories.UserRoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
-import ahc.dms.dao.respositories.UserRepository;
+import ahc.dms.dao.pgdms.repositories.UserRepository;
 import ahc.dms.payload.UserRoleDto;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +37,7 @@ public class UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -69,7 +71,7 @@ public class UserService {
         //return modelMapper.map(savedUser, UserDto.class);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public UserDto updateUser(UserDto userDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
@@ -98,7 +100,7 @@ public class UserService {
         return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
         userRepository.delete(user);
