@@ -9,19 +9,20 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class JwtAuditorAware implements AuditorAware<String> {
+public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        // Get the current authentication from Spring Security
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return Optional.empty();
         }
-
-        // Extract username (assuming JWT stores it in authentication.getName())
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        return Optional.ofNullable(user.getUsername());
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            return Optional.of((String) principal);
+        }
+        return Optional.ofNullable(((UserDetails) principal).getUsername());
     }
 }

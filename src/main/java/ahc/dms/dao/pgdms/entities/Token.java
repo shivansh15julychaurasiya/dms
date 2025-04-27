@@ -18,6 +18,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Token {
 
     @Version  // ← Optimistic lock column
@@ -40,12 +41,18 @@ public class Token {
     private Date expirationDate;
     private boolean tokenStatus;
 
+    // Audit Fields
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 }

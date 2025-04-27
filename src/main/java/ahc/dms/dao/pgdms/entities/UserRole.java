@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class UserRole {
 
     @Version  // ← Optimistic lock column
@@ -49,13 +53,19 @@ public class UserRole {
     @Column(name = "status", columnDefinition = "boolean default true")
     private Boolean status = true;
 
+    // Audit Fields
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 
     public UserRole(User user, Role role, boolean status) {

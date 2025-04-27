@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @SpringBootApplication(exclude = {
@@ -34,7 +33,7 @@ import java.util.stream.Stream;
         JpaRepositoriesAutoConfiguration.class, // Disables automatic JPA repository scanning
         DataSourceTransactionManagerAutoConfiguration.class // Avoids auto-creation of a default transaction manager
 })
-@EnableJpaAuditing(auditorAwareRef = "jwtAuditorAware")
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
 //public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
 public class DmsApplication implements CommandLineRunner {
 

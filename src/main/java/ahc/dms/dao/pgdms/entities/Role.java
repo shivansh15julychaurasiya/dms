@@ -36,6 +36,7 @@ public class Role {
     @Column(nullable = false)
     private Boolean status = true;
 
+    // Audit Fields
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -43,7 +44,7 @@ public class Role {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @CreatedBy
-    @Column(name = "created_by")
+    @Column(name = "created_by", updatable = false)
     private String createdBy;
     @LastModifiedBy
     @Column(name = "updated_by")
