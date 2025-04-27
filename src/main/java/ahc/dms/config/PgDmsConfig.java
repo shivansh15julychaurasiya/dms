@@ -1,8 +1,6 @@
 package ahc.dms.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -17,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.Objects;
 
 // Configuration for PostgreSQL edms
 @Configuration
@@ -33,10 +32,9 @@ public class PgDmsConfig {
     private Environment env;
 
     @Bean(name = "pgDmsDataSource")
-    //@ConfigurationProperties(prefix = "spring.datasource.pg_dms")
     public DataSource pgDmsDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("spring.datasource.pg_dms.driverClassName"));
+        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.pg_dms.driverClassName")));
         dataSource.setUrl(env.getProperty("spring.datasource.pg_dms.url"));
         dataSource.setUsername(env.getProperty("spring.datasource.pg_dms.username"));
         dataSource.setPassword(env.getProperty("spring.datasource.pg_dms.password"));
@@ -45,23 +43,22 @@ public class PgDmsConfig {
     }
 
     @Bean(name = "pgDmsEntityManager")
-    //@ConfigurationProperties(prefix = "spring.jpa.pg_dms.properties")
     public LocalContainerEntityManagerFactoryBean pgDmsEntityManager() {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(pgDmsDataSource());
-        em.setPackagesToScan(new String[] { "ahc.dms.dao.pgdms.entities" });
 
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        em.setJpaVendorAdapter(vendorAdapter);
+        HashMap<String, Object> jpaProperties = new HashMap<>();
+        jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.pg_dms.properties.hibernate.hbm2ddl.auto"));
+        jpaProperties.put("hibernate.dialect", env.getProperty("spring.jpa.pg_dms.properties.hibernate.dialect"));
+        jpaProperties.put("hibernate.show_sql", "spring.jpa.pg_dms.properties.show-sql");
+        jpaProperties.put("hibernate.format_sql", "spring.jpa.pg_dms.properties.format-sql");
 
-        HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.pg_dms.properties.hibernate.hbm2ddl.auto"));
-        properties.put("hibernate.dialect", env.getProperty("spring.jpa.pg_dms.properties.hibernate.dialect"));
-        properties.put("hibernate.show_sql", "spring.jpa.pg_dms.properties.show-sql");
-        properties.put("hibernate.format_sql", "spring.jpa.pg_dms.properties.format-sql");
-        em.setJpaPropertyMap(properties);
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(pgDmsDataSource());
+        emf.setPackagesToScan("ahc.dms.dao.pgdms.entities");
+        emf.setJpaPropertyMap(jpaProperties);
+        emf.setPersistenceUnitName("pgDms");
+        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
-        return em;
+        return emf;
     }
 
     @Bean(name = "pgDmsTransactionManager")
