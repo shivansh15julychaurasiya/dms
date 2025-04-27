@@ -1,8 +1,6 @@
 package ahc.dms.payload;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,8 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OtpDto {
 
+    @JsonIgnore
+    private Long version;
     private Long otpId;
     @JsonProperty("login_id")
     private String loginId;

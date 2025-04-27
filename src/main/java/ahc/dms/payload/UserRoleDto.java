@@ -1,7 +1,6 @@
 package ahc.dms.payload;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,8 +12,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserRoleDto {
 
+    @JsonIgnore
+    private Long version;
     @JsonProperty("ur_id")
     private Long urId;
     @JsonProperty("user_id")

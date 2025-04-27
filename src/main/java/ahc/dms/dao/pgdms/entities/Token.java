@@ -17,6 +17,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class Token {
 
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_seq")
     @SequenceGenerator(
