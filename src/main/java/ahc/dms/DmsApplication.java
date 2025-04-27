@@ -21,16 +21,18 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class
+        DataSourceAutoConfiguration.class, // Prevents default single DataSource auto-configuration
+        HibernateJpaAutoConfiguration.class, // Stops Hibernate from autoconfiguring based on a single DataSource
+        JpaRepositoriesAutoConfiguration.class, // Disables automatic JPA repository scanning
+        DataSourceTransactionManagerAutoConfiguration.class // Avoids auto-creation of a default transaction manager
 })
 //public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
 public class DmsApplication implements CommandLineRunner {
@@ -74,50 +76,45 @@ public class DmsApplication implements CommandLineRunner {
     }
 
     @Override
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public void run(String... args) {
-        System.out.println(this.passwordEncoder.encode("1234"));
+
         try {
-            Role adminRole = new Role();
-            adminRole.setRoleId(AppConstants.ADMIN_USER);
-            adminRole.setRoleName("ROLE_ADMIN");
-
-            Role userRole = new Role();
-            userRole.setRoleId(AppConstants.NORMAL_USER);
-            userRole.setRoleName("ROLE_USER");
-
-            Role ecourtRole = new Role();
-            ecourtRole.setRoleId(AppConstants.ECOURT_USER);
-            ecourtRole.setRoleName("ROLE_ECOURT");
-
-            List<Role> roles = List.of(adminRole, userRole, ecourtRole);
+            // Create and save roles once
+            List<Role> roles = List.of(
+                    new Role(AppConstants.ADMIN_USER, "ROLE_ADMIN", true),
+                    new Role(AppConstants.NORMAL_USER, "ROLE_USER", true),
+                    new Role(AppConstants.ECOURT_USER, "ROLE_ECOURT", true)
+            );
             List<Role> savedRoles = roleRepository.saveAll(roles);
-            savedRoles.forEach(r -> System.out.println(r.getRoleName()));
 
-            /*
-            adminRole = roleRepository.save(adminRole);
-            userRole = roleRepository.save(userRole);
-            ecourtRole = roleRepository.save(ecourtRole);
+            // Get references to saved roles
+            Role adminRole = savedRoles.get(0);
+            Role userRole = savedRoles.get(1);
+            Role ecourtRole = savedRoles.get(2);
 
-            User firstUser = new User();
-            firstUser.setName("amit");
-            firstUser.setUserId(11448l);
-            firstUser.setEmail("amitvarmaone@gmail.com");
-            firstUser.setAbout("admin");
-            firstUser.setPhone("8601837554");
-            firstUser = userRepository.save(firstUser);
+            User firstUser = userRepository.findByLoginId("11448")
+                    .orElseGet(() -> {
+                        User newUser = new User();
+                        newUser.setName("amit");
+                        newUser.setLoginId("11448");
+                        newUser.setEmail("amitvarmaone@gmail.com");
+                        newUser.setAbout("admin");
+                        newUser.setPhone("8601837554");
+                        newUser.setPassword(passwordEncoder.encode("1234"));
+                        return userRepository.saveAndFlush(newUser);
+                    });
 
-            Set<UserRole> userRoles = new HashSet<>();
-            UserRole adminUserRole = new UserRole();
-            adminUserRole.setRole(adminRole);
-            adminUserRole.setUser(firstUser);
-            userRoles.add(adminUserRole);
-            UserRole userUserRole = new UserRole();
-            userUserRole.setRole(userRole);
-            userUserRole.setUser(firstUser);
-            userRoles.add(userUserRole);
-            userRoleRepository.saveAll(userRoles);
-            */
+            // For each role, check if it exists first
+            Stream.of(adminRole, userRole, ecourtRole)
+                    .forEach(role -> {
+                        if (!userRoleRepository.existsByUserAndRole(firstUser, role)) {
+                            userRoleRepository.save(new UserRole(firstUser, role, true));
+                        }
+                    });
 
+
+            System.out.println("Admin User created");
         } catch (Exception e) {
             e.printStackTrace();
         }

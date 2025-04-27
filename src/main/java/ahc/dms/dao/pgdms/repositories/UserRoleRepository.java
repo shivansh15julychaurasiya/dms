@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
@@ -18,4 +19,8 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     List<UserRole> findByUserAndStatusTrue(User user);
     // find active user-role mapping
     boolean existsByUserAndRoleAndStatusTrue(User user, Role role);
+    // find by roles of a user
+    Set<UserRole> findByUser(User user);
+    // if user-role mapping exists
+    boolean existsByUserAndRole(User user, Role role);
 }

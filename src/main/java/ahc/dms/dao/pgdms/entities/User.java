@@ -28,6 +28,8 @@ public class User implements UserDetails {
     )
     private Long userId;
 
+    @Version  // ← Optimistic lock column
+    private Integer version;
 
     @Column(name = "login_id", nullable = false, length=100, unique = true)
     private String loginId;
