@@ -32,6 +32,7 @@ public class RoleService {
 
     @Transactional(transactionManager = "pgDmsTransactionManager")
     public RoleDto createRole(RoleDto roleDto) {
+        roleDto.setStatus(true);
         Role savedRole = roleRepository.save(modelMapper.map(roleDto, Role.class));
         return modelMapper.map(savedRole, RoleDto.class);
     }

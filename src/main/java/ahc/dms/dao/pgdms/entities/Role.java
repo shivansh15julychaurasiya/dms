@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -16,10 +19,17 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Role {
 
     @Id
     @Column(name = "role_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_seq")
+    @SequenceGenerator(
+            name = "role_seq",
+            sequenceName = "role_sequence", // DB sequence name
+            allocationSize = 1
+    )
     private Integer roleId;
     @Column(name = "role_name", unique = true, nullable = false)
     private String roleName;
@@ -29,10 +39,15 @@ public class Role {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @CreatedBy
+    @Column(name = "created_by")
+    private String createdBy;
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     // Optional reverse mapping
 //    @OneToMany(mappedBy = "role")
@@ -52,6 +67,11 @@ public class Role {
 
     public Role(Integer roleId, String roleName, Boolean status) {
         this.roleId = roleId;
+        this.roleName = roleName;
+        this.status = status;
+    }
+
+    public Role(String roleName, Boolean status) {
         this.roleName = roleName;
         this.status = status;
     }

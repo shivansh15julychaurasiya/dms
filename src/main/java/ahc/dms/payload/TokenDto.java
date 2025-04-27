@@ -24,6 +24,12 @@ public class TokenDto {
     private String loginId;
     private Date expirationDate;
     private Boolean tokenStatus;
+    @JsonIgnore
+    @JsonProperty("created_by")
+    private String createdBy;
+    @JsonIgnore
+    @JsonProperty("updated_by")
+    private String updatedBy;
 
     // audit fields
     @JsonProperty("created_at")
