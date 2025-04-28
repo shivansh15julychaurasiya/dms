@@ -1,11 +1,11 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.pgdms.services.OtpLogService;
-import ahc.dms.dao.pgdms.services.RoleService;
+import ahc.dms.dao.dms.services.OtpLogService;
+import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.payload.*;
-import ahc.dms.dao.pgdms.services.TokenService;
-import ahc.dms.dao.pgdms.services.UserService;
+import ahc.dms.dao.dms.services.TokenService;
+import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;

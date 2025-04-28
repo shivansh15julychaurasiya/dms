@@ -1,12 +1,11 @@
 package ahc.dms;
 
-import ahc.dms.config.AppConstants;
-import ahc.dms.dao.pgdms.entities.Role;
-import ahc.dms.dao.pgdms.entities.User;
-import ahc.dms.dao.pgdms.entities.UserRole;
-import ahc.dms.dao.pgdms.repositories.RoleRepository;
-import ahc.dms.dao.pgdms.repositories.UserRepository;
-import ahc.dms.dao.pgdms.repositories.UserRoleRepository;
+import ahc.dms.dao.dms.entities.Role;
+import ahc.dms.dao.dms.entities.User;
+import ahc.dms.dao.dms.entities.UserRole;
+import ahc.dms.dao.dms.repositories.RoleRepository;
+import ahc.dms.dao.dms.repositories.UserRepository;
+import ahc.dms.dao.dms.repositories.UserRoleRepository;
 import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -76,7 +75,7 @@ public class DmsApplication implements CommandLineRunner {
     }
 
     @Override
-    @Transactional(transactionManager = "pgDmsTransactionManager", isolation = Isolation.SERIALIZABLE)
+    @Transactional(transactionManager = "dmsTransactionManager", isolation = Isolation.SERIALIZABLE)
     public void run(String... args) {
 
         try {
