@@ -1,4 +1,4 @@
-package ahc.dms.dao.entities;
+package ahc.dms.dao.pgdms2.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
-@Table(name = "token")
+@Table(name = "token_logs")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Token {
+public class TokenLogs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_seq")

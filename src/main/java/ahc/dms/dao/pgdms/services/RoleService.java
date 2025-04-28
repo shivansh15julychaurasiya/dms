@@ -1,21 +1,27 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.respositories.RoleRepository;
+import ahc.dms.dao.pgdms.entities.Role;
+import ahc.dms.dao.pgdms.repositories.RoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class RoleService {
 
+    @Autowired
     private final RoleRepository roleRepository;
+    private final Logger logger = LoggerFactory.getLogger(RoleService.class);
 
     public RoleService(RoleRepository roleRepository){
         this.roleRepository = roleRepository;
@@ -24,18 +30,19 @@ public class RoleService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public RoleDto createRole(RoleDto roleDto) {
+        roleDto.setStatus(true);
         Role savedRole = roleRepository.save(modelMapper.map(roleDto, Role.class));
         return modelMapper.map(savedRole, RoleDto.class);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public RoleDto updateRole(RoleDto roleDto, Integer roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", "Id", roleId));
 
         role.setRoleName(roleDto.getRoleName());
-        role.setStatus(roleDto.isStatus());
+        role.setStatus(roleDto.getStatus());
         Role updatedRole = roleRepository.save(role);
         return modelMapper.map(updatedRole, RoleDto.class);
     }
@@ -60,5 +67,20 @@ public class RoleService {
     public void deleteRole(Integer roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
         roleRepository.delete(role);
+    }
+
+    //for authentication response, send only active role
+    public Set<RoleDto> getActiveRoles(UserDetails userDetails) {
+        logger.info(userDetails.getUsername());
+        Set<Role> activeRoles = userDetails.getAuthorities()
+                .stream()
+                .map(grantedAuthority ->
+                        roleRepository.findByRoleName(grantedAuthority.getAuthority()).get())
+                .collect(Collectors.toSet());
+
+        return activeRoles
+                .stream()
+                .map(activeRole -> modelMapper.map(activeRole, RoleDto.class))
+                .collect(Collectors.toSet());
     }
 }

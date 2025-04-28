@@ -1,17 +1,16 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.pgdms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.entities.User;
-import ahc.dms.dao.entities.UserRole;
-import ahc.dms.dao.respositories.RoleRepository;
-import ahc.dms.dao.respositories.UserRepository;
-import ahc.dms.dao.respositories.UserRoleRepository;
+import ahc.dms.dao.pgdms.entities.Role;
+import ahc.dms.dao.pgdms.entities.User;
+import ahc.dms.dao.pgdms.entities.UserRole;
+import ahc.dms.dao.pgdms.repositories.RoleRepository;
+import ahc.dms.dao.pgdms.repositories.UserRepository;
+import ahc.dms.dao.pgdms.repositories.UserRoleRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.payload.UserRoleDto;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,8 +32,13 @@ public class UserRoleService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "pgDmsTransactionManager")
     public UserDto assignRole(UserRoleDto userRoleDto) {
+
+        if (userRoleDto.getUserId() == null)
+            throw new ApiException("User Id required");
+        if (userRoleDto.getRoleId() == null)
+            throw new ApiException("Role Id required");
 
         //check for existing user
         User user = userRepository
@@ -47,7 +51,7 @@ public class UserRoleService {
         //check for existing role-mapping
         Optional<UserRole> existingRole = userRoleRepository.findByUserAndRole(user, role);
         if (existingRole.isPresent()) {
-            if (existingRole.get().isStatus()) {
+            if (existingRole.get().getStatus()) {
                 throw new ApiException("Mapping already exists");
             } else {
                 existingRole.get().setStatus(true);
@@ -66,7 +70,7 @@ public class UserRoleService {
 
         // Get updated roles directly from the managed user entity
         Set<Role> roles = user.getUserRoles().stream()
-                .filter(UserRole::isStatus)
+                .filter(UserRole::getStatus)
                 .map(UserRole::getRole)
                 .collect(Collectors.toSet());
 
@@ -80,6 +84,10 @@ public class UserRoleService {
     }
 
     public UserDto deassignRole(UserRoleDto userRoleDto) {
+        if (userRoleDto.getUserId() == null)
+            throw new ApiException("User Id required");
+        if (userRoleDto.getRoleId() == null)
+            throw new ApiException("Role Id required");
         //check for existing user
         User user = userRepository
                 .findById(userRoleDto.getUserId())
@@ -91,7 +99,7 @@ public class UserRoleService {
         //check for existing role-mapping
         Optional<UserRole> existingRole = userRoleRepository.findByUserAndRole(user, role);
         if (existingRole.isPresent()) {
-            if (existingRole.get().isStatus()) {
+            if (existingRole.get().getStatus()) {
                 existingRole.get().setStatus(false);
                 userRoleRepository.save(existingRole.get());
             } else {
@@ -106,7 +114,7 @@ public class UserRoleService {
 
         // Get updated roles directly from the managed user entity
         Set<Role> roles = user.getUserRoles().stream()
-                .filter(UserRole::isStatus)
+                .filter(UserRole::getStatus)
                 .map(UserRole::getRole)
                 .collect(Collectors.toSet());
 

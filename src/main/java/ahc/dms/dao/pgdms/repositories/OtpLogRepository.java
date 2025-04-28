@@ -1,6 +1,7 @@
-package ahc.dms.dao.respositories;
+package ahc.dms.dao.pgdms.repositories;
 
-import ahc.dms.dao.entities.OtpLog;
+import ahc.dms.dao.pgdms.entities.OtpLog;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

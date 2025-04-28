@@ -1,7 +1,7 @@
 package ahc.dms.security;
 
-import ahc.dms.dao.entities.User;
-import ahc.dms.dao.respositories.UserRepository;
+import ahc.dms.dao.pgdms.entities.User;
+import ahc.dms.dao.pgdms.repositories.UserRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

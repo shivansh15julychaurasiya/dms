@@ -1,6 +1,6 @@
-package ahc.dms.dao.respositories;
+package ahc.dms.dao.pgdms.repositories;
 
-import ahc.dms.dao.entities.Token;
+import ahc.dms.dao.pgdms.entities.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

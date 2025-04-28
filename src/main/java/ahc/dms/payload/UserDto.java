@@ -1,8 +1,6 @@
 package ahc.dms.payload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,10 +16,13 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
-    private int userId;
+    @JsonIgnore
+    private Long version;
+    private Long userId;
 
     @NotBlank
     @Size(min=4, message = "Must be greater than 4 characters.")
@@ -46,6 +48,14 @@ public class UserDto {
 
     @JsonProperty("roles")
     private Set<RoleDto> roles = new HashSet<>();
+
+    // audit fields
+    @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
 
     // CUSTOM GETTERS AND SETTERS
 

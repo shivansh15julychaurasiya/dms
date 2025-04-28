@@ -1,9 +1,16 @@
-package ahc.dms.dao.entities;
+package ahc.dms.dao.pgdms.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -13,7 +20,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class UserRole {
+
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_seq")
@@ -40,7 +51,21 @@ public class UserRole {
     private Role role;
 
     @Column(name = "status", columnDefinition = "boolean default true")
-    private boolean status = true;
+    private Boolean status = true;
+
+    // Audit Fields
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 
     public UserRole(User user, Role role, boolean status) {
@@ -48,5 +73,5 @@ public class UserRole {
         this.role = role;
         this.status = status;
     }
-
+    
 }
