@@ -1,10 +1,11 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.services.OtpLogService;
+import ahc.dms.dao.dms.services.OtpLogService;
+import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.payload.*;
-import ahc.dms.dao.services.TokenService;
-import ahc.dms.dao.services.UserService;
+import ahc.dms.dao.dms.services.TokenService;
+import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/dms/auth")
@@ -43,6 +45,8 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private ModelMapper modelMapper;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -59,16 +63,21 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
-        System.out.println("111111111111111");
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
-        System.out.println("2222222222222222");
+        //get only active roles, which are set in user entity
+        Set<RoleDto> activeRoleSet = roleService.getActiveRoles(userDetails);
+        UserDto authUserDto = modelMapper.map(userDetails, UserDto.class);
+        authUserDto.setUserRoles(null);
+        authUserDto.setRoles(activeRoleSet);
+
+
         String token = this.jwtTokenHelper.generateToken(userDetails);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
         jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-        jwtAuthResponse.setUser(modelMapper.map(userDetails, UserDto.class));
+        jwtAuthResponse.setUser(authUserDto);
 
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
 
@@ -111,7 +120,7 @@ public class AuthController {
 
     @PostMapping("/request-otp")
     public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) {
-        System.out.println("otpDto : " + requestOtp);
+        logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
         OtpDto otpLog = otpLogService.getOtpLogByLoginIdAndOtpType(requestOtp.getLoginId(), requestOtp.getOtpType());

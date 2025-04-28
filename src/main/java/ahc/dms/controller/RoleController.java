@@ -1,12 +1,14 @@
 package ahc.dms.controller;
 
-import ahc.dms.dao.services.RoleService;
-import ahc.dms.dao.services.UserRoleService;
+import ahc.dms.dao.dms.services.RequestLogService;
+import ahc.dms.dao.dms.services.RoleService;
+import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.payload.UserRoleDto;
 import ahc.dms.utils.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +25,19 @@ public class RoleController {
     private RoleService roleService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private RequestLogService requestLogService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<RoleDto>> createRole(@Valid @RequestBody RoleDto roleDto){
+    public ResponseEntity<ApiResponse<RoleDto>> createRole(
+            HttpServletRequest request,
+            @Valid @RequestBody RoleDto roleDto
+    ){
+        requestLogService.logRequest(request);
+
         RoleDto createdRoleDto = roleService.createRole(roleDto);
         return ResponseEntity.ok(ResponseUtil.success(createdRoleDto, "role created"));
-
     }
 
     @PreAuthorize("hasRole('ADMIN')")

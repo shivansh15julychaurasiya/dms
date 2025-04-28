@@ -1,14 +1,28 @@
-package ahc.dms.dao.entities;
+package ahc.dms.dao.dms.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "case_file_details")
-@Data
+@ToString
+@Getter
+@Setter
+@EntityListeners(AuditingEntityListener.class)
 public class CaseFileDetails {
+
+    @Version  // ← Optimistic lock column
+    private Long version = 0L;
 
     @Id
     @SequenceGenerator(
@@ -48,14 +62,8 @@ public class CaseFileDetails {
     @Column(name="cr_by")
     private Long crBy;
 
-    @Column(name="cr_date")
-    private Date crDate;
-
     @Column(name="mod_by")
     private Long modBy;
-
-    @Column(name="mod_date")
-    private Date modDate;
 
     @Column(name="disposal_date")
     private Date disposalDate;
@@ -84,5 +92,19 @@ public class CaseFileDetails {
     @Column(name="rc_flag")
     private Boolean rcFlag;
 
+
+    // Audit Fields
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 }

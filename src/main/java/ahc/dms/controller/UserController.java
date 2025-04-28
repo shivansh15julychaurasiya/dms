@@ -1,9 +1,9 @@
 package ahc.dms.controller;
 
-import ahc.dms.dao.services.UserRoleService;
+import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.UserDto;
-import ahc.dms.dao.services.UserService;
+import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer userId) {
+    public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Long userId) {
         UserDto updatedUser = userService.updateUser(userDto, userId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
     }
@@ -40,7 +40,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<?>> deleteUser(
-            @PathVariable("userId") Integer userId,
+            @PathVariable("userId") Long userId,
             HttpServletRequest request
     ){
         userService.deleteUser(userId);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Integer userId){
+    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Long userId){
         //return ResponseEntity.ok(userService.getUserById(userId));
         return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
     }

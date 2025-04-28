@@ -1,14 +1,14 @@
-package ahc.dms.dao.services;
+package ahc.dms.dao.dms.services;
 
-import ahc.dms.dao.entities.Role;
-import ahc.dms.dao.entities.User;
-import ahc.dms.dao.entities.UserRole;
-import ahc.dms.dao.respositories.RoleRepository;
-import ahc.dms.dao.respositories.UserRoleRepository;
+import ahc.dms.dao.dms.entities.Role;
+import ahc.dms.dao.dms.entities.User;
+import ahc.dms.dao.dms.entities.UserRole;
+import ahc.dms.dao.dms.repositories.RoleRepository;
+import ahc.dms.dao.dms.repositories.UserRoleRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
-import ahc.dms.dao.respositories.UserRepository;
+import ahc.dms.dao.dms.repositories.UserRepository;
 import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -69,8 +69,8 @@ public class UserService {
         //return modelMapper.map(savedUser, UserDto.class);
     }
 
-    @Transactional
-    public UserDto updateUser(UserDto userDto, Integer userId) {
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public UserDto updateUser(UserDto userDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
         user.setLoginId(userDto.getLoginId());
@@ -83,7 +83,7 @@ public class UserService {
         return modelMapper.map(updatedUser, UserDto.class);
     }
 
-    public UserDto getUserById(Integer userId) {
+    public UserDto getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
         return modelMapper.map(user, UserDto.class);
     }
@@ -98,8 +98,8 @@ public class UserService {
         return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
-    @Transactional
-    public void deleteUser(Integer userId) {
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
         userRepository.delete(user);
     }
