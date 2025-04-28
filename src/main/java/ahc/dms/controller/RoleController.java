@@ -1,5 +1,6 @@
 package ahc.dms.controller;
 
+import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.dao.dms.services.UserRoleService;
@@ -47,9 +48,14 @@ public class RoleController {
         return ResponseEntity.ok(ResponseUtil.success(updatedRole, "role updated"));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(){
-        List<RoleDto> roles = roleService.getAllRoles();
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ){
+        List<RoleDto> roles = roleService.getAllRoles(pageNumber, pageSize, sortBy, sortDir);
         return ResponseEntity.ok(ResponseUtil.success(roles, "role list"));
     }
 

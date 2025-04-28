@@ -8,6 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,8 +51,12 @@ public class RoleService {
         return modelMapper.map(updatedRole, RoleDto.class);
     }
 
-    public List<RoleDto> getAllRoles() {
-        List<Role> roles = roleRepository.findAll();
+    public List<RoleDto> getAllRoles(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Role> pageRole = roleRepository.findAll(pageable);
+        List<Role> roles = pageRole.getContent();
         return roles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
     }
 
