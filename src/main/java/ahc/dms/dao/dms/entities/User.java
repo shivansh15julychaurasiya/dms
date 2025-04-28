@@ -71,36 +71,14 @@ public class User implements UserDetails {
     )
     private Set<UserRole> userRoles = new HashSet<>();
 
-    // Utility method to add roles
-    public void addRole(Role role, boolean status) {
-        UserRole userRole = new UserRole(this, role, status);
-        userRoles.add(userRole);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        // finding active roles in user-role as well as role (master) entities
-        Set<UserRole> activeUserRoles = new HashSet<>();
-        for (UserRole eachUserRole :  userRoles) {
-            if (eachUserRole.getStatus() && eachUserRole.getRole().getStatus()) {
-                activeUserRoles.add(eachUserRole);
-            }
-        }
-
-        /*
-        List<SimpleGrantedAuthority> authorities = this.userRoles.stream()
-                .map((userRole) -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
+        // find the active role in user-role as well as in role (master) entities
+        return this.getUserRoles().stream()
+                .filter(userRole -> userRole.getStatus() && userRole.getRole().getStatus())
+                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
-
-         */
-        // setting only those roles which are active at user-role and global (role) entity level
-        List<SimpleGrantedAuthority> authorities = activeUserRoles
-                .stream()
-                .map(activeUserRole -> new SimpleGrantedAuthority(activeUserRole.getRole().getRoleName()))
-                .collect(Collectors.toList());
-
-        return authorities;
     }
 
     @Override
