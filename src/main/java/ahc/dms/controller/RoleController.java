@@ -1,6 +1,5 @@
 package ahc.dms.controller;
 
-import ahc.dms.dao.pgdms.repositories.RequestLogRepository;
 import ahc.dms.dao.pgdms.services.RequestLogService;
 import ahc.dms.dao.pgdms.services.RoleService;
 import ahc.dms.dao.pgdms.services.UserRoleService;
@@ -8,7 +7,6 @@ import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.payload.UserRoleDto;
-import ahc.dms.utils.RequestUtil;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -36,12 +34,10 @@ public class RoleController {
             HttpServletRequest request,
             @Valid @RequestBody RoleDto roleDto
     ){
-
-        requestLogService.logRequest(RequestUtil.getClientIp(request), request.getRequestURI(), request.getMethod());
+        requestLogService.logRequest(request);
 
         RoleDto createdRoleDto = roleService.createRole(roleDto);
         return ResponseEntity.ok(ResponseUtil.success(createdRoleDto, "role created"));
-
     }
 
     @PreAuthorize("hasRole('ADMIN')")

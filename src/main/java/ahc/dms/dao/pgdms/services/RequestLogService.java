@@ -2,6 +2,8 @@ package ahc.dms.dao.pgdms.services;
 
 import ahc.dms.dao.pgdms.entities.RequestLog;
 import ahc.dms.dao.pgdms.repositories.RequestLogRepository;
+import ahc.dms.utils.RequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +13,11 @@ public class RequestLogService {
     @Autowired
     private RequestLogRepository requestLogRepository;
 
-    public void logRequest(String ipAddress, String requestURI, String method) {
+    public void logRequest(HttpServletRequest request) {
         RequestLog requestLog = new RequestLog();
-        requestLog.setIpAddress(ipAddress);
-        requestLog.setEndpoint(requestURI);
-        requestLog.setMethod(method);
+        requestLog.setIpAddress(RequestUtil.getClientIp(request));
+        requestLog.setEndpoint(request.getRequestURI());
+        requestLog.setMethod(request.getMethod());
         requestLogRepository.save(requestLog);
     }
 }
