@@ -27,7 +27,9 @@ const Login = () => {
     try {
       const { token, user } = await loginUser(formData.loginId, formData.password);
       login({ token, user });
-      navigate(getRoleRedirectPath(user.roles[0].name.trim()));
+      console.log("role: " + user.roles[0].role_name.trim());
+
+      navigate(getRoleRedirectPath( user.roles[0].role_name.trim()));
     } catch {
       showAlert("!!Invalid User ID or Password!!")
       // setErrorMsg("Invalid User ID or Password.");

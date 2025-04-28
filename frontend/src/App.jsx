@@ -17,7 +17,6 @@ import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./pages/ManageCauseList";
 import PDFViewer from "./components/pdf/PDFViewer";
 import UnAuthorize from "./pages/UnAuthorize";
-
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -39,9 +38,10 @@ export default function App() {
       <BrowserRouter basename="/dms">
         <Routes>
 
-          <Route path="" element={<Home />} />
-          <Route path="/home/login" element={<Login />} />
+          <Route path="" element={<Login />} />
+          {/* <Route path="/home/login" element={<Login />} /> */}
           <Route path="/home/register" element={<Register />} />
+
           <Route path="/home/forgot" element={<ForgotPassword />} />
           <Route path="/home/reset" element={<ResetPassword />} />
           <Route path="/home/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

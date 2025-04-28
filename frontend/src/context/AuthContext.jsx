@@ -5,27 +5,51 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
-  );
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user")) || null;
+    } catch (e) {
+      console.error("Error parsing user data:", e);
+      return null;
+    }
+  });
   const [role, setRole] = useState(localStorage.getItem("role") || "");
 
+  // Check for token expiration when token is available
   useEffect(() => {
     if (token && isTokenExpired(token)) {
       logout();
     }
-  }, []);
+  }, [token]);
 
-  useEffect(() => {
-    localStorage.setItem("token", token || "");
-    localStorage.setItem("user", JSON.stringify(user) || "");
-    localStorage.setItem("role", role || "");
-  }, [token, user, role]);
+  // Syncing state with localStorage
+ // Syncing state with localStorage
+useEffect(() => {
+  if (token && user) {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // Check if the roles array exists and has at least one role before accessing it
+    if (user.roles && user.roles[0] && user.roles[0].role_name) {
+      setRole(user.roles[0].role_name.trim());
+      localStorage.setItem("role", user.roles[0].role_name.trim()); //  Corrected here
+    } else {
+      setRole(""); // Clear role if no valid role found
+    }
+  }
+}, [token, user]);
+
 
   const login = ({ token, user }) => {
     setToken(token);
     setUser(user);
-    setRole(user.roles[0].name.trim());
+
+    // Check if the roles array exists and has at least one role
+    if (user.roles && user.roles[0] && user.roles[0].role_name) {
+      setRole(user.roles[0].role_name.trim());
+    } else {
+      setRole(""); // Clear role if no valid role found
+    }
   };
 
   const logout = () => {
@@ -33,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setRole("");
     localStorage.clear();
-    localStorage.setItem("logout", Date.now()); // trigger cross-tab logout
+    localStorage.setItem("logout", Date.now()); // Trigger cross-tab logout
   };
 
   return (
@@ -42,6 +66,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-// Add this at the bottom of your file
-export const useAuth = () => React.useContext(AuthContext);
 
+// Custom hook to access Auth context
+export const useAuth = () => React.useContext(AuthContext);

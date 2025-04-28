@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaFileAlt, FaCalendarAlt, FaChartBar, FaBars } from "react-icons/fa";
 import "../../assets/styles.css";
+import { useAuth } from "../../context/AuthContext";
+
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState("");
+    const { role,token } = useAuth();
+  
 
-  const role = localStorage.getItem("role"); // get role directly
+  // const role = localStorage.getItem("role"); // get role directly
+  console.log(token+role)
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
   const toggleDropdown = (item) =>

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUser } from "../../services/axios";
+import { useAuth } from "../../context/AuthContext";
+
 import {
   Container,
   Row,
@@ -14,11 +16,14 @@ import {
   Button,
   Alert,
 } from "reactstrap";
-
 import "../../assets/styles.css";
+import {fetchRoles} from "../../services/roleServices"
 
 const Register = () => {
+
+  
   const navigate = useNavigate();
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,8 +31,40 @@ const Register = () => {
     password: "",
     phone: "",
     login_id: "",
+    role: "", // Add role to the form data
   });
+
   const [error, setError] = useState("");
+  const [roles, setRoles] = useState([]); // State to hold roles
+  const [roleError, setRoleError] = useState("");
+
+  // Fetch roles from API
+  // const fetchRoles = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:8081/dms/role/", {
+  //       method: "GET",
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Error fetching roles.");
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.status) {
+  //       setRoles(data.data); // Set the roles from the 'data' field
+  //     }
+  //   } catch (err) {
+  //     setError("Error fetching roles.");
+  //   }
+  // };
+
+  useEffect(() => {
+    fetchRoles(token,setRoles);
+  }, []);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -36,38 +73,30 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, email, password, phone, about, login_id } = formData;
-
-    if (!name || !email || !password || !phone || !about || !login_id) {
-      setError("All fields are required.");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Invalid email format.");
-      return;
-    }
-
-    if (password.length < 3) {
-      setError("Password must be at least 3 characters.");
-      return;
-    }
-
-    setError("");
+    // Structure the user data with role correctly
+    const { name, email, about, password, phone, login_id, role } = formData;
+    const userData = {
+      name,
+      email,
+      about,
+      password,
+      phone,
+      login_id,
+      user_roles: [{ role_id: role }], // Wrap the role in an array
+    };
 
     try {
-      await saveUser(formData, navigate);
-    } catch (err) {
-      setError(err.message);
+      await saveUser(userData, navigate, token); // Ensure this method is implemented correctly in axios
+    } catch (error) {
+      console.error("Error saving user:", error);
     }
   };
 
   const backToDashboard = () => {
-    window.location.href = "/dms/home/admindashboard";
+    navigate("/dms/home/admindashboard");
   };
 
   return (
@@ -78,7 +107,7 @@ const Register = () => {
             <CardBody className="p-4">
               <h3 className="text-center text-primary mb-4 shimmer-text">Create User</h3>
               {error && <Alert color="danger">{error}</Alert>}
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleFormSubmit}> {/* Updated to handleFormSubmit */}
                 <Row>
                   <Col xs={12} md={6} className="mb-3">
                     <FormGroup>
@@ -156,6 +185,28 @@ const Register = () => {
                         onChange={handleChange}
                         placeholder="Short description"
                       />
+                    </FormGroup>
+                  </Col>
+                </Row>
+
+                {/* Role Selection */}
+                <Row>
+                  <Col xs={12} md={6} className="mb-3">
+                    <FormGroup>
+                      <Label for="role">Role</Label>
+                      <Input
+                        type="select"
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select a role</option>
+                        {roles.map((role) => (
+                          <option key={role.role_id} value={role.role_id}>
+                            {role.role_name}
+                          </option>
+                        ))}
+                      </Input>
                     </FormGroup>
                   </Col>
                 </Row>

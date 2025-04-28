@@ -57,13 +57,13 @@ export const loginUser = async (loginId, password) => {
 
 
 // Fetch user by ID (renamed to getUserById if needed)
-export const fetchUserById = (userId) => {
+export const fetchUserById = (userId,token) => {
   if (!window.confirm("Are you sure you want to update this user?")) return;
 
   axiosInstance
     .get(API_PATHS.GET_USER(userId), {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .catch((err) => handleError(err, "Could not fetch user."));
@@ -82,7 +82,7 @@ export const fetchUsers = (setUsers,token) => {
     .get(API_PATHS.USERS, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((res) => setUsers(res.data))
+    .then((res) => setUsers(res.data.data))
     .catch(() => showAlert("Error loading users. You may not be authorized."))
 };
 
@@ -104,9 +104,14 @@ export const deleteUser = (userId, users, setUsers) => {
 };
 
 // Register/save user
-export const saveUser = async (userData, navigate) => {
+export const saveUser = async (userData, navigate, token) => {
   try {
-    const response = await axiosInstance.post(API_PATHS.REGISTER, userData);
+    console.log(userData);
+    const response = await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add token in the Authorization header
+      },
+    });
     console.log("User created:", response.data);
     navigate("/home/admindashboard");
   } catch (error) {
@@ -114,6 +119,7 @@ export const saveUser = async (userData, navigate) => {
     throw new Error(message);
   }
 };
+
 
 // Update user
 export const updateUser = (userData, setUsers, setError, setShowModal, navigate) => {
@@ -188,3 +194,4 @@ export const resetPassword = async (loginId, newPassword, token) => {
     throw new Error(error.response?.data?.message || "Password reset failed.");
   }
 };
+export { axiosInstance };  // Named export

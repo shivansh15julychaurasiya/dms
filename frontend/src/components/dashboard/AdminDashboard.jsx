@@ -1,4 +1,3 @@
-// Import React hooks and required components from Reactstrap and React Router
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -22,6 +21,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]); // State to store list of users
   const [currentPage, setCurrentPage] = useState(1); // Current pagination page
   const usersPerPage = 5; // Users to display per page
+  const [loading, setLoading] = useState(true); // State to handle loading
 
   const navigate = useNavigate();
 
@@ -29,19 +29,24 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (!token || isTokenExpired(token)) {
       logout(); // Logout if token is missing or expired
+      navigate("/login"); // Redirect to login page
     } else {
-      fetchUsers(setUsers, token); // Fetch users from backend
+      // Fetch users from backend and set loading state
+      fetchUsers(setUsers, token);
+      console.log(users)
+      setLoading(false);
     }
 
     // Periodic token check every 10 seconds
     const intervalId = setInterval(() => {
       if (!token || isTokenExpired(token)) {
         logout(); // Logout if token expires during session
+        navigate("/login"); // Redirect to login page
       }
-    }, 10000);
+    }, 20000);
 
     return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, []);
+  }, [token, logout, navigate]);
 
   // Delete user handler
   const deleteHandler = async (userId) => {
@@ -51,7 +56,7 @@ const AdminDashboard = () => {
   // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = Array.isArray(users) ? users.slice(indexOfFirstUser, indexOfLastUser) : [];
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
@@ -78,65 +83,69 @@ const AdminDashboard = () => {
           </Row>
 
           {/* Users table */}
-          <Table responsive bordered hover className="mt-3">
-            <thead className="table-dark">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Employee ID</th>
-                <th>Phone</th>
-                <th>About</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.length > 0 ? (
-                currentUsers.map((user, index) => (
-                  <tr key={user.userId}>
-                    <td>{indexOfFirstUser + index + 1}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.login_id}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.about}</td>
-                    <td>
-                      {user.roles?.length
-                        ? user.roles
-                            .map((role) => role.name.replace("ROLE_", ""))
-                            .join(", ")
-                        : "No Role"}
-                    </td>
-                    <td>
-                      <Button
-                        color="warning"
-                        size="sm"
-                        className="me-2 mb-1"
-                        onClick={() => console.log("Edit user:", user)} // Placeholder for edit functionality
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        color="danger"
-                        size="sm"
-                        className="mb-1"
-                        onClick={() => deleteHandler(user.userId)}
-                      >
-                        Delete
-                      </Button>
+          {loading ? (
+            <div className="text-center">Loading...</div>
+          ) : (
+            <Table responsive bordered hover className="mt-3">
+              <thead className="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Employee ID</th>
+                  <th>Phone</th>
+                  <th>About</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentUsers.length > 0 ? (
+                  currentUsers.map((user, index) => (
+                    <tr key={user.userId}>
+                      <td>{indexOfFirstUser + index + 1}</td>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.login_id}</td>
+                      <td>{user.phone}</td>
+                      <td>{user.about}</td>
+                      <td>
+                        {user.roles?.length
+                          ? user.roles
+                              .map((role) => role.role_name.replace("ROLE_", ""))
+                              .join(", ")
+                          : "No Role"}
+                      </td>
+                      <td>
+                        <Button
+                          color="warning"
+                          size="sm"
+                          className="me-2 mb-1"
+                          onClick={() => console.log("Edit user:", user)} // Placeholder for edit functionality
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          color="danger"
+                          size="sm"
+                          className="mb-1"
+                          onClick={() => deleteHandler(user.userId)}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No users found
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center">
-                    No users found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+                )}
+              </tbody>
+            </Table>
+          )}
 
           {/* Pagination controls */}
           {totalPages > 1 && (
