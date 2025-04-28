@@ -1,7 +1,7 @@
-package ahc.dms.dao.msdms.services;
+package ahc.dms.dao.pgdms2.services;
 
-import ahc.dms.dao.msdms.entities.TokenLogs;
-import ahc.dms.dao.msdms.repositories.TokenLogsRepository;
+import ahc.dms.dao.pgdms2.entities.TokenLogs;
+import ahc.dms.dao.pgdms2.repositories.TokenLogsRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.TokenDto;
 import org.modelmapper.ModelMapper;

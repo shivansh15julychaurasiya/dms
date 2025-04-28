@@ -1,6 +1,6 @@
-package ahc.dms.dao.msdms.repositories;
+package ahc.dms.dao.pgdms2.repositories;
 
-import ahc.dms.dao.msdms.entities.TokenLogs;
+import ahc.dms.dao.pgdms2.entities.TokenLogs;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
