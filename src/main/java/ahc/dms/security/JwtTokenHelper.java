@@ -41,6 +41,7 @@ public class JwtTokenHelper {
         logger.info("user details object = {}", userDetails);
         Map<String, Object> claims = new HashMap<>();
         Date expiration = new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY);
+        logger.info("Token will expire at {}", expiration);
         String token = Jwts.builder()
                 .claims(claims)
                 .subject(userDetails.getUsername())
