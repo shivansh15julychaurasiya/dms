@@ -1,7 +1,7 @@
 package ahc.dms.security;
 
-import ahc.dms.dao.dms.entities.User;
 import ahc.dms.dao.dms.repositories.UserRepository;
+import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +19,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         //User user = userRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("User", "Email "+username, 0));
-        User user = userRepository.findByLoginId(username).orElseThrow(() -> new ResourceNotFoundException("User", "Login Id "+username, 0));
-        return user;
+        return userRepository
+                .findByLoginId(username)
+                .map(user -> {
+                    if (Boolean.FALSE.equals(user.getStatus())) {
+                        throw new ApiException("User is disabled");
+                    }
+                    return user;
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", username));
     }
 }
