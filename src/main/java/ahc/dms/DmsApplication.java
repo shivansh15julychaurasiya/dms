@@ -24,8 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Stream;
-
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class, // Prevents default single DataSource auto-configuration
         HibernateJpaAutoConfiguration.class, // Stops Hibernate from autoconfiguring based on a single DataSource
@@ -88,7 +86,7 @@ public class DmsApplication implements CommandLineRunner {
                         return roleRepository.save(newRole);
                     });
 
-            Role userRole = roleRepository.findByRoleName("ROLE_USER")
+            roleRepository.findByRoleName("ROLE_USER")
                     .orElseGet(() -> {
                         Role newRole = new Role();
                         newRole.setRoleName("ROLE_USER");
@@ -96,7 +94,7 @@ public class DmsApplication implements CommandLineRunner {
                         return roleRepository.save(newRole);
                     });
 
-            Role ecourtRole = roleRepository.findByRoleName("ROLE_ECOURT")
+            roleRepository.findByRoleName("ROLE_ECOURT")
                     .orElseGet(() -> {
                         Role newRole = new Role();
                         newRole.setRoleName("ROLE_ECOURT");
@@ -117,12 +115,9 @@ public class DmsApplication implements CommandLineRunner {
                     });
 
             // For each role, check if it exists first
-            Stream.of(adminRole, userRole, ecourtRole)
-                    .forEach(role -> {
-                        if (!userRoleRepository.existsByUserAndRole(firstUser, role)) {
-                            userRoleRepository.save(new UserRole(firstUser, role, true));
-                        }
-                    });
+            if (!userRoleRepository.existsByUserAndRole(firstUser, adminRole)) {
+                userRoleRepository.save(new UserRole(firstUser, adminRole, true));
+            }
 
 
             System.out.println("Admin User created");
