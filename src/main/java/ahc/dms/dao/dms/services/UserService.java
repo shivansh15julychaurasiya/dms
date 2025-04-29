@@ -175,8 +175,7 @@ public class UserService {
 
     private User fetchUserOrThrow(Long userId) {
         return Optional.ofNullable(userId)
-                .map(id -> userRepository
-                        .findById(id)
+                .map(id -> userRepository.findById(id)
                         .map(user -> {
                             if (Boolean.FALSE.equals(user.getStatus())) {
                                 throw new ApiException("User is disabled");
