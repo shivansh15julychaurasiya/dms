@@ -39,7 +39,6 @@ public class UserRoleService {
         User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
         Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
 
-
         //check for existing role-mapping
         Optional<UserRole> existingUserRole = userRoleRepository.findByUserAndRole(existingUser, existingRole);
         if (existingUserRole.isPresent() && existingUserRole.get().getStatus()) {
@@ -63,18 +62,9 @@ public class UserRoleService {
             userRoleRepository.saveAndFlush(newUserRole);
         }
 
-        // Refresh the user entity in persistence context
-        existingUser = userRepository.findById(existingUser.getUserId()).orElseThrow();
-        // Get only those roles whose status is active in **user-role entity**
-        Role activeRole = existingUser.getUserRoles().stream()
-                .filter(UserRole::getStatus)
-                .findFirst()
-                .map(UserRole::getRole)
-                .orElse(null);
-
         // Prepare response
         UserDto theUserDto = modelMapper.map(existingUser, UserDto.class);
-        RoleDto theRoleDto = modelMapper.map(activeRole, RoleDto.class);
+        RoleDto theRoleDto = modelMapper.map(existingRole, RoleDto.class);
         theUserDto.setRoles(new HashSet<>(Collections.singletonList(theRoleDto)));
         theUserDto.setUserRoles(null);
         return theUserDto;
@@ -100,12 +90,9 @@ public class UserRoleService {
                     //return userRoleRepository.findById(userRole.getUrId()).orElseThrow();
                 }).orElseThrow(() -> new ApiException("User has never been assigned given Role"));
 
-        // Refresh the user entity in persistence context
-        existingUser = userRepository.findById(existingUser.getUserId()).orElseThrow();
-
         // Prepare response
         UserDto theUserDto = modelMapper.map(existingUser, UserDto.class);
-        RoleDto theRoleDto = modelMapper.map(updatedUserRole.getRole(), RoleDto.class);
+        RoleDto theRoleDto = modelMapper.map(existingRole, RoleDto.class);
         //set the status from the user-role mapping
         theRoleDto.setStatus(updatedUserRole.getStatus());
         theUserDto.setRoles(Collections.singleton(theRoleDto));

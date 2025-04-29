@@ -60,6 +60,7 @@ public class UserService {
 
         // now save new user and the correct user-role mapping
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setStatus(true);
         User newUser = userRepository.saveAndFlush(modelMapper.map(userDto, User.class));
         UserRole userRole = userRoleRepository.saveAndFlush(new UserRole(newUser, providedRole, true));
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
