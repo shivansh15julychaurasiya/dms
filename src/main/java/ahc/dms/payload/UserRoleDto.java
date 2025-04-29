@@ -1,6 +1,7 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
