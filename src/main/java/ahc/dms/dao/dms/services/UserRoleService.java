@@ -17,9 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserRoleService {
@@ -36,17 +35,10 @@ public class UserRoleService {
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto assignRole(UserRoleDto userRoleDto) {
 
-        //check for existing user
-        User existingUser = Optional.ofNullable(userRoleDto.getUserId())
-                .map(userId -> userRepository
-                        .findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", userRoleDto.getUserId())))
-                .orElseThrow(() -> new ApiException("User Id cannot be null"));
-        //check for existing role
-        Role existingRole = Optional.ofNullable(userRoleDto.getRoleId())
-                .map(roleId -> roleRepository.findByRoleId(userRoleDto.getRoleId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId())))
-                .orElseThrow(() -> new ApiException("Role Id cannot be null"));
+        //check for existing user and role
+        User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
+        Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+
 
         //check for existing role-mapping
         Optional<UserRole> existingUserRole = userRoleRepository.findByUserAndRole(existingUser, existingRole);
@@ -54,60 +46,54 @@ public class UserRoleService {
             // if an active user-role mapping already exists
             throw new ApiException("Mapping already exists");
         } else if (existingUserRole.isPresent()){
-            // deactivate all other user-role mapping
+            // if a stale user-role mapping is present, then first deactivate all other user-role mapping
             existingUser.getUserRoles().forEach(userRole -> userRole.setStatus(false));
             userRepository.saveAndFlush(existingUser);
-            // if the user-role mapping is stale, then active it
+            // activate the provided user-role mapping
             existingUserRole.get().setStatus(true);
             userRoleRepository.saveAndFlush(existingUserRole.get());
         } else {
+            //if no user-role mapping is present, then create a new one
             //first deactivate all the previous user-role mapping
             existingUser.getUserRoles().forEach(userRole -> userRole.setStatus(false));
             userRepository.saveAndFlush(existingUser);
             //create a new active user-role mapping
             UserRole newUserRole = new UserRole(existingUser, existingRole, true);
-            userRoleRepository.save(newUserRole);
+            userRoleRepository.saveAndFlush(newUserRole);
         }
 
         // Refresh the user entity in persistence context
         existingUser = userRepository.findById(existingUser.getUserId()).orElseThrow();
-
         // Get updated roles directly from the managed user entity
-        Set<Role> roles = existingUser.getUserRoles().stream()
+        Role activeRole = existingUser.getUserRoles().stream()
                 .filter(UserRole::getStatus)
+                .findFirst()
                 .map(UserRole::getRole)
-                .collect(Collectors.toSet());
+                .orElse(null);
 
         // Prepare response
         UserDto theUserDto = modelMapper.map(existingUser, UserDto.class);
-        theUserDto.setRoles(roles.stream()
-                .map(eachrole -> modelMapper.map(eachrole, RoleDto.class))
-                .collect(Collectors.toSet()));
+        RoleDto theRoleDto = modelMapper.map(activeRole, RoleDto.class);
+        theUserDto.setRoles(new HashSet<>(Collections.singletonList(theRoleDto)));
         theUserDto.setUserRoles(null);
         return theUserDto;
     }
 
+    @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto deassignRole(UserRoleDto userRoleDto) {
-        //check for existing user
-        User existingUser = Optional.ofNullable(userRoleDto.getUserId())
-                .map(userId -> userRepository
-                        .findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", userRoleDto.getUserId())))
-                .orElseThrow(() -> new ApiException("User Id cannot be null"));
-        //check for existing role
-        Role existingRole = Optional.ofNullable(userRoleDto.getRoleId())
-                .map(roleId -> roleRepository.findByRoleId(userRoleDto.getRoleId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId())))
-                .orElseThrow(() -> new ApiException("Role Id cannot be null"));
-        //check for existing role-mapping, if found active then disable it of if not found throw exception
+
+        //check for existing user and role
+        User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
+        Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+
+        //check for existing role-mapping, if found active then disable it and if not found throw exception
         UserRole updatedUserRole = userRoleRepository.findByUserAndRole(existingUser, existingRole)
                 .map(userRole -> {
-                    if (userRole.getStatus()) {
-                        userRole.setStatus(false);
-                        return userRoleRepository.saveAndFlush(userRole);
-                    } else {
+                    if (!userRole.getStatus()) {
                         throw new ApiException("Role already de-assigned");
                     }
+                    userRole.setStatus(false);
+                    return userRoleRepository.saveAndFlush(userRole);
                 }).orElseThrow(() -> new ApiException("User has never been assigned given Role"));
 
 
@@ -122,6 +108,19 @@ public class UserRoleService {
         return theUserDto;
     }
 
+    private User fetchUserOrThrow(Long userId) {
+        return Optional.ofNullable(userId)
+                .map(id -> userRepository
+                        .findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", id)))
+                .orElseThrow(() -> new ApiException("User Id cannot be null"));
+    }
 
+    private Role fetchRoleOrThrow(Integer roleId) {
+        return Optional.ofNullable(roleId)
+                .map(id -> roleRepository.findByRoleId(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", id)))
+                .orElseThrow(() -> new ApiException("Role Id cannot be null"));
+    }
 
 }

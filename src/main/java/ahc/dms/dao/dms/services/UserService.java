@@ -56,8 +56,7 @@ public class UserService {
                 ));
 
         // find the provided role object
-        Role providedRole = roleRepository.findByRoleId(userRoleDto.getRoleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
+        Role providedRole = fetchRoleOrThrow(userRoleDto.getRoleId());
 
         // now save new user and the correct user-role mapping
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -169,6 +168,13 @@ public class UserService {
         if (userRepository.existsByPhone(userDto.getPhone())) {
             throw new DuplicateResourceException("Phone number", userDto.getPhone());
         }
+    }
+
+    private Role fetchRoleOrThrow(Integer roleId) {
+        return Optional.ofNullable(roleId)
+                .map(id -> roleRepository.findByRoleId(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", id)))
+                .orElseThrow(() -> new ApiException("Role Id cannot be null"));
     }
 
 }
