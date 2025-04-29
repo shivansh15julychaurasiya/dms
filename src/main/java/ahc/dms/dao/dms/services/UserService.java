@@ -172,9 +172,29 @@ public class UserService {
         }
     }
 
+    private User fetchUserOrThrow(Long userId) {
+        return Optional.ofNullable(userId)
+                .map(id -> userRepository
+                        .findById(id)
+                        .map(user -> {
+                            if (Boolean.FALSE.equals(user.getStatus())) {
+                                throw new ApiException("User is disabled");
+                            }
+                            return user;
+                        })
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", id)))
+                .orElseThrow(() -> new ApiException("User Id cannot be null"));
+    }
+
     private Role fetchRoleOrThrow(Integer roleId) {
         return Optional.ofNullable(roleId)
                 .map(id -> roleRepository.findByRoleId(id)
+                        .map(role -> {
+                            if (Boolean.FALSE.equals(role.getStatus())) {
+                                throw new ApiException("Role is disabled");
+                            }
+                            return role;
+                        })
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", id)))
                 .orElseThrow(() -> new ApiException("Role Id cannot be null"));
     }

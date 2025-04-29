@@ -1,6 +1,7 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.Column;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -42,6 +43,8 @@ public class UserDto {
     private String phone;
     @NotBlank
     private String about;
+    private Boolean status;
+
     @JsonProperty("user_roles")
     @NotEmpty(message = "At least one role must be specified")
     private Set<@Valid UserRoleDto> userRoles = new HashSet<>();

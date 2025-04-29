@@ -49,6 +49,8 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false, length=100)
     private String password;
     private String about;
+    @Column(nullable = false)
+    private Boolean status = true;
 
     // Audit Fields
     @CreationTimestamp
