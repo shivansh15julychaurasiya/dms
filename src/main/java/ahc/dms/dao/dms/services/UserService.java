@@ -145,9 +145,29 @@ public class UserService {
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
-        userRepository.delete(user);
+    public void deactivateUser(String loginId) {
+        userRepository.findByLoginId(loginId)
+                .map(user -> {
+                    if (Boolean.FALSE.equals(user.getStatus())) {
+                        throw new ApiException("User is already deactivated");
+                    }
+                    user.setStatus(false);
+                    return userRepository.save(user);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", loginId));
+    }
+
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public void activateUser(String loginId) {
+        userRepository.findByLoginId(loginId)
+                .map(user -> {
+                    if (Boolean.TRUE.equals(user.getStatus())) {
+                        throw new ApiException("User is already active");
+                    }
+                    user.setStatus(true);
+                    return userRepository.save(user);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", loginId));
     }
 
     public UserDto resetPassword(String loginId, String password) {
