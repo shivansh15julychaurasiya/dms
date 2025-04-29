@@ -18,7 +18,7 @@ export const fetchRoles = ( token,setRoles) => {
         showAlert("No roles found.");
       }
     })
-    .catch(() => showAlert("Error loading roles. You may not be authorized."));
+    
 };
 
 // Fetch role by ID

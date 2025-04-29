@@ -56,7 +56,7 @@ export const fetchUsers = (setUsers, token) => {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((res) => setUsers(res.data.data))
-    .catch(() => showAlert("Error loading users. You may not be authorized."));
+    // .catch(() => showAlert("Error loading users. You may not be authorized."));
 };
 
 // Delete user
