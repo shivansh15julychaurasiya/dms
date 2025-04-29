@@ -16,6 +16,13 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     // for database errors
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<?>> duplicateResourceExceptionHandler(DuplicateResourceException ex) {
+        String message = ex.getMessage();
+        return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.NOT_FOUND);
+    }
+
+    // for database errors
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         String message = ex.getMessage();

@@ -5,6 +5,7 @@ import ahc.dms.dao.dms.entities.User;
 import ahc.dms.dao.dms.entities.UserRole;
 import ahc.dms.dao.dms.repositories.RoleRepository;
 import ahc.dms.dao.dms.repositories.UserRoleRepository;
+import ahc.dms.exceptions.DuplicateResourceException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
@@ -37,17 +38,20 @@ public class UserService {
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto createUser(UserDto userDto) {
+        dataIntegrityValidation(userDto);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         //first save the user to get userid
         User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
+
         //preparing to map roles since modelmapper is not able to map nested classes properly
         Set<RoleDto> roleDtos = new HashSet<>();
         //if user-roles are provided the add them
         if (userDto.getUserRoles() != null && !userDto.getUserRoles().isEmpty()){
             Set<UserRole> userRoles = new HashSet<>();
             for (UserRoleDto userRoleDto : userDto.getUserRoles()) {
+                // check if the role provided exists in role entity
                 Role role = roleRepository
                         .findByRoleId(userRoleDto.getRoleId())
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
@@ -110,4 +114,23 @@ public class UserService {
         userRepository.save(user);
         return modelMapper.map(user, UserDto.class);
     }
+
+    //validation constraints
+    private void dataIntegrityValidation (UserDto userDto) {
+        // Check if email already exists
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new DuplicateResourceException("Email", userDto.getEmail());
+        }
+
+        // Check if loginId already exists
+        if (userRepository.existsByLoginId(userDto.getLoginId())) {
+            throw new DuplicateResourceException("Login ID", userDto.getLoginId());
+        }
+
+        // Check if phone already exists
+        if (userRepository.existsByPhone(userDto.getPhone())) {
+            throw new DuplicateResourceException("Phone number", userDto.getPhone());
+        }
+    }
+
 }

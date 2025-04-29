@@ -105,4 +105,40 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+
+    /*
+    public void assignNewActiveRole (Role role) {
+        //deactivate all userroles first
+        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
+        //check if user already has given role (just inactive)
+        Optional<UserRole> existingUserRole = this.getUserRoles()
+                .stream()
+                .filter(userRole -> userRole.getRole().equals(role))
+                .findFirst();
+
+        if (existingUserRole.isPresent()) {
+            //reactivate role mapping
+            existingUserRole.get().setStatus(true);
+        } else {
+            //create new active role
+            UserRole newUserRole = new UserRole(this, role, true);
+            this.getUserRoles().add(newUserRole);
+        }
+    }
+
+    */
+
+    public void deactivateAllUserRoles(){
+        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
+    }
+
+    public Optional<Role> getActiveUserRole() {
+        return this.getUserRoles()
+                .stream()
+                .filter(userRole -> userRole.getStatus())
+                .map(userRole -> userRole.getRole())
+                .findFirst();
+    }
+
 }
