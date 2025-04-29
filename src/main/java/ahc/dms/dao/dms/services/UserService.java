@@ -76,18 +76,6 @@ public class UserService {
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto updateUser(UserDto userDto, Long userId) {
-        // find and update user
-        User updatedUser = userRepository.findById(userId)
-                .map(user -> {
-                    user.setLoginId(userDto.getLoginId());
-                    user.setName(userDto.getName());
-                    user.setEmail(userDto.getEmail());
-                    user.setAbout(userDto.getAbout());
-                    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-                    user.getUserRoles().forEach(userRole -> userRole.setStatus(false));
-                    return userRepository.saveAndFlush(user);
-                })
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
         // get the provided user-role from userDto
         UserRoleDto userRoleDto = Optional.ofNullable(userDto.getUserRoles())
@@ -100,22 +88,36 @@ public class UserService {
                 ));
 
         // find the provided role object
-        Role providedRole = roleRepository.findByRoleId(userRoleDto.getRoleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", userRoleDto.getRoleId()));
+        Role providedRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+        // find and update user
+        User updatedUser = userRepository.findById(userId)
+                .map(user -> {
+                    if (Boolean.FALSE.equals(user.getStatus())) {
+                        throw new ApiException("User is disabled");
+                    }
+                    user.setLoginId(userDto.getLoginId());
+                    user.setName(userDto.getName());
+                    user.setEmail(userDto.getEmail());
+                    user.setAbout(userDto.getAbout());
+                    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+                    user.getUserRoles().forEach(userRole -> userRole.setStatus(false));
+                    return userRepository.save(user);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
 
         // Deactivate all roles
         Set<UserRole> userRoles = userRoleRepository.findByUser(updatedUser);
         userRoles.forEach(ur -> ur.setStatus(false));
-        userRoleRepository.saveAllAndFlush(userRoles);
+        userRoleRepository.saveAll(userRoles);
 
         // if user-role exists then update status to true or create new active user-role
         UserRole userRole = userRoleRepository.findByUserAndRole(updatedUser, providedRole)
                 .map(existingUserRole -> {
                     // If exists, update status to true if it's not already true
                     existingUserRole.setStatus(true);
-                    return userRoleRepository.saveAndFlush(existingUserRole);
+                    return userRoleRepository.save(existingUserRole);
                 })
-                .orElseGet(() -> userRoleRepository.saveAndFlush(new UserRole(updatedUser, providedRole, true)));
+                .orElseGet(() -> userRoleRepository.save(new UserRole(updatedUser, providedRole, true)));
 
         //preparing response
         UserDto updatedUserDto = modelMapper.map(updatedUser, UserDto.class);
@@ -160,12 +162,10 @@ public class UserService {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new DuplicateResourceException("Email", userDto.getEmail());
         }
-
         // Check if loginId already exists
         if (userRepository.existsByLoginId(userDto.getLoginId())) {
             throw new DuplicateResourceException("Login ID", userDto.getLoginId());
         }
-
         // Check if phone already exists
         if (userRepository.existsByPhone(userDto.getPhone())) {
             throw new DuplicateResourceException("Phone number", userDto.getPhone());
