@@ -2,6 +2,7 @@ package ahc.dms.dao.dms.services;
 
 import ahc.dms.dao.dms.entities.Role;
 import ahc.dms.dao.dms.repositories.RoleRepository;
+import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
@@ -72,9 +73,28 @@ public class RoleService {
         return modelMapper.map(role, RoleDto.class);
     }
 
-    public void deleteRole(Integer roleId) {
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
-        roleRepository.delete(role);
+    public void disableRole(Integer roleId) {
+        roleRepository.findById(roleId)
+                .map(role -> {
+                    if (Boolean.FALSE.equals(role.getStatus())) {
+                        throw new ApiException("Role is already disabled");
+                    }
+                    role.setStatus(false);
+                    return roleRepository.save(role);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
+    }
+
+    public void enableRole(Integer roleId) {
+        roleRepository.findById(roleId)
+                .map(role -> {
+                    if (Boolean.TRUE.equals(role.getStatus())) {
+                        throw new ApiException("Role is already enabled");
+                    }
+                    role.setStatus(true);
+                    return roleRepository.save(role);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Role", " Id ", roleId));
     }
 
     //for authentication response, send only active role

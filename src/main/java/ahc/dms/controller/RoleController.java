@@ -72,10 +72,17 @@ public class RoleController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{roleId}")
-    public ResponseEntity<ApiResponse<?>> deleteRole(@PathVariable("roleId") Integer roleId){
-        roleService.deleteRole(roleId);
-        return ResponseEntity.ok(ResponseUtil.success(null, "role deleted"));
+    @GetMapping("/disable/{roleId}")
+    public ResponseEntity<ApiResponse<?>> disableRole(@PathVariable("roleId") Integer roleId){
+        roleService.disableRole(roleId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "role disabled"));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/enable/{roleId}")
+    public ResponseEntity<ApiResponse<?>> enableRole(@PathVariable("roleId") Integer roleId){
+        roleService.enableRole(roleId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "role enabled"));
     }
 
     @PostMapping("/assign-role")
