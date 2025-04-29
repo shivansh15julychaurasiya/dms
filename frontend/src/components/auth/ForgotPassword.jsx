@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {
   Container,
   Row,
@@ -13,7 +15,10 @@ import {
   Button,
   Alert,
 } from "reactstrap";
-import { requestOtp, verifyOtp } from "../../services/axios";
+import { requestOtp, verifyOtp } from "../../services/userService";
+import "../../assets/styles.css"
+import { showAlert } from "../../utils/helpers";
+
 
 const ForgotPassword = () => {
   const [loginId, setLoginId] = useState("");
@@ -49,18 +54,17 @@ const ForgotPassword = () => {
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     verifyOtp(loginId, otp, setMessage, navigate);
+    showAlert("OTP verified Successfully 1")
   };
 
   return (
-    <div className="vh-100 d-flex align-items-center justify-content-center bg-image"
-      style={{ backgroundImage: "url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg')", backgroundSize: "cover" }}
-    >
+    <div className="vh-100 d-flex align-items-center justify-content-center register-background">
       <Container>
         <Row className="justify-content-center">
           <Col md={6} lg={5}>
-            <Card className="shadow-lg rounded-4">
-              <CardBody className="p-4 bg-white bg-opacity-75">
-                <h2 className="text-center mb-3">
+            <Card className="shadow-lg border-1 rounded-4 cardStyle">
+              <CardBody className="p-4 ">
+                <h2 className="text-center mb-3 text-primary">
                   <i className="bi bi-unlock me-2"></i>Forgot Password
                 </h2>
                 <p className="text-center text-muted mb-4">
@@ -77,29 +81,30 @@ const ForgotPassword = () => {
 
                 <Form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}>
                   <FormGroup>
-                    <Label for="loginId">{otpSent ? "Enter OTP:" : "Login ID:"}</Label>
+                    <Label for="loginId" className="fw-bold text-primary">{otpSent ? "Enter OTP:" : "Login ID:"}</Label>
                     <Input
-                      type={otpSent ? "text" : "text"}
+                      type="text"
                       id={otpSent ? "otp" : "loginId"}
                       value={otpSent ? otp : loginId}
                       onChange={(e) => otpSent ? setOtp(e.target.value) : setLoginId(e.target.value)}
                       placeholder={otpSent ? "Enter OTP" : "Enter Login ID"}
                       required
                       disabled={otpSent && timer === 0}
+                      className="rounded-3 border-2"
                     />
                   </FormGroup>
 
                   <div className="d-grid">
                     {!otpSent ? (
-                      <Button color="danger" className="btn-block" type="submit">
+                      <Button color="danger" className="btn-block rounded-pill py-2 fs-5 hover-shadow" type="submit">
                         <i className="bi bi-envelope-arrow-up me-1"></i> Send Reset OTP
                       </Button>
                     ) : timer > 0 ? (
-                      <Button color="danger" className="btn-block" type="submit">
+                      <Button color="danger" className="btn-block rounded-pill py-2 fs-5 hover-shadow" type="submit">
                         <i className="bi bi-shield-lock me-1"></i> Verify OTP
                       </Button>
                     ) : (
-                      <Button color="warning" className="btn-block" type="button" onClick={handleSendOtp}>
+                      <Button color="warning" className="btn-block rounded-pill py-2 fs-5 hover-shadow" type="button" onClick={handleSendOtp}>
                         <i className="bi bi-arrow-clockwise me-1"></i> Resend OTP
                       </Button>
                     )}
@@ -113,7 +118,7 @@ const ForgotPassword = () => {
                 )}
 
                 <div className="text-center mt-3">
-                  <Link to="/home/login" className="text-decoration-none">
+                  <Link to="/" className="text-decoration-none text-danger fw-bold">
                     <i className="bi bi-arrow-left me-1"></i> Back to Login
                   </Link>
                 </div>

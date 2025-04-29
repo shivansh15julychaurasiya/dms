@@ -1,6 +1,6 @@
 import { showAlert } from "../utils/helpers";
 import { ROLE_API_PATHS } from "../utils/constants";
-import { axiosInstance } from './axios';  // Correctly import axiosInstance
+import { axiosInstance } from './userService';  // Correctly import axiosInstance
 
 // Fetch all roles
 export const fetchRoles = ( token,setRoles) => {

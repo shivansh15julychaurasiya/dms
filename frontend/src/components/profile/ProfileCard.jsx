@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { isTokenExpired } from "../../utils/helpers";
-
+import { showAlert } from "../../utils/helpers";
 const ProfileCard = () => {
   const { user, token, logout } = useAuth();
 
@@ -15,6 +15,7 @@ const ProfileCard = () => {
 
   const handleLogout = async () => {
     logout();
+    showAlert("Yor are logged out !" ,"success")
   };
 
   const handleProfile = () => {

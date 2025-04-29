@@ -1,8 +1,21 @@
 import { ROLE_PATHS } from "./constants";
 import { toast } from "react-toastify";
 
-export const getRoleRedirectPath = (role) => {
-  return ROLE_PATHS[role] || "/home/unauthorize";
+// export const getRoleRedirectPath = (role) => {
+//   return ROLE_PATHS[role] || "/home/unauthorize";
+// };
+
+// Define role priority (highest first)
+const ROLE_PRIORITY = ["ROLE_ADMIN", "ROLE_USER", "ROLE_ECOURT"];
+
+export const getRoleRedirectPath = (roleNames) => {
+  for (let role of ROLE_PRIORITY) {
+    if (roleNames.includes(role)) {
+      return ROLE_PATHS[role];  // return path for the first matched role
+    }
+  }
+  // fallback route if no known role matched
+  return "/home/userdashboard";
 };
 
 

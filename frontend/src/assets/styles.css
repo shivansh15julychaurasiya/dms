@@ -25,7 +25,7 @@
 
 
 /* Animation style */
-.custom-top-right-modal {
+/* .custom-top-right-modal {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -58,15 +58,52 @@ rgb(167, 14, 154) 80%
     100% {
       background-position: -200% center;
     }
-  }
-
+  } */
   .register-background {
+  background-image: url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg');
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(3px);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(45deg, #007bff, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .cardStyle:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+  }
+  
+  .shimmer-text {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(to right, #dee2e6 8%, #f8f9fa 18%, #dee2e6 33%);
+    background-size: 1000px 100%;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  input:focus, select:focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+  
+
+  /* .register-background {
   background-image: url('https://as2.ftcdn.net/jpg/06/12/69/39/1000_F_612693965_Ic0XfvkMa44xQXHA8lonULgqoEzyS0Xl.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;
   overflow: hidden;
-}
+} */
 
 .wrapperStyle{
   height: "100vh";
@@ -105,3 +142,78 @@ rgb(167, 14, 154) 80%
   overflow: hidden;
  
 }
+.sidebar-hover {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.sidebar-hover:hover {
+  background-color: #0d6efd; /* Bootstrap primary color */
+  color: white;
+}
+
+/* Login form css */
+
+
+
+/* Background Gradient */
+.bg-gradient-light {
+  background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
+}
+
+/* Card Styling */
+.cardStyle {
+  border-radius: 1.5rem;
+  background: #ffffff9c;
+}
+
+/* Input Field Rounded Styling */
+input, .form-group .form-control {
+  border-radius: 10px;
+  border: 2px solid #0ec0ec;
+  box-shadow: none;
+}
+
+input:focus, .form-group .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+}
+
+/* Button Styling */
+button.py-2.fs-5.rounded-pill {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+button.py-2.fs-5.rounded-pill:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+  transform: translateY(-3px);
+}
+
+button.py-2.fs-5.rounded-pill:active {
+  transform: translateY(0);
+}
+
+/* Error Alert Fade-In */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Link Hover */
+.text-danger:hover {
+  color: #dc3545 !important;
+  text-decoration: underline;
+}
+.rounded-4 {
+  border-radius: 1.5rem ;
+}
+

@@ -13,12 +13,14 @@ import {
   Button,
   Alert,
 } from "reactstrap";
-import { resetPassword } from "../../services/axios";
+import { resetPassword } from "../../services/userService";
+import { showAlert } from "../../utils/helpers";
+import "../../assets/styles.css"
+
 
 const ResetPassword = () => {
   const [loginId, setLoginId] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleResetPassword = async (e) => {
@@ -26,17 +28,17 @@ const ResetPassword = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      setMessage("Reset token not found. Please verify OTP again.");
+      showAlert("Reset token not found. Please verify OTP again.");
       return;
     }
 
     try {
       await resetPassword(loginId, newPassword, token);
-      setMessage("Password has been reset successfully!");
-      setTimeout(() => navigate("/home/login"), 1000);
+      showAlert("Password has been reset successfully!","success");
+      setTimeout(() => navigate("/"), 1000);
     } catch (error) {
       console.error("Reset failed:", error);
-      setMessage(error.message || "Failed to reset password. Please try again.");
+      showAlert( "Failed to reset password. Please try again.","error");
     }
   };
 
@@ -52,8 +54,8 @@ const ResetPassword = () => {
       <Container>
         <Row className="justify-content-center">
           <Col md={6} lg={5}>
-            <Card className="shadow-lg rounded-4">
-              <CardBody className="p-4 bg-white bg-opacity-75">
+            <Card className="shadow-lg rounded-4 cardStyle">
+              <CardBody className="p-4  bg">
                 <h2 className="text-center mb-3">
                   <i className="bi bi-key-fill me-2"></i>Reset Password
                 </h2>
@@ -93,16 +95,13 @@ const ResetPassword = () => {
                   </div>
                 </Form>
 
-                {message && (
-                  <Alert color="info" className="mt-3 text-center">
-                    {message}
-                  </Alert>
-                )}
-
-                <div className="text-center mt-3">
-                  <Link to="/home/login" className="text-decoration-none">
+               
+                <div className="d-grid mt-3">
+                  <Button color="primary" type="submit">
+                  <Link to="/" className="text-decoration-none  text-light rounded-pill hover-shadow">
                     <i className="bi bi-arrow-left me-1"></i> Back to Login
                   </Link>
+                  </Button>
                 </div>
               </CardBody>
             </Card>

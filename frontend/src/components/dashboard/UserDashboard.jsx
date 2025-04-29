@@ -3,7 +3,7 @@ import Sidebar from "../layout/Sidebar";
 import Navbar from "../layout/Navbar";
 import "../../assets/styles.css";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, isTokenExpired } from "../../services/axios";
+import { fetchUsers, isTokenExpired } from "../../services/userService";
 
 const UserDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -23,6 +23,8 @@ const UserDashboard = () => {
         fetchUsers(setUsers, setError, navigate);
       }
     };
+
+
 
     checkTokenAndFetch();
     const intervalId = setInterval(() => {

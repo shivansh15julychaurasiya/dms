@@ -1,10 +1,12 @@
 import React, { createContext, useState, useEffect } from "react";
-import { isTokenExpired } from "../services/axios";
+import { isTokenExpired } from "../services/userService";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
   const [token, setToken] = useState(localStorage.getItem("token") || "");
+
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user")) || null;

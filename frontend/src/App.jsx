@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -19,12 +19,12 @@ import PDFViewer from "./components/pdf/PDFViewer";
 import UnAuthorize from "./pages/UnAuthorize";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-
+import UpdateUser from "./components/auth/UpdateUser";
 export default function App() {
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "logout") {
-        window.location.href = "/dms/home/login";
+        window.location.href = "/dms/";
       }
     };
     window.addEventListener("storage", handleStorageChange);
@@ -33,28 +33,94 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <ToastContainer />
+      <ToastContainer
+        position="top-center" // Position on screen
+        autoClose={2000} // Auto close after 3 seconds
+        hideProgressBar={false} // Show the progress bar
+        newestOnTop={false} // Newest toasts appear on top
+        closeOnClick // Close on click
+        rtl={false} // Left-to-right layout
+        pauseOnFocusLoss // Pause when tab loses focus
+        draggable // Allow drag to dismiss
+        pauseOnHover // Pause on hover
+        theme="colored" // "light" | "dark" | "colored"
+      />
 
       <BrowserRouter basename="/dms">
         <Routes>
-
           <Route path="" element={<Login />} />
-          {/* <Route path="/home/login" element={<Login />} /> */}
           <Route path="/home/register" element={<Register />} />
 
           <Route path="/home/forgot" element={<ForgotPassword />} />
           <Route path="/home/reset" element={<ResetPassword />} />
-          <Route path="/home/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/home/admindashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/home/userdashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-          <Route path="/home/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-          <Route path="/home/editprofile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-          <Route path="/home/managecauselist" element={<ProtectedRoute><ManageCauseList /></ProtectedRoute>} />
-          <Route path="/pdf" element={<ProtectedRoute><PDFViewer /></ProtectedRoute>} />
-          <Route path="/home/unauthorize" element={<UnAuthorize />} />
+          <Route
+            path="/home/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/admindashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/userdashboard"
+            element={
+              <ProtectedRoute>
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/search"
+            element={
+              <ProtectedRoute>
+                <Search />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/editprofile"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/managecauselist"
+            element={
+              <ProtectedRoute>
+                <ManageCauseList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home/updateuser/:userId"
+            element={
+              <ProtectedRoute>
+                <UpdateUser />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/pdf"
+            element={
+              <ProtectedRoute>
+                <PDFViewer />
+              </ProtectedRoute>
+            }
+          />
+          {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-    
   );
 }

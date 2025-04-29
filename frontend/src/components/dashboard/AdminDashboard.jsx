@@ -11,10 +11,12 @@ import {
 } from "reactstrap";
 
 import Sidebar from "../layout/Sidebar"; // Sidebar component
-import Navbar from "../layout/Navbar";   // Top navigation bar
-import { isTokenExpired, fetchUsers, deleteUser } from "../../services/axios"; // API helper functions
+import Navbar from "../layout/Navbar"; // Top navigation bar
+import { isTokenExpired, fetchUsers, deleteUser } from "../../services/userService"; // API helper functions
 import { useNavigate } from "react-router-dom"; // For programmatic navigation
 import { useAuth } from "../../context/AuthContext"; // Auth context to access token and logout
+import { FaEdit, FaTrash } from "react-icons/fa"; // Add this at the top
+
 
 const AdminDashboard = () => {
   const { token, logout } = useAuth(); // Access token and logout function from context
@@ -22,6 +24,8 @@ const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current pagination page
   const usersPerPage = 5; // Users to display per page
   const [loading, setLoading] = useState(true); // State to handle loading
+
+  
 
   const navigate = useNavigate();
 
@@ -33,7 +37,6 @@ const AdminDashboard = () => {
     } else {
       // Fetch users from backend and set loading state
       fetchUsers(setUsers, token);
-      console.log(users)
       setLoading(false);
     }
 
@@ -56,7 +59,9 @@ const AdminDashboard = () => {
   // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = Array.isArray(users) ? users.slice(indexOfFirstUser, indexOfLastUser) : [];
+  const currentUsers = Array.isArray(users)
+    ? users.slice(indexOfFirstUser, indexOfLastUser)
+    : [];
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
@@ -69,14 +74,17 @@ const AdminDashboard = () => {
         <Navbar />
 
         {/* Main content container */}
-        <Container fluid className="p-4">
+        <Container fluid className="">
           {/* Header with title and create user button */}
-          <Row className="align-items-center mb-3">
+          <Row className="align-items-center ">
             <Col xs="12" md="6">
               <h4 className="text-primary">Admin User Management</h4>
             </Col>
             <Col xs="12" md="6" className="text-md-end mt-2 mt-md-0">
-              <Button color="primary" onClick={() => navigate("/home/register")}>
+              <Button
+                color="primary"
+                onClick={() => navigate("/home/register")}
+              >
                 Create User
               </Button>
             </Col>
@@ -86,7 +94,7 @@ const AdminDashboard = () => {
           {loading ? (
             <div className="text-center">Loading...</div>
           ) : (
-            <Table responsive bordered hover className="mt-3">
+            <Table responsive bordered hover className="mt-2">
               <thead className="table-dark">
                 <tr>
                   <th>#</th>
@@ -112,26 +120,32 @@ const AdminDashboard = () => {
                       <td>
                         {user.roles?.length
                           ? user.roles
-                              .map((role) => role.role_name.replace("ROLE_", ""))
+                              .map((role) =>
+                                role.role_name.replace("ROLE_", "")
+                              )
                               .join(", ")
                           : "No Role"}
                       </td>
+
+                      {/* // Inside your JSX: */}
                       <td>
                         <Button
                           color="warning"
                           size="sm"
-                          className="me-2 mb-1"
-                          onClick={() => console.log("Edit user:", user)} // Placeholder for edit functionality
+                          className="px-1 mb-1 me-1"
+                          onClick={() =>
+                            navigate(`/home/updateuser/${user.userId}`)
+                          }
                         >
-                          Edit
+                          <FaEdit />
                         </Button>
                         <Button
                           color="danger"
                           size="sm"
-                          className="mb-1"
+                          className=" px-1 mb-1"
                           onClick={() => deleteHandler(user.userId)}
                         >
-                          Delete
+                          <FaTrash />
                         </Button>
                       </td>
                     </tr>

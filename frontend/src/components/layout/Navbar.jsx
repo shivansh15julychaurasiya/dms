@@ -45,11 +45,11 @@ const CustomNavbar = () => {
         className="bg-light shadow-sm border-bottom"
         style={{ height: "50px", zIndex: 1040 }}
       >
-        <Container className="d-flex justify-content-between align-items-center px-4">
-          <NavbarBrand className="fw-bold shimmer-text px-5">High Court</NavbarBrand>
+        <Container className="d-flex justify-content-between align-items-center px-5">
+          <NavbarBrand className="fw-bold text-primary">High Court</NavbarBrand>
 
           <div className="d-flex align-items-center gap-3">
-            <div className="d-none d-md-inline text-muted small">{formattedDateTime}</div>
+            <div className="d-none d-md-inline text-dark small">{formattedDateTime}</div>
 
             <Button
               color="link"
@@ -60,12 +60,12 @@ const CustomNavbar = () => {
               <FaUserCircle size={26} className="text-primary" />
             </Button>
 
-            <span className="fw-semibold d-none d-md-inline shimmer-text">E-High Court</span>
+            <span className="fw-semibold d-none d-md-inline  text-dark">E-High Court</span>
           </div>
         </Container>
       </Navbar>
 
-      <div className="mb-5" style={{ height: "50px" }}></div>
+      <div className="mb-2" style={{ height: "60px" }}></div>
 
       {/* Right Corner Profile Modal */}
       <Modal
@@ -75,7 +75,7 @@ const CustomNavbar = () => {
         className="custom-right-modal"
         modalClassName="custom-modal-content"
       >
-        <ModalHeader toggle={toggleModal} className="border-0 shimmer-text fw-bold">
+        <ModalHeader toggle={toggleModal} className="border-0 text-dark text-center fw-bold">
           User Profile
         </ModalHeader>
         <ModalBody className="p-">
