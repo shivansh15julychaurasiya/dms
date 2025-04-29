@@ -1,8 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane, Card, CardBody } from "reactstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
+  Card,
+  CardBody,
+} from "reactstrap";
 import Sidebar from "../layout/Sidebar";
 import Navbar from "../layout/Navbar";
-import { isTokenExpired, fetchUsers, deleteUser } from "../../services/userService";
+import { FaUserPlus } from "react-icons/fa"; // Import at the top
+
+import {
+  isTokenExpired,
+  fetchUsers,
+  deleteUser,
+} from "../../services/userService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import RoleManagement from "../auth/RoleManagement";
@@ -49,16 +67,22 @@ const AdminDashboard = () => {
       <div className="flex-grow-1">
         <Navbar />
 
-        <Container fluid>
-          <Row className="align-items-center">
-            <Col xs="12" md="6">
-              <h4 className="text-primary">Admin Dashboard</h4>
+        <Container fluid >
+          <Row className="align-items-center mb-1">
+            <Col xs="12" className="text-center mb-2">
+              <h3 className="text-primary mb-0 fw-bold">Admin Dashboard</h3>
             </Col>
-            <Col xs="12" md="6" className="text-md-end mt-2 mt-md-0">
-              <Button color="primary" onClick={() => navigate("/home/register")}>
-                Create User
-              </Button>
-            </Col>
+
+<Col xs="12" className="text-start">
+  <Button
+    color="primary"
+    onClick={() => navigate("/home/register")}
+  >
+    <FaUserPlus className="me-2" /> {/* Icon with right margin */}
+    Create User
+  </Button>
+</Col>
+
           </Row>
 
           <Nav tabs>

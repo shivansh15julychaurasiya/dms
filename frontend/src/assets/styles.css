@@ -142,6 +142,8 @@ rgb(167, 14, 154) 80%
   overflow: hidden;
  
 }
+
+/* sidebar css */
 .sidebar-hover {
   transition: all 0.3s ease;
   border-radius: 8px;
@@ -151,6 +153,12 @@ rgb(167, 14, 154) 80%
   background-color: #0d6efd; /* Bootstrap primary color */
   color: white;
 }
+.active-sidebar-link {
+  background-color: #0d6efd !important; /* Bootstrap primary */
+  color: white !important;
+  border-radius: 0.25rem;
+}
+
 
 /* Login form css */
 
@@ -217,3 +225,4 @@ button.py-2.fs-5.rounded-pill:active {
   border-radius: 1.5rem ;
 }
 
+/* sidebar csss */

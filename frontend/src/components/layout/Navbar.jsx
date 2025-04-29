@@ -65,7 +65,7 @@ const CustomNavbar = () => {
         </Container>
       </Navbar>
 
-      <div className="mb-2" style={{ height: "60px" }}></div>
+      <div className="mb-1" style={{ height: "60px" }}></div>
 
       {/* Right Corner Profile Modal */}
       <Modal
