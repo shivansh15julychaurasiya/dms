@@ -63,6 +63,7 @@ public class UserService {
         User newUser = userRepository.saveAndFlush(modelMapper.map(userDto, User.class));
         UserRole userRole = userRoleRepository.saveAndFlush(new UserRole(newUser, providedRole, true));
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
+        roleDto.setStatus(userRole.getStatus());
 
         //preparing response
         UserDto newUserDto = modelMapper.map(newUser, UserDto.class);
@@ -119,6 +120,7 @@ public class UserService {
         //preparing response
         UserDto updatedUserDto = modelMapper.map(updatedUser, UserDto.class);
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
+        roleDto.setStatus(userRole.getStatus());
         updatedUserDto.setRoles(new HashSet<>(Collections.singletonList(roleDto)));
         updatedUserDto.setUserRoles(null);
         return updatedUserDto;

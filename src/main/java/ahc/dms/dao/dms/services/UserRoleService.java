@@ -45,8 +45,9 @@ public class UserRoleService {
         if (existingUserRole.isPresent() && existingUserRole.get().getStatus()) {
             // if an active user-role mapping already exists
             throw new ApiException("Mapping already exists");
-        } else if (existingUserRole.isPresent()){
-            // if a stale user-role mapping is present, then first deactivate all other user-role mapping
+        } else if (existingUserRole.isPresent()) {
+            // if stale user-role mapping is present
+            // first deactivate all other user-role mapping
             existingUser.getUserRoles().forEach(userRole -> userRole.setStatus(false));
             userRepository.saveAndFlush(existingUser);
             // activate the provided user-role mapping
@@ -64,7 +65,7 @@ public class UserRoleService {
 
         // Refresh the user entity in persistence context
         existingUser = userRepository.findById(existingUser.getUserId()).orElseThrow();
-        // Get updated roles directly from the managed user entity
+        // Get only those roles whose status is active in **user-role entity**
         Role activeRole = existingUser.getUserRoles().stream()
                 .filter(UserRole::getStatus)
                 .findFirst()
@@ -86,7 +87,8 @@ public class UserRoleService {
         User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
         Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
 
-        //check for existing role-mapping, if found active then disable it and if not found throw exception
+        //check for existing role-mapping
+        // if found active then disable it and if not found throw exception
         UserRole updatedUserRole = userRoleRepository.findByUserAndRole(existingUser, existingRole)
                 .map(userRole -> {
                     if (!userRole.getStatus()) {
@@ -94,8 +96,9 @@ public class UserRoleService {
                     }
                     userRole.setStatus(false);
                     return userRoleRepository.saveAndFlush(userRole);
+                    //refresh context
+                    //return userRoleRepository.findById(userRole.getUrId()).orElseThrow();
                 }).orElseThrow(() -> new ApiException("User has never been assigned given Role"));
-
 
         // Refresh the user entity in persistence context
         existingUser = userRepository.findById(existingUser.getUserId()).orElseThrow();
@@ -103,6 +106,8 @@ public class UserRoleService {
         // Prepare response
         UserDto theUserDto = modelMapper.map(existingUser, UserDto.class);
         RoleDto theRoleDto = modelMapper.map(updatedUserRole.getRole(), RoleDto.class);
+        //set the status from the user-role mapping
+        theRoleDto.setStatus(updatedUserRole.getStatus());
         theUserDto.setRoles(Collections.singleton(theRoleDto));
         theUserDto.setUserRoles(null);
         return theUserDto;
