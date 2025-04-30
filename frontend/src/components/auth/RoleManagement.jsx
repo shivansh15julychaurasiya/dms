@@ -1,6 +1,6 @@
 // src/components/admin/RoleManagement.js
 
-import { Form, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from "reactstrap";
+import {Table, Form, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from "reactstrap";
 import { FaPlus, FaUserMinus, FaTrash } from "react-icons/fa";
 import {   useState,useEffect } from "react";
 import {
@@ -26,6 +26,7 @@ const RoleManagement = () => {
 
 useEffect(() => {
     fetchRoles(token, setRoles);
+    setLoading(false)
   }, [token]);
 
 
@@ -154,15 +155,15 @@ useEffect(() => {
       {loading ? (
         <div className="text-center mt-4">Loading roles...</div>
       ) : (
-        <Table responsive bordered hover className="mt-4">
-          <thead className="table-dark">
+        <Table responsive bordered hover className="mt-4 table-sm">
+          <thead className="table-dark table-sm text-center">
             <tr>
               <th>#</th>
               <th>Role Name</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-center">
             {roles.length > 0 ? (
               roles.map((role, index) => (
                 <tr key={role.roleId}>
