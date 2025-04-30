@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import RoleManagement from "../auth/RoleManagement";
 import UserManagement from "../auth/UserManagement";
+import "../../assets/styles.css"
 
 const AdminDashboard = () => {
   const { token, logout } = useAuth();
@@ -98,6 +99,45 @@ const AdminDashboard = () => {
               </Button>
             </Col> */}
           </Row>
+          <Row className="my-4 g-4">
+  <Col md="6" lg="3">
+    <Card className="admin-card bg-primary text-white text-center h-100 border-0">
+      <CardBody>
+        <h5 className="fw-bold">👥 Users</h5>
+        <p className="fs-3 fw-bold">{users.length}</p>
+      </CardBody>
+    </Card>
+  </Col>
+
+  <Col md="6" lg="3">
+    <Card className="admin-card bg-success text-white text-center h-100 border-0">
+      <CardBody>
+        <h5 className="fw-bold">🔐 Roles</h5>
+        <p className="fs-3 fw-bold">3</p>
+      </CardBody>
+    </Card>
+  </Col>
+
+  <Col md="6" lg="3">
+    <Card className="admin-card bg-danger text-white text-center h-100 border-0">
+      <CardBody>
+        <h5 className="fw-bold">📄 Reserved Cases</h5>
+        <p className="fs-3 fw-bold">12</p>
+      </CardBody>
+    </Card>
+  </Col>
+
+  <Col md="6" lg="3">
+    <Card className="admin-card bg-warning text-dark text-center h-100 border-0">
+      <CardBody>
+        <h5 className="fw-bold">📊 Reports</h5>
+        <p className="fs-3 fw-bold">4</p>
+      </CardBody>
+    </Card>
+  </Col>
+</Row>
+
+
 
           <Nav tabs>
             <NavItem>

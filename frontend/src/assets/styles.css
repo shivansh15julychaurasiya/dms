@@ -260,6 +260,20 @@ button.py-2.fs-5.rounded-pill:active {
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
   transform: translateY(-2px);
 }
+/* Admin dashboard cards css */
+.admin-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 1rem;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+
+
 
 /* Profile card model css */
 
@@ -283,3 +297,6 @@ button.py-2.fs-5.rounded-pill:active {
 .modal-backdrop {
   display: none !important; /* Remove backdrop for small corner modals */
 }
+
+
+
