@@ -85,7 +85,7 @@ const RoleManagement = () => {
       {loading ? (
         <div className="text-center"></div>
       ) : (
-        <Table responsive bordered hover className="mt-2">
+        <Table responsive bordered hover className="mt-3">
           <thead className="table-dark">
             <tr>
               <th>#</th>

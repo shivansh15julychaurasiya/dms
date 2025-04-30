@@ -15,6 +15,7 @@ import {
 import Sidebar from "../layout/Sidebar";
 import Navbar from "../layout/Navbar";
 import { FaUserPlus } from "react-icons/fa"; // Import at the top
+import { Typewriter } from "react-simple-typewriter";
 
 import {
   isTokenExpired,
@@ -70,7 +71,21 @@ const AdminDashboard = () => {
         <Container fluid>
           <Row className="align-items-center mb-1 bg-dark  ">
             <Col xs="12" className="text-center mb-2">
-              <h3 className="text-light mb-0 fw-bold fs-2 "> 🚀 Admin Dashboard 🎯</h3>
+              <h3 className="fs-2 fw-bold text-center text-light my-2">
+                🚀{" "}
+                <span>
+                  <Typewriter
+                    words={["Welcome to Admin Dashboard"]}
+                    loop={0}
+                    cursor
+                    cursorStyle="|"
+                    typeSpeed={60}
+                    deleteSpeed={90}
+                    delaySpeed={1500}
+                  />
+                </span>{" "}
+                🎯
+              </h3>
             </Col>
 
             {/* <Col xs="12" className="text-start">
@@ -82,13 +97,12 @@ const AdminDashboard = () => {
                 Create User
               </Button>
             </Col> */}
-            
           </Row>
 
           <Nav tabs>
             <NavItem>
-              <NavLink   onClick={() => navigate("/home/register")}>
-              <FaUserPlus className="me-2" />
+              <NavLink onClick={() => navigate("/home/register")}>
+                <FaUserPlus className="me-2" />
                 Create User
               </NavLink>
             </NavItem>
@@ -101,7 +115,6 @@ const AdminDashboard = () => {
               </NavLink>
             </NavItem>
 
-            
             <NavItem>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
@@ -109,7 +122,6 @@ const AdminDashboard = () => {
               >
                 Role Management
               </NavLink>
-             
             </NavItem>
           </Nav>
 
