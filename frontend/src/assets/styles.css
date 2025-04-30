@@ -224,5 +224,39 @@ button.py-2.fs-5.rounded-pill:active {
 .rounded-4 {
   border-radius: 1.5rem ;
 }
+/*  admin dashboard css */
+/* AdminDashboard.css */
 
-/* sidebar csss */
+.nav-tabs {
+  border-bottom: none;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+}
+
+.nav-tabs .nav-link {
+  color: #080808be;
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 1.5rem;
+  margin: 0 2.5rem;
+  padding: 0.6rem 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: #76cfe6;
+  color: #0d6efd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #0d6efd;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  transform: translateY(-2px);
+}

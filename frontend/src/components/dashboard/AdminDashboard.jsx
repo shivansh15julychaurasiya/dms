@@ -68,24 +68,30 @@ const AdminDashboard = () => {
         <Navbar />
 
         <Container fluid>
-          <Row className="align-items-center mb-1">
+          <Row className="align-items-center mb-1 bg-dark  ">
             <Col xs="12" className="text-center mb-2">
-              <h3 className="text-primary mb-0 fw-bold">Admin Dashboard</h3>
+              <h3 className="text-light mb-0 fw-bold fs-2 "> 🚀 Admin Dashboard 🎯</h3>
             </Col>
 
-            <Col xs="12" className="text-start">
-              <Button
+            {/* <Col xs="12" className="text-start">
+              <Button className="rounded-pill"
                 color="primary"
                 onClick={() => navigate("/home/register")}
               >
-                <FaUserPlus className="me-2" /> {/* Icon with right margin */}
+                <FaUserPlus className="me-2" />
                 Create User
               </Button>
-            </Col>
+            </Col> */}
+            
           </Row>
 
           <Nav tabs>
-            
+            <NavItem>
+              <NavLink   onClick={() => navigate("/home/register")}>
+              <FaUserPlus className="me-2" />
+                Create User
+              </NavLink>
+            </NavItem>
             <NavItem>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
@@ -103,12 +109,7 @@ const AdminDashboard = () => {
               >
                 Role Management
               </NavLink>
-              <NavLink
-                className={activeTab === "3" ? "active" : ""}
-                onClick={() => toggleTab("3")}
-              >
-               
-              </NavLink>
+             
             </NavItem>
           </Nav>
 
