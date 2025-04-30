@@ -31,21 +31,16 @@ public class RequestAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Arrays.stream(AppConstants.REQUEST_AUTH_IGNORED_URLS)
-                .anyMatch(url -> request.getRequestURI().equalsIgnoreCase(url)
-        );
+        logger.info("Checking ignored urls for : {}", request.getRequestURI());
+        String path = request.getRequestURI();
+        return AppConstants.REQUEST_AUTH_IGNORED_URLS.contains(path);
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-
-        // Only process RequestAuth for non-excluded paths
-        if (shouldNotFilter(request)) {
-            logger.info("ignoring filter : RequestAuthFilter");
-            filterChain.doFilter(request, response);
-            return;
-        }
+                                    FilterChain filterChain) throws ServletException, IOException
+    {
+        logger.info("Running doFilterInternal (RequestAuthFilter)");
 
         String uri = request.getRequestURI();
         String method = request.getMethod();

@@ -20,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -69,7 +70,7 @@ public class SecurityConfig {
                 // Set custom authentication provider
                 .authenticationProvider(authenticationProvider())
                 // Add JWT filter before Spring Security's default filter
-                .addFilterBefore(this.jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(this.jwtAuthFilter, AuthorizationFilter.class)
                 .addFilterAfter(this.requestAuthFilter, JwtAuthFilter.class);
 
         return http.build();

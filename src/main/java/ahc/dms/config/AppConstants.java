@@ -1,5 +1,7 @@
 package ahc.dms.config;
 
+import java.util.Set;
+
 public class AppConstants {
 
     public static final String[] PUBLIC_URLS = {
@@ -17,23 +19,23 @@ public class AppConstants {
             "/resources/static/**"
     };
 
-    public static final String[] JWT_IGNORED_URLS = {
+    public static final Set<String> JWT_IGNORED_URLS = Set.of(
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"
-    };
+    );
 
-    public static final String[] REQUEST_AUTH_IGNORED_URLS = {
+    public static final Set<String> REQUEST_AUTH_IGNORED_URLS = Set.of(
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"
-    };
+    );
 
     public static final String PAGE_NUMBER="0";
     public static final String PAGE_SIZE="5";

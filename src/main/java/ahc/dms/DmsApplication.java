@@ -18,9 +18,12 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,4 +128,21 @@ public class DmsApplication implements CommandLineRunner {
             e.printStackTrace();
         }
     }
+
+    @Bean
+    public ApplicationListener<ApplicationReadyEvent> filterChainInspector() {
+        return event -> {
+            FilterChainProxy filterChainProxy = event.getApplicationContext()
+                    .getBean(FilterChainProxy.class);
+
+            System.out.println("\n===== SECURITY FILTER CHAIN ORDER =====");
+            filterChainProxy.getFilterChains().forEach(chain -> {
+                System.out.println("\nDefault filters:");
+                chain.getFilters().forEach(filter ->
+                        System.out.println("- " + filter.getClass().getSimpleName()));
+            });
+            System.out.println("===== END FILTER CHAIN =====");
+        };
+    }
+
 }

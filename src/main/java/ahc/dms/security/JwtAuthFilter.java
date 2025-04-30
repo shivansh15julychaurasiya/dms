@@ -33,9 +33,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Arrays.stream(AppConstants.JWT_IGNORED_URLS)
-                .anyMatch(url -> request.getRequestURI().equalsIgnoreCase(url)
-                );
+        logger.info("Checking ignored urls for : {}", request.getRequestURI());
+        String path = request.getRequestURI();
+        return AppConstants.JWT_IGNORED_URLS.contains(path);
     }
 
     @Override
@@ -44,12 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // Only process JWT for non-excluded paths
-        if (shouldNotFilter(request)) {
-            logger.info("ignoring filter : JwtAuthFilter");
-            filterChain.doFilter(request, response);
-            return;
-        }
+        logger.info("Running doFilterInternal (JwtAuthFilter)");
 
         String authHeader = request.getHeader("Authorization");
         logger.info("Auth Header : {}", authHeader);
