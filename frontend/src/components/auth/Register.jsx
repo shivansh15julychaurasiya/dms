@@ -64,11 +64,10 @@ const Register = () => {
 
     try {
       await saveUser(userData, navigate, token);
-      showAlert("User Create Successfully!","success")
+      showAlert("User Create Successfully!", "success");
     } catch (error) {
       console.error("Error saving user:", error);
-      showAlert("Something went wrong!","error")
-
+      showAlert("Something went wrong!", "error");
     }
   };
 
@@ -77,11 +76,20 @@ const Register = () => {
   };
 
   return (
-    <div className="register-background wrapperStyle" style={{ minHeight: "100vh" }}>
-      <Container fluid className="py-4 px-2 d-flex justify-content-center align-items-center">
+    <div
+      className="register-background wrapperStyle"
+      style={{ minHeight: "100vh" }}
+    >
+      <Container
+        fluid
+        className="py-4 px-2 d-flex justify-content-center align-items-center"
+      >
         <Col xs={12} sm={11} md={9} lg={8} xl={6}>
           <Card className="cardStyle shadow">
-          <CardHeader className="bg-primary text-white text-center fs-4 rounded-3"> Create User</CardHeader>
+            <CardHeader className="bg-primary text-white text-center fs-4 rounded-3">
+              {" "}
+              Create User
+            </CardHeader>
             <CardBody className="p-4d ">
               {error && <Alert color="danger">{error}</Alert>}
               <Form onSubmit={handleFormSubmit}>
@@ -189,7 +197,12 @@ const Register = () => {
 
                 <Row className="mb-2">
                   <Col sm={6} className="mb-2">
-                    <Button color="warning" className="w-100" type="button" onClick={backToDashboard}>
+                    <Button
+                      color="warning"
+                      className="w-100"
+                      type="button"
+                      onClick={backToDashboard}
+                    >
                       Back to Dashboard
                     </Button>
                   </Col>

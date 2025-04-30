@@ -1,8 +1,20 @@
 // src/components/admin/RoleManagement.js
 
-import {Table, Form, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from "reactstrap";
+import {
+  Table,
+  Form,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Alert,
+} from "reactstrap";
 import { FaPlus, FaUserMinus, FaTrash, FaEdit } from "react-icons/fa";
-import {   useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   fetchRoles,
   createRole,
@@ -12,28 +24,29 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
 
-
-const RoleManagement = () => {
+const RoleManagement = ({ onRolesUpdate }) => {
   const [roles, setRoles] = useState([]);
   const [newRole, setNewRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
   const [deassignRoleId, setDeassignRoleId] = useState("");
- 
 
-    const { token } = useAuth();
-  
+  const { token } = useAuth();
 
-useEffect(() => {
+  useEffect(() => {
     fetchRoles(token, setRoles);
-    setLoading(false)
+    setLoading(false);
   }, [token]);
 
-
+  useEffect(() => {
+    // When roles are fetched or updated, pass them to the parent
+    if (roles.length > 0) {
+      onRolesUpdate(roles); // Pass roles back to parent
+    }
+  }, [roles, onRolesUpdate]);
 
   const handleCreateRole = async () => {
-    
-    console.log(newRole+token)
+    console.log(newRole + token);
     if (newRole.trim()) {
       await createRole(newRole, token);
     }
@@ -44,7 +57,6 @@ useEffect(() => {
   };
 
   const handleDeassignRole = async () => {
-    
     if (userId && deassignRoleId) {
       try {
         await deassignRoleFromUser(Number(userId), Number(deassignRoleId));
@@ -59,12 +71,10 @@ useEffect(() => {
     }
   };
 
- 
-  
   return (
     <div>
       <h5 className="text-primary fw-bold mb-4">Role Management</h5>
-  
+
       <Row>
         {/* Create Role - Left Column */}
         <Col md={6}>
@@ -74,7 +84,12 @@ useEffect(() => {
                 <FaPlus className="me-2" />
                 Create New Role
               </h6>
-              <Form onSubmit={(e) => { e.preventDefault(); handleCreateRole(); }}>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCreateRole();
+                }}
+              >
                 <FormGroup>
                   <Label for="roleName">Role Name</Label>
                   <Input
@@ -92,7 +107,7 @@ useEffect(() => {
             </CardBody>
           </Card>
         </Col>
-  
+
         {/* De-assign Role - Right Column */}
         <Col md={6}>
           <Card className="shadow-sm bg-light-subtle">
@@ -101,7 +116,12 @@ useEffect(() => {
                 <FaUserMinus className="me-2" />
                 De-assign Role from User
               </h6>
-              <Form onSubmit={(e) => { e.preventDefault(); handleDeassignRole(); }}>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleDeassignRole();
+                }}
+              >
                 <FormGroup>
                   <Label for="userId">User ID</Label>
                   <Input
@@ -112,7 +132,7 @@ useEffect(() => {
                     onChange={(e) => setUserId(e.target.value)}
                   />
                 </FormGroup>
-  
+
                 <FormGroup>
                   <Label for="roleSelect">Select Role</Label>
                   <Input
@@ -129,18 +149,16 @@ useEffect(() => {
                     ))}
                   </Input>
                 </FormGroup>
-  
+
                 <Button color="danger" type="submit">
                   De-assign Role
                 </Button>
-  
-               
               </Form>
             </CardBody>
           </Card>
         </Col>
       </Row>
-  
+
       {/* Role List Table */}
       {loading ? (
         <div className="text-center mt-4">Loading roles...</div>
@@ -160,13 +178,13 @@ useEffect(() => {
                   <td>{index + 1}</td>
                   <td>{role.role_name.replace("ROLE_", "")}</td>
                   <td>
-                  <Button
+                    <Button
                       color="success px-2 me-2"
                       size="sm"
                       onClick={() => handleDeleteRole(role.roleId)}
                     >
                       <FaEdit />
-                      </Button>
+                    </Button>
                     <Button
                       color="danger"
                       size="sm"
@@ -189,7 +207,6 @@ useEffect(() => {
       )}
     </div>
   );
-  
 };
 
 export default RoleManagement;

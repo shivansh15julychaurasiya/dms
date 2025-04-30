@@ -15,8 +15,7 @@ import {
 } from "reactstrap";
 import { resetPassword } from "../../services/userService";
 import { showAlert } from "../../utils/helpers";
-import "../../assets/styles.css"
-
+import "../../assets/styles.css";
 
 const ResetPassword = () => {
   const [loginId, setLoginId] = useState("");
@@ -34,11 +33,11 @@ const ResetPassword = () => {
 
     try {
       await resetPassword(loginId, newPassword, token);
-      showAlert("Password has been reset successfully!","success");
+      showAlert("Password has been reset successfully!", "success");
       setTimeout(() => navigate("/"), 1000);
     } catch (error) {
       console.error("Reset failed:", error);
-      showAlert( "Failed to reset password. Please try again.","error");
+      showAlert("Failed to reset password. Please try again.", "error");
     }
   };
 
@@ -90,17 +89,20 @@ const ResetPassword = () => {
 
                   <div className="d-grid">
                     <Button color="danger" type="submit">
-                      <i className="bi bi-shield-lock-fill me-1"></i> Reset Password
+                      <i className="bi bi-shield-lock-fill me-1"></i> Reset
+                      Password
                     </Button>
                   </div>
                 </Form>
 
-               
                 <div className="d-grid mt-3">
                   <Button color="primary" type="submit">
-                  <Link to="/" className="text-decoration-none  text-light rounded-pill hover-shadow">
-                    <i className="bi bi-arrow-left me-1"></i> Back to Login
-                  </Link>
+                    <Link
+                      to="/"
+                      className="text-decoration-none  text-light rounded-pill hover-shadow"
+                    >
+                      <i className="bi bi-arrow-left me-1"></i> Back to Login
+                    </Link>
                   </Button>
                 </div>
               </CardBody>
