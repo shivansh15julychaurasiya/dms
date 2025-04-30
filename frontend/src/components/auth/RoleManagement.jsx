@@ -1,91 +1,156 @@
 // src/components/admin/RoleManagement.js
 
-import React, { useState, useEffect } from "react";
-import { Button, Input, Table, FormGroup, Label } from "reactstrap";
-import { FaPlus, FaTrash } from "react-icons/fa"; // Icons for adding and deleting roles
-import { fetchRoles, createRole, deleteRole, assignRoleToUser } from "../../services/roleServices"; // API helper functions
+import { Form, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from "reactstrap";
+import { FaPlus, FaUserMinus, FaTrash } from "react-icons/fa";
+import {   useState,useEffect } from "react";
+import {
+  fetchRoles,
+  createRole,
+  deleteRole,
+  deassignRoleFromUser,
+} from "../../services/roleServices";
+import { useAuth } from "../../context/AuthContext";
+
 
 const RoleManagement = () => {
   const [roles, setRoles] = useState([]);
   const [newRole, setNewRole] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState("");
+  const [deassignRoleId, setDeassignRoleId] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // Fetch roles on component mount
-  useEffect(() => {
-    fetchRoles(setRoles, setLoading);
-  }, []);
+    const { token } = useAuth();
+  
 
-  // Handle role creation
+useEffect(() => {
+    fetchRoles(token, setRoles);
+  }, [token]);
+
   const handleCreateRole = async () => {
     if (newRole.trim()) {
       await createRole(newRole, setRoles, setNewRole);
     }
   };
 
-  // Handle role deletion
   const handleDeleteRole = async (roleId) => {
     await deleteRole(roleId, setRoles);
   };
 
-  // Handle assigning role to a user
-  const handleAssignRole = async () => {
-    if (selectedRole.trim()) {
-      await assignRoleToUser(selectedRole);
+  const handleDeassignRole = async () => {
+    setSuccessMsg("");
+    setErrorMsg("");
+    if (userId && deassignRoleId) {
+      try {
+        await deassignRoleFromUser(Number(userId), Number(deassignRoleId));
+        setSuccessMsg("Role de-assigned successfully.");
+        setUserId("");
+        setDeassignRoleId("");
+      } catch (err) {
+        setErrorMsg("Failed to de-assign role.");
+      }
+    } else {
+      setErrorMsg("Please fill all fields.");
     }
   };
 
+ 
+  
   return (
     <div>
-      <h5>Role Management</h5>
-      
-      {/* Create New Role */}
-      <FormGroup>
-        <Label for="roleName">New Role Name</Label>
-        <Input
-          id="roleName"
-          value={newRole}
-          onChange={(e) => setNewRole(e.target.value)}
-        />
-        <Button
-          color="primary"
-          onClick={handleCreateRole}
-          className="mt-2"
-        >
-          <FaPlus /> Create Role
-        </Button>
-      </FormGroup>
-
-      {/* Assign Role to User */}
-      <FormGroup>
-        <Label for="roleAssign">Assign Role to User</Label>
-        <Input
-          id="roleAssign"
-          type="select"
-          value={selectedRole}
-          onChange={(e) => setSelectedRole(e.target.value)}
-        >
-          <option value="">Select a Role</option>
-          {roles.map((role) => (
-            <option key={role.roleId} value={role.roleId}>
-              {role.role_name.replace("ROLE_", "")}
-            </option>
-          ))}
-        </Input>
-        <Button
-          color="success"
-          onClick={handleAssignRole}
-          className="mt-2"
-        >
-          Assign Role
-        </Button>
-      </FormGroup>
-
-      {/* Role List */}
+      <h5 className="text-primary fw-bold mb-4">Role Management</h5>
+  
+      <Row>
+        {/* Create Role - Left Column */}
+        <Col md={6}>
+          <Card className="shadow-sm bg-light-subtle">
+            <CardBody>
+              <h6 className="text-success mb-3">
+                <FaPlus className="me-2" />
+                Create New Role
+              </h6>
+              <Form onSubmit={(e) => { e.preventDefault(); handleCreateRole(); }}>
+                <FormGroup>
+                  <Label for="roleName">Role Name</Label>
+                  <Input
+                    id="roleName"
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    placeholder="e.g., ROLE_USER"
+                  />
+                </FormGroup>
+                <Button color="primary" type="submit">
+                  <FaPlus className="me-2" />
+                  Create Role
+                </Button>
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
+  
+        {/* De-assign Role - Right Column */}
+        <Col md={6}>
+          <Card className="shadow-sm bg-light-subtle">
+            <CardBody>
+              <h6 className="text-danger mb-3">
+                <FaUserMinus className="me-2" />
+                De-assign Role from User
+              </h6>
+              <Form onSubmit={(e) => { e.preventDefault(); handleDeassignRole(); }}>
+                <FormGroup>
+                  <Label for="userId">User ID</Label>
+                  <Input
+                    id="userId"
+                    type="number"
+                    placeholder="Enter User ID"
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
+                  />
+                </FormGroup>
+  
+                <FormGroup>
+                  <Label for="roleSelect">Select Role</Label>
+                  <Input
+                    id="roleSelect"
+                    type="select"
+                    value={deassignRoleId}
+                    onChange={(e) => setDeassignRoleId(e.target.value)}
+                  >
+                    <option value="">Select a Role</option>
+                    {roles.map((role) => (
+                      <option key={role.roleId} value={role.roleId}>
+                        {role.role_name.replace("ROLE_", "")}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
+  
+                <Button color="danger" type="submit">
+                  De-assign Role
+                </Button>
+  
+                {successMsg && (
+                  <Alert color="success" className="mt-3">
+                    {successMsg}
+                  </Alert>
+                )}
+                {errorMsg && (
+                  <Alert color="danger" className="mt-3">
+                    {errorMsg}
+                  </Alert>
+                )}
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+  
+      {/* Role List Table */}
       {loading ? (
-        <div className="text-center"></div>
+        <div className="text-center mt-4">Loading roles...</div>
       ) : (
-        <Table responsive bordered hover className="mt-3">
+        <Table responsive bordered hover className="mt-4">
           <thead className="table-dark">
             <tr>
               <th>#</th>
@@ -122,6 +187,7 @@ const RoleManagement = () => {
       )}
     </div>
   );
+  
 };
 
 export default RoleManagement;

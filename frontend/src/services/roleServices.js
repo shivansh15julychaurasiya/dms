@@ -37,25 +37,21 @@ export const fetchRoleById = (roleId, token) => {
     .catch(() => showAlert("Error fetching role."));
 };
 
-// Assign role to a user
-export const assignRoleToUser = (userId, roleId, token) => {
-  axiosInstance
-    .post(
-      ROLE_API_PATHS.ASSIGN_ROLE,
-      { userId, roleId },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
-    .then((res) => {
-      if (res.data.status) {
-        showAlert("Role assigned successfully.");
-      } else {
-        showAlert("Failed to assign role.");
-      }
-    })
-    .catch(() => showAlert("Error assigning role to user."));
+// Deassign role
+
+export const deassignRoleFromUser = async (userId, roleId ,token) => {
+  await axiosInstance.post(
+    "http://localhost:8081/dms/role/deassign-role",
+    { user_id: userId, role_id: roleId },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
+
 
 // Remove role from user
 export const removeRoleFromUser = (userId, roleId, token) => {
