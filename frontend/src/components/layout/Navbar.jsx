@@ -69,19 +69,20 @@ const CustomNavbar = () => {
 
       {/* Right Corner Profile Modal */}
       <Modal
-        isOpen={modalOpen}
-        toggle={toggleModal}
-        backdrop={true}
-        className="custom-right-modal"
-        modalClassName="custom-modal-content"
-      >
-        <ModalHeader toggle={toggleModal} className="border-0 text-dark text-center fw-bold">
-          User Profile
-        </ModalHeader>
-        <ModalBody className="p-">
-          <ProfileCard />
-        </ModalBody>
-      </Modal>
+  isOpen={modalOpen}
+  toggle={toggleModal}
+  backdrop={false} // <== Remove background overlay
+  className="custom-right-modal"
+  modalClassName="custom-modal-content"
+>
+  <ModalHeader toggle={toggleModal} className="border-0 text-dark text-center fw-bold">
+    User Profile
+  </ModalHeader>
+  <ModalBody className="p-2">
+    <ProfileCard />
+  </ModalBody>
+</Modal>
+
     </>
   );
 };

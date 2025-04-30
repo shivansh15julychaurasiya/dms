@@ -15,7 +15,7 @@ const ProfileCard = () => {
 
   const handleLogout = async () => {
     logout();
-    showAlert("Yor are logged out !" ,"success")
+    showAlert("Yor are logged out !", "success");
   };
 
   const handleProfile = () => {
@@ -27,18 +27,18 @@ const ProfileCard = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center mt-5">
+    <div className="container d-flex justify-content-center mt-1">
       <div
-        className="card p-4 shadow-lg rounded-4"
-        style={{ maxWidth: "400px" }}
+        className="card p-3 shadow-sm rounded-4"
+        style={{ maxWidth: "300px" }}
       >
         <div className="d-flex flex-column align-items-center text-center">
           <img
             src="https://cdn.pixabay.com/photo/2022/09/08/15/16/cute-7441224_1280.jpg"
             alt="Profile"
-            className="rounded-circle"
-            width="100"
-            height="100"
+            className="rounded-circle mb-2"
+            width="80"
+            height="80"
           />
           <h4 className="mb-0">{user ? user.name : "Guest"}</h4>
           <small className="text-muted mb-3">
@@ -52,18 +52,18 @@ const ProfileCard = () => {
             {user ? (
               <>
                 <button
-                  className="btn btn-primary px-4 rounded-pill"
+                  className="btn btn-primary px-2 rounded-pill"
                   onClick={handleLogout}
                 >
-                  <i className="bi bi-box-arrow-right p-2 btn-sm"></i>
+                  <i className="bi bi-box-arrow-right p-1  btn-sm"></i>
                   Log-out
                 </button>
 
                 <button
-                  className="btn btn-success btn-sm px-4 rounded-pill"
+                  className="btn btn-success btn-sm px-2 rounded-pill"
                   onClick={handleProfile}
                 >
-                  <i className="bi bi-pencil p-2"></i>
+                  <i className="bi bi-pencil p-1"></i>
                   Edit Profile
                 </button>
               </>

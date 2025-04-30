@@ -260,3 +260,26 @@ button.py-2.fs-5.rounded-pill:active {
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
   transform: translateY(-2px);
 }
+
+/* Profile card model css */
+
+/* Shrink and align modal to top-right */
+.custom-right-modal {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  margin: 0;
+  max-width: 290px !important;
+  width: 90%;
+  z-index: 1050;
+}
+
+.custom-modal-content {
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-backdrop {
+  display: none !important; /* Remove backdrop for small corner modals */
+}
