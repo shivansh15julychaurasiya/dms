@@ -70,14 +70,14 @@ export const removeRoleFromUser = (userId, roleId, token) => {
 };
 
 // Create a new role
-export const createRole = (roleData, token) => {
+export const createRole = (newRole, token) => {
   axiosInstance
-    .post(ROLE_API_PATHS.CREATE_ROLE, roleData, {
+    .post(ROLE_API_PATHS.CREATE_ROLE, {role_name: newRole }, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((res) => {
       if (res.data.status) {
-        showAlert("Role created successfully.");
+        showAlert("Role created successfully.","success");
       } else {
         showAlert("Failed to create role.");
       }

@@ -19,7 +19,7 @@ export const ROLE_API_PATHS = {
   // Role management
   ROLES: "/role/",// Get all roles
   GET_ROLE: (roleId) => `/role/${roleId}`,  // Get specific role by ID
-  CREATE_ROLE: "/role/create", // Create a new role
+  CREATE_ROLE: "/role/", // Create a new role
   UPDATE_ROLE: (roleId) => `/role/${roleId}/update`, // Update specific role by ID
   DELETE_ROLE: (roleId) => `/role/${roleId}/delete`, // Delete specific role by ID
 

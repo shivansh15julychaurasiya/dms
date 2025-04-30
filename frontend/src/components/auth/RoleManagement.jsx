@@ -28,9 +28,13 @@ useEffect(() => {
     fetchRoles(token, setRoles);
   }, [token]);
 
+
+
   const handleCreateRole = async () => {
+    
+    console.log(newRole+token)
     if (newRole.trim()) {
-      await createRole(newRole, setRoles, setNewRole);
+      await createRole(newRole, token);
     }
   };
 
