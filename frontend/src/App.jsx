@@ -20,6 +20,8 @@ import UnAuthorize from "./pages/UnAuthorize";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UpdateUser from "./components/auth/UpdateUser";
+import ReservedCases from "./pages/ReservedCases";
+
 export default function App() {
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -98,6 +100,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ManageCauseList />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/home/reservedcases"
+            element={
+              <ProtectedRoute>
+                <ReservedCases/>
               </ProtectedRoute>
             }
           />

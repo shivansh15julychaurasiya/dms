@@ -114,9 +114,9 @@ const Sidebar = () => {
                 </li>
                 <li className="nav-item">
                   <Link
-                    to="/cases_mgmt/assignedCase"
+                    to="/home/reservedcases"
                     className={`nav-link px-2 text-light ${
-                      isActive("/cases_mgmt/assignedCase") ? "bg-primary rounded" : ""
+                      isActive("/home/reservedcases") ? "bg-primary rounded" : ""
                     }`}
                   >
                     Reserved Cases

@@ -67,25 +67,25 @@ const AdminDashboard = () => {
       <div className="flex-grow-1">
         <Navbar />
 
-        <Container fluid >
+        <Container fluid>
           <Row className="align-items-center mb-1">
             <Col xs="12" className="text-center mb-2">
               <h3 className="text-primary mb-0 fw-bold">Admin Dashboard</h3>
             </Col>
 
-<Col xs="12" className="text-start">
-  <Button
-    color="primary"
-    onClick={() => navigate("/home/register")}
-  >
-    <FaUserPlus className="me-2" /> {/* Icon with right margin */}
-    Create User
-  </Button>
-</Col>
-
+            <Col xs="12" className="text-start">
+              <Button
+                color="primary"
+                onClick={() => navigate("/home/register")}
+              >
+                <FaUserPlus className="me-2" /> {/* Icon with right margin */}
+                Create User
+              </Button>
+            </Col>
           </Row>
 
           <Nav tabs>
+            
             <NavItem>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
@@ -94,12 +94,20 @@ const AdminDashboard = () => {
                 User Management
               </NavLink>
             </NavItem>
+
+            
             <NavItem>
               <NavLink
                 className={activeTab === "2" ? "active" : ""}
                 onClick={() => toggleTab("2")}
               >
                 Role Management
+              </NavLink>
+              <NavLink
+                className={activeTab === "3" ? "active" : ""}
+                onClick={() => toggleTab("3")}
+              >
+               
               </NavLink>
             </NavItem>
           </Nav>
