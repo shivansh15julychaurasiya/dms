@@ -1,12 +1,15 @@
 package ahc.dms.security;
 
 
+import ahc.dms.config.AppConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -25,6 +29,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
+    private final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return Arrays.stream(AppConstants.JWT_IGNORED_URLS)
+                .anyMatch(url -> request.getRequestURI().equalsIgnoreCase(url)
+                );
+    }
 
     @Override
     protected void doFilterInternal(
@@ -32,8 +44,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        // Only process JWT for non-excluded paths
+        if (shouldNotFilter(request)) {
+            logger.info("ignoring filter : JwtAuthFilter");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader : "+authHeader);
+        logger.info("Auth Header : {}", authHeader);
 
         String username = null;
         String token = null;
@@ -41,19 +60,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //getting token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             //Bearer afa87fasd89
-            System.out.println("extracting token");
+            logger.info("Extracting Token");
             token = authHeader.substring(7);
             try {
                 username = this.jwtTokenHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
-                System.out.println("unable to get user");
+                logger.info("Unable to get user");
             } catch (ExpiredJwtException e) {
-                System.out.println("jwt token expired");
+                logger.info("JWT expired");
             } catch (MalformedJwtException e) {
-                System.out.println("malformed jwt");
+                logger.info("Malformed JWT");
             }
         } else {
-            System.out.println("jwt doesn't start with bearer");
+            logger.info("JWT doesn't start with Bearer");
         }
 
         //validating token
@@ -66,12 +85,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             } else {
-                System.out.println("invalid jwt token");
+                logger.info("Invalid JWT");
             }
         } else {
-            System.out.println("user is null or context is not null");
+            logger.info("User/Context is null");
         }
-
         filterChain.doFilter(request, response);
     }
 

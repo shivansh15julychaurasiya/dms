@@ -49,7 +49,7 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false, length=100)
     private String password;
     private String about;
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private Boolean status = true;
 
     // Audit Fields

@@ -3,6 +3,7 @@ package ahc.dms.config;
 import ahc.dms.security.CustomUserDetailsService;
 import ahc.dms.security.JwtAuthEntryPoint;
 import ahc.dms.security.JwtAuthFilter;
+import ahc.dms.security.RequestAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,27 +40,14 @@ public class SecurityConfig {
     private JwtAuthEntryPoint jwtAuthEntryPoint;
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private RequestAuthFilter requestAuthFilter;
 
     /*
     * permitAll() allows all requests on the specified path WITHOUT DISABLING SECURITY FILTERS.
     * ensures logging, session management, CSRF protection functionalities remains active.
     * Eg- useful for login pages where some Security features, such as CSRF tokens, are required.
      */
-    public static final String[] PUBLIC_URLS = {
-            "/dms/auth/login-password",
-            "/dms/auth/login-otp",
-            "/dms/auth/register",
-            "/dms/auth/request-otp",
-            "/dms/auth/verify-reset-otp",
-            "/actuator/**"
-    };
-
-    public static final String[] WEB_IGNORES = {
-            "/swagger-ui/**",
-            "/v3/api-docs*/**",
-            "/resources/static/**"
-    };
-
     /*
      * Main security configuration
      * Defines endpoint access rules and JWT filter setup
@@ -71,7 +59,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(AppConstants.PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthEntryPoint))
@@ -81,7 +69,8 @@ public class SecurityConfig {
                 // Set custom authentication provider
                 .authenticationProvider(authenticationProvider())
                 // Add JWT filter before Spring Security's default filter
-                .addFilterBefore(this.jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(this.jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(this.requestAuthFilter, JwtAuthFilter.class);
 
         return http.build();
     }
@@ -127,7 +116,7 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(WEB_IGNORES);
+        return (web) -> web.ignoring().requestMatchers(AppConstants.WEB_IGNORES);
     }
 
     @Bean
