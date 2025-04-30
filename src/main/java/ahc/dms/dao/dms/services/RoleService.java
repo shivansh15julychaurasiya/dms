@@ -78,6 +78,8 @@ public class RoleService {
                 .map(role -> {
                     if (Boolean.FALSE.equals(role.getStatus())) {
                         throw new ApiException("Role is already disabled");
+                    } else if (role.getRoleName().equalsIgnoreCase("ROLE_ADMIN")) {
+                        throw new ApiException("Admin role can not be disabled");
                     }
                     role.setStatus(false);
                     return roleRepository.save(role);
