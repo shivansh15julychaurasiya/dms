@@ -15,10 +15,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,11 +30,20 @@ public class RequestAuthFilter extends OncePerRequestFilter {
     private ObjectMasterRepository objectMasterRepository;
     private final Logger logger = LoggerFactory.getLogger(RequestAuthFilter.class);
 
+    /*
+    *   Ant-style patterns support these wildcards:
+        ? - matches one character
+        * - matches zero or more characters within a path segment
+        ** - matches zero or more path segments
+        {string} - matches a path segment and captures it as a variable
+    */
+    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        logger.info("Checking ignored urls for : {}", request.getRequestURI());
-        String path = request.getRequestURI();
-        return AppConstants.REQUEST_AUTH_IGNORED_URLS.contains(path);
+        logger.info("Checking REQUEST_AUTH_IGNORED_URLS for : {}", request.getRequestURI());
+        return AppConstants.REQUEST_AUTH_IGNORED_URLS.stream()
+                .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -47,7 +57,7 @@ public class RequestAuthFilter extends OncePerRequestFilter {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // If not authenticated yet, continue — let Spring Security handle it
+        // If not authenticated yet, let the Spring Security handle it
         if (auth == null || !auth.isAuthenticated()) {
             logger.info("user is not yet authenticated????");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
@@ -60,7 +70,7 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElse(null);
-        logger.info("auth role : {}", authRole);
+        logger.info("Auth Role : {}", authRole);
 
         Optional<ObjectMaster> objectMaster = objectMasterRepository.findByRequestUriAndRequestMethodAndStatusTrue(uri, method);
 
@@ -78,9 +88,8 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                                 roleName.equalsIgnoreCase(authRole);
                     });
 
-            logger.info("Boolean : {}", roleMatched);
-
             if (roleMatched) {
+                logger.info("Auth Role matched : {}", roleMatched);
                 filterChain.doFilter(request, response);
             } else {
                 logger.info("Access Denied");

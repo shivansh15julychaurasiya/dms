@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,11 +33,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtTokenHelper jwtTokenHelper;
     private final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
+
+    /*
+    *   Ant-style patterns support these wildcards:
+        ? - matches one character
+        * - matches zero or more characters within a path segment
+        ** - matches zero or more path segments
+        {string} - matches a path segment and captures it as a variable
+    */
+    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        logger.info("Checking ignored urls for : {}", request.getRequestURI());
-        String path = request.getRequestURI();
-        return AppConstants.JWT_IGNORED_URLS.contains(path);
+        logger.info("Checking JWT_IGNORED_URLS for : {}", request.getRequestURI());
+        return AppConstants.JWT_IGNORED_URLS.stream()
+                .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
     }
 
     @Override
@@ -52,7 +64,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String username = null;
         String token = null;
 
-        //getting token
+        //getting username from token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             //Bearer afa87fasd89
             logger.info("Extracting Token");
@@ -70,6 +82,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("JWT doesn't start with Bearer");
         }
 
+        logger.info("Username = {}", username);
         //validating token
         if (username !=null && SecurityContextHolder.getContext().getAuthentication()==null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -79,6 +92,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                logger.info("Authentication Object : {}", SecurityContextHolder.getContext().getAuthentication());
             } else {
                 logger.info("Invalid JWT");
             }
