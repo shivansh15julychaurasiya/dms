@@ -1,7 +1,7 @@
 // src/components/admin/RoleManagement.js
 
 import {Table, Form, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from "reactstrap";
-import { FaPlus, FaUserMinus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaUserMinus, FaTrash, FaEdit } from "react-icons/fa";
 import {   useState,useEffect } from "react";
 import {
   fetchRoles,
@@ -10,6 +10,7 @@ import {
   deassignRoleFromUser,
 } from "../../services/roleServices";
 import { useAuth } from "../../context/AuthContext";
+import { showAlert } from "../../utils/helpers";
 
 
 const RoleManagement = () => {
@@ -18,8 +19,7 @@ const RoleManagement = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
   const [deassignRoleId, setDeassignRoleId] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+ 
 
     const { token } = useAuth();
   
@@ -44,19 +44,18 @@ useEffect(() => {
   };
 
   const handleDeassignRole = async () => {
-    setSuccessMsg("");
-    setErrorMsg("");
+    
     if (userId && deassignRoleId) {
       try {
         await deassignRoleFromUser(Number(userId), Number(deassignRoleId));
-        setSuccessMsg("Role de-assigned successfully.");
+        showAlert("Role de-assigned successfully.");
         setUserId("");
         setDeassignRoleId("");
       } catch (err) {
-        setErrorMsg("Failed to de-assign role.");
+        showAlert("Failed to de-assign role.");
       }
     } else {
-      setErrorMsg("Please fill all fields.");
+      showAlert("Please fill all fields.");
     }
   };
 
@@ -82,7 +81,7 @@ useEffect(() => {
                     id="roleName"
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
-                    placeholder="e.g., ROLE_USER"
+                    placeholder="e.g., role_admin"
                   />
                 </FormGroup>
                 <Button color="primary" type="submit">
@@ -135,16 +134,7 @@ useEffect(() => {
                   De-assign Role
                 </Button>
   
-                {successMsg && (
-                  <Alert color="success" className="mt-3">
-                    {successMsg}
-                  </Alert>
-                )}
-                {errorMsg && (
-                  <Alert color="danger" className="mt-3">
-                    {errorMsg}
-                  </Alert>
-                )}
+               
               </Form>
             </CardBody>
           </Card>
@@ -155,7 +145,7 @@ useEffect(() => {
       {loading ? (
         <div className="text-center mt-4">Loading roles...</div>
       ) : (
-        <Table responsive bordered hover className="mt-4 table-sm">
+        <Table responsive bordered hover className="mt-4 ">
           <thead className="table-dark table-sm text-center">
             <tr>
               <th>#</th>
@@ -170,6 +160,13 @@ useEffect(() => {
                   <td>{index + 1}</td>
                   <td>{role.role_name.replace("ROLE_", "")}</td>
                   <td>
+                  <Button
+                      color="success px-2 me-2"
+                      size="sm"
+                      onClick={() => handleDeleteRole(role.roleId)}
+                    >
+                      <FaEdit />
+                      </Button>
                     <Button
                       color="danger"
                       size="sm"
