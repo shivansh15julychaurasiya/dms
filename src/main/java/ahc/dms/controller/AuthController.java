@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -53,13 +55,15 @@ public class AuthController {
     @PostMapping("/login-password")
     public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingPassword(@RequestBody JwtAuthRequest request) {
 
-        logger.info("inside login-password controller");
         try {
-            this.authenticationManager
+            // 1. Authenticate and get the full Authentication object
+            Authentication authentication = this.authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
                             request.getUsername(),
                             request.getPassword()
                     ));
+            // 2. MANUALLY set the security context (critical for stateless apps)
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (BadCredentialsException e) {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
@@ -79,6 +83,9 @@ public class AuthController {
         jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
         jwtAuthResponse.setUser(authUserDto);
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        logger.info("Auth Authorities : {}", auth.getAuthorities());
+        logger.info("User Authorities : {}", userDetails.getAuthorities());
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
 
     }
