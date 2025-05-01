@@ -32,15 +32,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
     private final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
-
-
-    /*
-    *   Ant-style patterns support these wildcards:
-        ? - matches one character
-        * - matches zero or more characters within a path segment
-        ** - matches zero or more path segments
-        {string} - matches a path segment and captures it as a variable
-    */
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     @Override

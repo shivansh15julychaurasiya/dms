@@ -29,14 +29,6 @@ public class RequestAuthFilter extends OncePerRequestFilter {
     @Autowired
     private ObjectMasterRepository objectMasterRepository;
     private final Logger logger = LoggerFactory.getLogger(RequestAuthFilter.class);
-
-    /*
-    *   Ant-style patterns support these wildcards:
-        ? - matches one character
-        * - matches zero or more characters within a path segment
-        ** - matches zero or more path segments
-        {string} - matches a path segment and captures it as a variable
-    */
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     @Override
