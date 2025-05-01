@@ -63,7 +63,7 @@ const RoleManagement = ({ onRolesUpdate }) => {
         showAlert("Role de-assigned successfully.");
         setUserId("");
         setDeassignRoleId("");
-      } catch (err) {
+      } catch  {
         showAlert("Failed to de-assign role.");
       }
     } else {
@@ -73,7 +73,6 @@ const RoleManagement = ({ onRolesUpdate }) => {
 
   return (
     <div>
-      <h5 className="text-primary fw-bold mb-4">Role Management</h5>
 
       <Row>
         {/* Create Role - Left Column */}

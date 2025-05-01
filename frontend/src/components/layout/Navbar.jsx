@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import {
-  Navbar,
-  NavbarBrand,
-  Container,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-} from "reactstrap";
+import { Navbar, NavbarBrand, Container, Button, Modal } from "reactstrap";
 import ProfileCard from "../profile/ProfileCard";
 import "../../assets/styles.css"; // Ensure your shimmer and modal classes are here
 
@@ -62,32 +54,29 @@ const CustomNavbar = () => {
               <FaUserCircle size={26} className="text-primary" />
             </Button>
 
-            <span className="fw-semibold d-none d-md-inline  text-dark">
+            <span className="fw-semibold d-none d-md-inline text-dark">
               E-High Court
             </span>
           </div>
         </Container>
       </Navbar>
 
-      <div className="mb-1" style={{ height: "60px" }}></div>
+      <div className="mb-1" style={{ height: "40px" }}></div>
 
       {/* Right Corner Profile Modal */}
       <Modal
         isOpen={modalOpen}
         toggle={toggleModal}
-        backdrop={false} // <== Remove background overlay
+        backdrop={false} // Remove background overlay
         className="custom-right-modal"
         modalClassName="custom-modal-content"
+        style={{
+          borderRadius: "15px", // Add rounded corners to modal
+          padding: 0, // Ensure no extra padding around the modal
+        }}
       >
-        <ModalHeader
-          toggle={toggleModal}
-          className="border-0 text-dark text-center fw-bold"
-        >
-          User Profile
-        </ModalHeader>
-        <ModalBody className="p-2">
-          <ProfileCard />
-        </ModalBody>
+        {/* Pass the toggleModal function as a prop to ProfileCard */}
+        <ProfileCard toggleModal={toggleModal} />
       </Modal>
     </>
   );

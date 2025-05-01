@@ -1,21 +1,23 @@
 import React, { useEffect } from "react";
+import { FaTimes } from "react-icons/fa"; // Use FaTimes instead of FaCross
+import { Button } from "reactstrap";
 import { useAuth } from "../../context/AuthContext";
 import { isTokenExpired } from "../../utils/helpers";
 import { showAlert } from "../../utils/helpers";
-const ProfileCard = () => {
+
+const ProfileCard = ({ toggleModal }) => {
   const { user, token, logout } = useAuth();
 
   // Auto logout if user/token is missing or token is expired
   useEffect(() => {
     if (!user || !token || isTokenExpired(token)) {
       logout();
-      // window.location.href = "/dms/home/login"; // Force redirect to login
     }
   }, [user, token, logout]);
 
   const handleLogout = async () => {
     logout();
-    showAlert("Yor are logged out !", "success");
+    showAlert("You are logged out!", "success");
   };
 
   const handleProfile = () => {
@@ -27,10 +29,10 @@ const ProfileCard = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center mt-1">
+    <div className="container d-flex justify-content-center p-0" style={{ marginTop: 0, marginBottom: 0 }}>
       <div
-        className="card p-3 shadow-sm rounded-4"
-        style={{ maxWidth: "300px" }}
+        className="card p-3 shadow-sm rounded-4 mx-auto"
+        style={{ maxWidth: "300px", width: "100%", marginTop: 0, marginBottom: 0 }} // Removed top/bottom margin from card
       >
         <div className="d-flex flex-column align-items-center text-center">
           <img
@@ -48,6 +50,20 @@ const ProfileCard = () => {
             {user ? user.about : "You are viewing the profile as a guest."}
           </p>
 
+          {/* Close Button with FaTimes Icon */}
+          <Button
+            color="link"
+            onClick={toggleModal} // Toggle close modal
+            className="position-absolute top-0 end-0 p-2"
+            style={{
+              zIndex: 1050,
+              borderRadius: "50%", // Ensure round button
+            }}
+            title="Close"
+          >
+            <FaTimes size={20} className="text-primary" /> {/* FaTimes as close button */}
+          </Button>
+
           <div className="d-flex gap-2">
             {user ? (
               <>
@@ -55,7 +71,7 @@ const ProfileCard = () => {
                   className="btn btn-primary px-2 rounded-pill"
                   onClick={handleLogout}
                 >
-                  <i className="bi bi-box-arrow-right p-1  btn-sm"></i>
+                  <i className="bi bi-box-arrow-right p-1 btn-sm"></i>
                   Log-out
                 </button>
 

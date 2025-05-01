@@ -14,8 +14,8 @@ import {
 } from "reactstrap";
 import Sidebar from "../layout/Sidebar";
 import Navbar from "../layout/Navbar";
-import { FaUserPlus } from "react-icons/fa"; // Import at the top
-import { Typewriter } from "react-simple-typewriter";
+// import { FaUserPlus } from "react-icons/fa"; // Import at the top
+// import { Typewriter } from "react-simple-typewriter";
 
 import {
   isTokenExpired,
@@ -28,6 +28,7 @@ import RoleManagement from "../auth/RoleManagement";
 import UserManagement from "../auth/UserManagement";
 import "../../assets/styles.css";
 import WidgetsDropdown from "../../widget/WidgetsDropdown";
+import Register from "../auth/Register";
 
 const AdminDashboard = () => {
   const { token, logout } = useAuth();
@@ -80,7 +81,7 @@ const AdminDashboard = () => {
         <Container fluid>
           <Row className="align-items-center mb-1 bg-dark  ">
             <Col xs="12" className="text-center mb-2">
-              <h3 className="fs-2 fw-bold text-center text-light my-2">
+              {/* <h3 className="fs-2 fw-bold text-center text-light my-2">
                 🚀{" "}
                 <span>
                   <Typewriter
@@ -94,72 +95,26 @@ const AdminDashboard = () => {
                   />
                 </span>{" "}
                 🎯
-              </h3>
+              </h3> */}
             </Col>
-
-            {/* <Col xs="12" className="text-start">
-              <Button className="rounded-pill"
-                color="primary"
-                onClick={() => navigate("/home/register")}
-              >
-                <FaUserPlus className="me-2" />
-                Create User
-              </Button>
-            </Col> */}
           </Row>
           <Row className="mb-4">
-  <Col xs="12">
-    <div className="shadow rounded p-3 bg-white">
-      <WidgetsDropdown />
-    </div>
-  </Col>
-</Row>
-
-          {/* <Row className="my-4 g-4">
-            <Col md="6" lg="3">
-              <Card className="admin-card bg-primary text-white text-center h-100 border-0">
-                <CardBody>
-                  <h5 className="fw-bold">👥 Users</h5>
-                  <p className="fs-3 fw-bold">{users.length}</p>
-                </CardBody>
-              </Card>
+            <Col xs="12">
+              <div className="shadow rounded p-3 bg-white">
+                <WidgetsDropdown />
+              </div>
             </Col>
-
-            <Col md="6" lg="3">
-              <Card className="admin-card bg-success text-white text-center h-100 border-0">
-                <CardBody>
-                  <h5 className="fw-bold">🔐 Roles</h5>
-                  <p className="fs-3 fw-bold">{rolesFromChild.length}</p>
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col md="6" lg="3">
-              <Card className="admin-card bg-danger text-white text-center h-100 border-0">
-                <CardBody>
-                  <h5 className="fw-bold">📄 Reserved Cases</h5>
-                  <p className="fs-3 fw-bold">12</p>
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col md="6" lg="3">
-              <Card className="admin-card bg-warning text-dark text-center h-100 border-0">
-                <CardBody>
-                  <h5 className="fw-bold">📊 Reports</h5>
-                  <p className="fs-3 fw-bold">4</p>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row> */}
+          </Row>
 
           <Nav tabs>
-            <NavItem>
-              <NavLink onClick={() => navigate("/home/register")}>
-                <FaUserPlus className="me-2" />
+            {/* <NavItem>
+              <NavLink
+                className={activeTab === "0" ? "active" : ""}
+                onClick={() => toggleTab("0")}
+              >
                 Create User
               </NavLink>
-            </NavItem>
+            </NavItem> */}
             <NavItem>
               <NavLink
                 className={activeTab === "1" ? "active" : ""}
@@ -191,8 +146,15 @@ const AdminDashboard = () => {
             <TabPane tabId="2">
               <Card>
                 <CardBody>
-                <RoleManagement onRolesUpdate={handleRolesUpdate} /> {/* Pass the callback */}
+                  <RoleManagement onRolesUpdate={handleRolesUpdate} />{" "}
+                  {/* Pass the callback */}
                 </CardBody>
+              </Card>
+            </TabPane>
+            <TabPane tabId="0">
+              <Card>
+                <Register setActiveTab={setActiveTab} />{" "}
+                {/* Pass tab control */}
               </Card>
             </TabPane>
           </TabContent>

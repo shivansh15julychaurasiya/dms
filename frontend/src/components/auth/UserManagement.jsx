@@ -1,30 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Pagination, PaginationItem, PaginationLink } from "reactstrap";
-import { FaEdit, FaTrash } from "react-icons/fa"; // Add icons for actions
-import { useNavigate } from "react-router-dom"; // For programmatic navigation
-import { useAuth } from "../../context/AuthContext"; // Auth context to access token and logout
-import { isTokenExpired, fetchUsers, deleteUser } from "../../services/userService"; // API helper functions
+import {
+  Button,
+  Table,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  Card,
+  CardBody,
+} from "reactstrap";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import {
+  isTokenExpired,
+  fetchUsers,
+  deleteUser,
+} from "../../services/userService";
+import Register from "./Register";
 
 const UserManagement = () => {
-  const { token, logout } = useAuth(); // Access token and logout function from context
-  const [users, setUsers] = useState([]); // State to store users
-  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [loading, setLoading] = useState(true); // Loading state
-  const usersPerPage = 5; // Number of users per page
+  const { token, logout } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState(null); // null = not editing
+  const usersPerPage = 5;
+
   const navigate = useNavigate();
 
-  // Fetch users on component mount and check token validity
   useEffect(() => {
     if (!token || isTokenExpired(token)) {
-      logout(); // Logout if token is missing or expired
-      navigate("/login"); // Redirect to login page
+      logout();
+      navigate("/login");
     } else {
-      // Fetch users and set loading state
       fetchUsers(setUsers, token);
       setLoading(false);
     }
 
-    // Periodic token check every 20 seconds
     const intervalId = setInterval(() => {
       if (!token || isTokenExpired(token)) {
         logout();
@@ -32,116 +44,131 @@ const UserManagement = () => {
       }
     }, 20000);
 
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, [token, logout, navigate]);
 
-  // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = Array.isArray(users)
-    ? users.slice(indexOfFirstUser, indexOfLastUser)
-    : [];
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(users.length / usersPerPage);
 
-  // Delete user handler
   const deleteHandler = async (userId) => {
     await deleteUser(userId, users, setUsers, navigate);
+    if (editingUser?.userId === userId) {
+      setEditingUser(null);
+    }
   };
 
   return (
     <>
-      {/* Users Table */}
-      <Table responsive bordered hover className="mt-2">
-        <thead className="table-dark">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Employee ID</th>
-            <th>Phone</th>
-            <th>About</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan="8" className="text-center">
-                Loading...
-              </td>
-            </tr>
-          ) : users.length > 0 ? (
-            currentUsers.map((user, index) => (
-              <tr key={user.userId}>
-                <td>{indexOfFirstUser + index + 1}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.login_id}</td>
-                <td>{user.phone}</td>
-                <td>{user.about}</td>
-                <td>
-                  {user.roles?.length
-                    ? user.roles
-                        .map((role) => role.role_name.replace("ROLE_", ""))
-                        .join(", ")
-                    : "No Role"}
-                </td>
-                <td>
-                  <Button
-                    color="warning"
-                    size="sm"
-                    className="px-1 mb-1 me-1"
-                    onClick={() => navigate(`/home/updateuser/${user.userId}`)}
-                  >
-                    <FaEdit />
-                  </Button>
-                  <Button
-                    color="danger"
-                    size="sm"
-                    className="px-1 mb-1"
-                    onClick={() => deleteHandler(user.userId)}
-                  >
-                    <FaTrash />
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center">
-                No users found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+      {!editingUser ? (
+        <>
+          <div className="d-flex justify-content-between align-items-center mt-1 mb-2">
+          <Button color="primary" onClick={() => setEditingUser({})} className="rounded-pill">
+              <FaPlus className="me-2 " />
+              Create User
+            </Button>
+           
+          </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination className="justify-content-center mt-4">
-          <PaginationItem disabled={currentPage === 1}>
-            <PaginationLink
-              previous
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          <Table responsive bordered hover>
+            <thead className="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Employee ID</th>
+                <th>Phone</th>
+                <th>About</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="8" className="text-center">Loading...</td>
+                </tr>
+              ) : currentUsers.length > 0 ? (
+                currentUsers.map((user) => (
+                  <tr key={user.userId}>
+                    <td>{user.userId}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.login_id}</td>
+                    <td>{user.phone}</td>
+                    <td>{user.about}</td>
+                    <td>
+                      {user.roles?.length
+                        ? user.roles
+                            .map((role) => role.role_name.replace("ROLE_", ""))
+                            .join(", ")
+                        : "No Role"}
+                    </td>
+                    <td>
+                      <Button
+                        color="warning"
+                        size="sm"
+                        className="px-1 mb-1 me-1"
+                        onClick={() => setEditingUser(user)}
+                      >
+                        <FaEdit />
+                      </Button>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        className="px-1 mb-1"
+                        onClick={() => deleteHandler(user.userId)}
+                      >
+                        <FaTrash />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center">No users found</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+
+          {totalPages > 1 && (
+            <Pagination className="justify-content-center mt-4">
+              <PaginationItem disabled={currentPage === 1}>
+                <PaginationLink
+                  previous
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, i) => (
+                <PaginationItem key={i} active={currentPage === i + 1}>
+                  <PaginationLink onClick={() => setCurrentPage(i + 1)}>
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem disabled={currentPage === totalPages}>
+                <PaginationLink
+                  next
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                />
+              </PaginationItem>
+            </Pagination>
+          )}
+        </>
+      ) : (
+        <Card className="mt-4">
+          <CardBody>
+            <Register
+              user={Object.keys(editingUser).length === 0 ? null : editingUser}
+              setEditingUser={setEditingUser}
+              refreshUsers={() => fetchUsers(setUsers, token)}
             />
-          </PaginationItem>
-          {[...Array(totalPages)].map((_, i) => (
-            <PaginationItem key={i} active={currentPage === i + 1}>
-              <PaginationLink onClick={() => setCurrentPage(i + 1)}>
-                {i + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem disabled={currentPage === totalPages}>
-            <PaginationLink
-              next
-              onClick={() =>
-                setCurrentPage((p) => Math.min(p + 1, totalPages))
-              }
-            />
-          </PaginationItem>
-        </Pagination>
+          </CardBody>
+        </Card>
       )}
     </>
   );

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { saveUser } from "../../services/userService";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { saveUser, updateUser } from "../../services/userService"; // updateUser added for update
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
 import {
@@ -8,7 +10,6 @@ import {
   Row,
   Col,
   Card,
-  CardHeader,
   CardBody,
   Form,
   FormGroup,
@@ -20,79 +21,84 @@ import {
 import "../../assets/styles.css";
 import { fetchRoles } from "../../services/roleServices";
 
-const Register = () => {
+const Register = ({ user, setEditingUser, refreshUsers }) => {
+  const isEditMode = !!user;
+  const handleCancel = () => {
+    setEditingUser(null);
+  };
   const navigate = useNavigate();
   const { token } = useAuth();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    about: "",
-    password: "",
-    phone: "",
-    login_id: "",
-    role: "",
-  });
-
-  const [error, setError] = useState("");
   const [roles, setRoles] = useState([]);
-  const [roleError, setRoleError] = useState("");
 
   useEffect(() => {
     fetchRoles(token, setRoles);
   }, [token]);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phone: Yup.string().required("Phone is required"),
+    login_id: Yup.string().required("Login ID is required"),
+    password: Yup.string()
+      .min(6, "Password too short")
+      .required("Password is required"),
+    about: Yup.string().max(200, "Too long"),
+    role: Yup.string().required("Role is required"),
+  });
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const { name, email, about, password, phone, login_id, role } = formData;
-    const userData = {
-      name,
-      email,
-      about,
-      password,
-      phone,
-      login_id,
-      user_roles: [{ role_id: role }],
-    };
+  const formik = useFormik({
+    initialValues: {
+      name: isEditMode ? user.name : "",
+      email: isEditMode ? user.email : "",
+      about: isEditMode ? user.about : "",
+      password: "",
+      phone: isEditMode ? user.phone : "",
+      login_id: isEditMode ? user.login_id : "",
+      role: isEditMode ? user.roles[0].role_id : "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      const userData = {
+        ...values,
+        user_roles: [{ role_id: values.role }],
+      };
 
-    try {
-      await saveUser(userData, navigate, token);
-      showAlert("User Create Successfully!", "success");
-    } catch (error) {
-      console.error("Error saving user:", error);
-      showAlert("Something went wrong!", "error");
-    }
-  };
-
-  const backToDashboard = () => {
-    navigate("/home/admindashboard");
-  };
+      try {
+        if (isEditMode) {
+          // Update user logic
+          await updateUser(user.userId, userData, token);
+          showAlert("User Updated Successfully!", "success");
+        } else {
+          // Create user logic
+          await saveUser(userData, navigate, token);
+          showAlert("User Created Successfully!", "success");
+        }
+        refreshUsers();
+        setEditingUser(null); // Close the form after submit
+      } catch (error) {
+        console.error("Error saving user:", error);
+        showAlert("Something went wrong!", "error");
+      }
+    },
+  });
 
   return (
-    <div
-      className="register-background wrapperStyle"
-      style={{ minHeight: "100vh" }}
-    >
+    <div className="wrapperStyle" style={{ minHeight: "100vh" }}>
       <Container
         fluid
         className="py-4 px-2 d-flex justify-content-center align-items-center"
       >
-        <Col xs={12} sm={11} md={9} lg={8} xl={6}>
-          <Card className="cardStyle shadow">
-            <CardHeader className="bg-primary text-white text-center fs-4 rounded-3">
-              {" "}
-              Create User
-            </CardHeader>
-            <CardBody className="p-4d ">
-              {error && <Alert color="danger">{error}</Alert>}
-              <Form onSubmit={handleFormSubmit}>
+        <Col
+          xs={12}
+          sm={11}
+          md={10}
+          lg={9}
+          xl={8}
+          style={{ maxWidth: "960px" }}
+        >
+          <Card className="cardStyle shadow rounded-4 border-0">
+            <CardBody className="p-5">
+              <Form onSubmit={formik.handleSubmit}>
                 <Row>
                   <Col md={6} className="mb-2">
                     <FormGroup>
@@ -100,10 +106,15 @@ const Register = () => {
                       <Input
                         type="text"
                         name="name"
-                        value={formData.name}
-                        onChange={handleChange}
+                        value={formik.values.name}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={formik.touched.name && !!formik.errors.name}
                         placeholder="Enter full name"
                       />
+                      {formik.touched.name && formik.errors.name && (
+                        <div className="text-danger">{formik.errors.name}</div>
+                      )}
                     </FormGroup>
                   </Col>
                   <Col md={6} className="mb-2">
@@ -112,10 +123,15 @@ const Register = () => {
                       <Input
                         type="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={formik.touched.email && !!formik.errors.email}
                         placeholder="Enter email address"
                       />
+                      {formik.touched.email && formik.errors.email && (
+                        <div className="text-danger">{formik.errors.email}</div>
+                      )}
                     </FormGroup>
                   </Col>
                 </Row>
@@ -127,10 +143,15 @@ const Register = () => {
                       <Input
                         type="text"
                         name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
+                        value={formik.values.phone}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={formik.touched.phone && !!formik.errors.phone}
                         placeholder="Enter phone number"
                       />
+                      {formik.touched.phone && formik.errors.phone && (
+                        <div className="text-danger">{formik.errors.phone}</div>
+                      )}
                     </FormGroup>
                   </Col>
                   <Col md={6} className="mb-2">
@@ -139,10 +160,19 @@ const Register = () => {
                       <Input
                         type="text"
                         name="login_id"
-                        value={formData.login_id}
-                        onChange={handleChange}
+                        value={formik.values.login_id}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={
+                          formik.touched.login_id && !!formik.errors.login_id
+                        }
                         placeholder="Enter login ID"
                       />
+                      {formik.touched.login_id && formik.errors.login_id && (
+                        <div className="text-danger">
+                          {formik.errors.login_id}
+                        </div>
+                      )}
                     </FormGroup>
                   </Col>
                 </Row>
@@ -154,10 +184,19 @@ const Register = () => {
                       <Input
                         type="password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={
+                          formik.touched.password && !!formik.errors.password
+                        }
                         placeholder="Create a password"
                       />
+                      {formik.touched.password && formik.errors.password && (
+                        <div className="text-danger">
+                          {formik.errors.password}
+                        </div>
+                      )}
                     </FormGroup>
                   </Col>
                   <Col md={6} className="mb-2">
@@ -166,10 +205,15 @@ const Register = () => {
                       <Input
                         type="text"
                         name="about"
-                        value={formData.about}
-                        onChange={handleChange}
+                        value={formik.values.about}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={formik.touched.about && !!formik.errors.about}
                         placeholder="Short description"
                       />
+                      {formik.touched.about && formik.errors.about && (
+                        <div className="text-danger">{formik.errors.about}</div>
+                      )}
                     </FormGroup>
                   </Col>
                 </Row>
@@ -181,8 +225,10 @@ const Register = () => {
                       <Input
                         type="select"
                         name="role"
-                        value={formData.role}
-                        onChange={handleChange}
+                        value={formik.values.role}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        invalid={formik.touched.role && !!formik.errors.role}
                       >
                         <option value="">Select a role</option>
                         {roles.map((role) => (
@@ -191,24 +237,27 @@ const Register = () => {
                           </option>
                         ))}
                       </Input>
+                      {formik.touched.role && formik.errors.role && (
+                        <div className="text-danger">{formik.errors.role}</div>
+                      )}
                     </FormGroup>
                   </Col>
                 </Row>
 
-                <Row className="mb-2">
-                  <Col sm={6} className="mb-2">
+                <Row className="mb-3">
+                  <Col xs="6" className="mt-xsds2">
                     <Button
-                      color="warning"
-                      className="w-100"
                       type="button"
-                      onClick={backToDashboard}
+                      color="secondary"
+                      onClick={handleCancel}
+                      className="w-100"
                     >
-                      Back to Dashboard
+                      Cancel
                     </Button>
                   </Col>
-                  <Col sm={6}>
-                    <Button color="success" className="w-100" type="submit">
-                      Register
+                  <Col xs="6">
+                    <Button type="submit" color="success" className="w-100">
+                      {isEditMode ? "Update User" : "Register User"}
                     </Button>
                   </Col>
                 </Row>
