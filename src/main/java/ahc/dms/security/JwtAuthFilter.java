@@ -22,7 +22,6 @@ import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -57,7 +56,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //getting username from token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            //Bearer afa87fasd89
             logger.info("Extracting Token");
             token = authHeader.substring(7);
             try {
@@ -72,17 +70,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } else {
             logger.info("JWT doesn't start with Bearer");
         }
-
         logger.info("Username = {}", username);
+
         //validating token
         if (username !=null && SecurityContextHolder.getContext().getAuthentication()==null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (this.jwtTokenHelper.validateToken(token, userDetails)) {
                 //now set the authentication
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
                 logger.info("Authentication Object : {}", SecurityContextHolder.getContext().getAuthentication());
             } else {
                 logger.info("Invalid JWT");
