@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,11 +38,11 @@ public class RequestAuthFilter extends OncePerRequestFilter {
         return AppConstants.REQUEST_AUTH_IGNORED_URLS.stream()
                 .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException
-    {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         logger.info("Running doFilterInternal (RequestAuthFilter)");
 
         String uri = request.getRequestURI();
@@ -80,8 +81,8 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                                 roleName.equalsIgnoreCase(authRole);
                     });
 
+            logger.info("Auth Role matched : {}", roleMatched);
             if (roleMatched) {
-                logger.info("Auth Role matched : {}", roleMatched);
                 filterChain.doFilter(request, response);
             } else {
                 logger.info("Access Denied");
