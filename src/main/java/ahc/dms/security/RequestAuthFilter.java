@@ -93,6 +93,6 @@ public class RequestAuthFilter extends OncePerRequestFilter {
             logger.info("API Not Registered");
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "API Not Registered");
         }
-        filterChain.doFilter(request, response);
+        //filterChain.doFilter(request, response);
     }
 }
