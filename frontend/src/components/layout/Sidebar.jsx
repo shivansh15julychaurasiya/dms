@@ -50,7 +50,7 @@ const Sidebar = () => {
           {isOpen && <h5 className="text-primary m-0"></h5>}
         </div>
 
-        <ul className="nav flex-column mt-3">
+        <ul className="nav flex-column mt-4">
           {/* Home Dropdown */}
           <li className="nav-item">
             <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-light hover-effect sidebar-hover">

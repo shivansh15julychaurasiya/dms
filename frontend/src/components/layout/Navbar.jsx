@@ -51,12 +51,12 @@ const CustomNavbar = () => {
               onClick={toggleModal}
               title="View Profile"
             >
-              <FaUserCircle size={26} className="text-primary" />
+              <FaUserCircle size={30} className="text-primary" />
             </Button>
 
-            <span className="fw-semibold d-none d-md-inline text-dark">
+            {/* <span className="fw-semibold d-none d-md-inline text-dark">
               E-High Court
-            </span>
+            </span> */}
           </div>
         </Container>
       </Navbar>
@@ -72,6 +72,8 @@ const CustomNavbar = () => {
         modalClassName="custom-modal-content"
         style={{
           borderRadius: "15px", // Add rounded corners to modal
+          maxHeight:"200px",
+          maxWidth:"200px",
           padding: 0, // Ensure no extra padding around the modal
         }}
       >

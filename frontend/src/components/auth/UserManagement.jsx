@@ -64,7 +64,7 @@ const UserManagement = () => {
       {!editingUser ? (
         <>
           <div className="d-flex justify-content-between align-items-center mt-1 mb-2">
-          <Button color="primary" onClick={() => setEditingUser({})} className="rounded-pill">
+          <Button color="primary"  onClick={() => setEditingUser({})} className="rounded-pill">
               <FaPlus className="me-2 " />
               Create User
             </Button>

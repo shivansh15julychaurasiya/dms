@@ -146,7 +146,7 @@ const AdminDashboard = () => {
             <TabPane tabId="2">
               <Card>
                 <CardBody>
-                  <RoleManagement onRolesUpdate={handleRolesUpdate} />{" "}
+                  <RoleManagement onRolesUpdate={handleRolesUpdate}  />{" "}
                   {/* Pass the callback */}
                 </CardBody>
               </Card>

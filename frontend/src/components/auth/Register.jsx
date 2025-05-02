@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { saveUser, updateUser } from "../../services/userService"; // updateUser added for update
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
+import "../../assets/styles.css"
 import {
   Container,
   Row,
@@ -83,10 +84,8 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
   });
 
   return (
-    <div className="wrapperStyle" style={{ minHeight: "100vh" }}>
-      <Container
-        fluid
-        className="py-4 px-2 d-flex justify-content-center align-items-center"
+    <div className="wrapperStyle   register-background " style={{ minHeight: "100vh" } }>
+      <Container fluid className="py-4 px-2 d-flex justify-content-center align-items-center"
       >
         <Col
           xs={12}
