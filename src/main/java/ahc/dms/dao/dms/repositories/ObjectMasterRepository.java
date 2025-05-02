@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ObjectMasterRepository extends JpaRepository<ObjectMaster, Long> {
-    public Optional<ObjectMaster> findByRequestUriAndRequestMethodAndStatusTrue(String uri, String method);
+    Optional<ObjectMaster> findByRequestUriAndRequestMethodAndStatusTrue(String uri, String method);
+    Optional<ObjectMaster> findByRequestUriStartingWithAndRequestMethodAndStatusTrue(String uri, String method);
 }

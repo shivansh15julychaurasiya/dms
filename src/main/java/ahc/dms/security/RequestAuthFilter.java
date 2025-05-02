@@ -65,7 +65,8 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                 .orElse(null);
         logger.info("Auth Role : {}", authRole);
 
-        Optional<ObjectMaster> objectMaster = objectMasterRepository.findByRequestUriAndRequestMethodAndStatusTrue(uri, method);
+        Optional<ObjectMaster> objectMaster = objectMasterRepository
+                .findByRequestUriStartingWithAndRequestMethodAndStatusTrue(uri, method);
 
         if (objectMaster.isPresent()) {
             Set<ObjectRole> objectRoles = objectMaster.get().getObjectRoles();
