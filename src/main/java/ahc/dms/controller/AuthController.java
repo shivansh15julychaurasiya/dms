@@ -1,11 +1,8 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.dms.services.OtpLogService;
-import ahc.dms.dao.dms.services.RoleService;
+import ahc.dms.dao.dms.services.*;
 import ahc.dms.payload.*;
-import ahc.dms.dao.dms.services.TokenService;
-import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.security.JwtTokenHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
@@ -50,17 +47,22 @@ public class AuthController {
     private RoleService roleService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private RequestLogService requestLogService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login-password")
-    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingPassword(@RequestBody JwtAuthRequest request) {
-
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingPassword(
+            HttpServletRequest httpRequest,
+            @RequestBody JwtAuthRequest jwtAuthRequest
+    ) {
+        requestLogService.logRequest(httpRequest);
         try {
             // 1. Authenticate and get the full Authentication object
             Authentication authentication = this.authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
+                            jwtAuthRequest.getUsername(),
+                            jwtAuthRequest.getPassword()
                     ));
             // 2. MANUALLY set the security context (critical for stateless apps)
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,7 +70,7 @@ public class AuthController {
             return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
         }
         //returns anonymousUser since session creation policy is stateless
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
         //get only active roles, which are set in user entity
         Set<RoleDto> activeRoleSet = roleService.getActiveRoles(userDetails);
         UserDto authUserDto = modelMapper.map(userDetails, UserDto.class);
@@ -91,14 +93,17 @@ public class AuthController {
     }
 
     @PostMapping("/login-otp")
-    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingOtp(@RequestBody JwtAuthRequest request) {
-
+    public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingOtp(
+            HttpServletRequest httpRequest,
+            @RequestBody JwtAuthRequest jwtAuthRequest
+    ) {
+        requestLogService.logRequest(httpRequest);
         logger.info("inside login-otp controller");
 
-        boolean authStatus = otpLogService.verifyLoginOtp(request.getUsername(), request.getOtp());
+        boolean authStatus = otpLogService.verifyLoginOtp(jwtAuthRequest.getUsername(), jwtAuthRequest.getOtp());
         if (authStatus) {
             //returns anonymousUser since session creation policy is stateless
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
             String token = this.jwtTokenHelper.generateToken(userDetails);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -112,6 +117,7 @@ public class AuthController {
     @GetMapping("/logout")
     public ResponseEntity<ApiResponse<JwtAuthResponse>> logoutUser(HttpServletRequest request) {
 
+        requestLogService.logRequest(request);
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
         String username = this.jwtTokenHelper.getUsernameFromToken(token);
@@ -126,7 +132,11 @@ public class AuthController {
     }
 
     @PostMapping("/request-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(@RequestBody OtpDto requestOtp) {
+    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(
+            HttpServletRequest httpRequest,
+            @RequestBody OtpDto requestOtp
+    ) {
+        requestLogService.logRequest(httpRequest);
         logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
@@ -143,12 +153,15 @@ public class AuthController {
     }
 
     @PostMapping("/verify-reset-otp")
-    public ResponseEntity<ApiResponse<?>> verifyResetOtp(@RequestBody JwtAuthRequest request) {
-
+    public ResponseEntity<ApiResponse<?>> verifyResetOtp(
+            HttpServletRequest httpRequest,
+            @RequestBody JwtAuthRequest authRequest
+    ) {
+        requestLogService.logRequest(httpRequest);
         logger.info("inside verify-reset-otp controller");
-        boolean authStatus = otpLogService.verifyResetOtp(request.getUsername(), request.getOtp());
+        boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
         if (authStatus) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
             String token = this.jwtTokenHelper.generateToken(userDetails);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -162,7 +175,11 @@ public class AuthController {
 
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<?>> resetUserPassword(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<?>> resetUserPassword(
+            HttpServletRequest httpRequest,
+            @RequestBody UserDto userDto
+    ) {
+        requestLogService.logRequest(httpRequest);
         UserDto updatedUser = userService.resetPassword(userDto.getLoginId(), userDto.getPassword());
         return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }

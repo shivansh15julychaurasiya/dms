@@ -23,6 +23,7 @@ public class UserDto {
 
     @JsonIgnore
     private Long version;
+    @JsonProperty("user_id")
     private Long userId;
 
     @NotBlank
@@ -46,8 +47,7 @@ public class UserDto {
     private Boolean status;
 
     @JsonProperty("user_roles")
-    @NotEmpty(message = "At least one role must be specified")
-    private Set<@Valid UserRoleDto> userRoles = new HashSet<>();
+    private Set<UserRoleDto> userRoles = new HashSet<>();
 
     @JsonProperty("roles")
     private Set<RoleDto> roles = new HashSet<>();
