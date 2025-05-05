@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -133,40 +134,47 @@ public class UserService {
     }
 
     public UserDto getUserById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-        return modelMapper.map(user, UserDto.class);
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setUserRoles(null);
+        user.getActiveUserRole().ifPresent(role ->
+                userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))));
+
+        return userDto;
     }
 
     public UserDto getUserByLoginId(String loginId) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId));
-        return modelMapper.map(user, UserDto.class);
+        User user = userRepository
+                .findByLoginId(loginId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId));
+
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setUserRoles(null);
+        user.getActiveUserRole().ifPresent(role ->
+                userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))));
+
+        return userDto;
     }
 
     public List<UserDto> getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
 
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<User> pageUser = userRepository.findAll(pageable);
-        List<User> users = pageUser.getContent();
 
-        List<UserDto> userDtoSet = new ArrayList<>();
-        for (User user : users) {
-            // convert user to dto
+        return userRepository.findAll(pageable).getContent().stream().map(user -> {
             UserDto userDto = modelMapper.map(user, UserDto.class);
             userDto.setUserRoles(null);
 
-            // create role dto set
-            Set<RoleDto> roleDtoSet = new HashSet<>();
-            Role role = user.getActiveUserRole().orElseGet(null);
-            if (role != null) {
+            user.getActiveUserRole().ifPresent(role -> {
                 RoleDto roleDto = modelMapper.map(role, RoleDto.class);
-                roleDtoSet.add(roleDto);
-            }
-            userDto.setRoles(roleDtoSet);
-            userDtoSet.add(userDto);
-        }
+                userDto.setRoles(Set.of(roleDto));
+            });
 
-        return userDtoSet;
+            return userDto;
+        }).collect(Collectors.toList());
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
