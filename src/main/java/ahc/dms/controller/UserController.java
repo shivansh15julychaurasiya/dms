@@ -38,13 +38,23 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse<?>> deleteUser(
-            @PathVariable("userId") Long userId,
+    @GetMapping("/deactivate/{username}")
+    public ResponseEntity<ApiResponse<?>> deactivateUser(
+            @PathVariable("username") String loginId,
             HttpServletRequest request
     ){
-        userService.deleteUser(userId);
-        return ResponseEntity.ok(ResponseUtil.success(null, "user deleted"));
+        userService.deactivateUser(loginId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "user deactivated"));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/activate/{username}")
+    public ResponseEntity<ApiResponse<?>> activateUser(
+            @PathVariable("username") String loginId,
+            HttpServletRequest request
+    ){
+        userService.activateUser(loginId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "user activated"));
     }
 
     @GetMapping("/")

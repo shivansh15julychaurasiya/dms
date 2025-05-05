@@ -1,5 +1,6 @@
 package ahc.dms.controller;
 
+import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.dao.dms.services.UserRoleService;
@@ -47,9 +48,14 @@ public class RoleController {
         return ResponseEntity.ok(ResponseUtil.success(updatedRole, "role updated"));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(){
-        List<RoleDto> roles = roleService.getAllRoles();
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ){
+        List<RoleDto> roles = roleService.getAllRoles(pageNumber, pageSize, sortBy, sortDir);
         return ResponseEntity.ok(ResponseUtil.success(roles, "role list"));
     }
 
@@ -66,10 +72,17 @@ public class RoleController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{roleId}")
-    public ResponseEntity<ApiResponse<?>> deleteRole(@PathVariable("roleId") Integer roleId){
-        roleService.deleteRole(roleId);
-        return ResponseEntity.ok(ResponseUtil.success(null, "role deleted"));
+    @GetMapping("/disable/{roleId}")
+    public ResponseEntity<ApiResponse<?>> disableRole(@PathVariable("roleId") Integer roleId){
+        roleService.disableRole(roleId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "role disabled"));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/enable/{roleId}")
+    public ResponseEntity<ApiResponse<?>> enableRole(@PathVariable("roleId") Integer roleId){
+        roleService.enableRole(roleId);
+        return ResponseEntity.ok(ResponseUtil.success(null, "role enabled"));
     }
 
     @PostMapping("/assign-role")

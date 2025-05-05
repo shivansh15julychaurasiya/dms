@@ -18,13 +18,14 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Stream;
 
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class, // Prevents default single DataSource auto-configuration
@@ -88,7 +89,7 @@ public class DmsApplication implements CommandLineRunner {
                         return roleRepository.save(newRole);
                     });
 
-            Role userRole = roleRepository.findByRoleName("ROLE_USER")
+            roleRepository.findByRoleName("ROLE_USER")
                     .orElseGet(() -> {
                         Role newRole = new Role();
                         newRole.setRoleName("ROLE_USER");
@@ -96,7 +97,7 @@ public class DmsApplication implements CommandLineRunner {
                         return roleRepository.save(newRole);
                     });
 
-            Role ecourtRole = roleRepository.findByRoleName("ROLE_ECOURT")
+            roleRepository.findByRoleName("ROLE_ECOURT")
                     .orElseGet(() -> {
                         Role newRole = new Role();
                         newRole.setRoleName("ROLE_ECOURT");
@@ -117,12 +118,9 @@ public class DmsApplication implements CommandLineRunner {
                     });
 
             // For each role, check if it exists first
-            Stream.of(adminRole, userRole, ecourtRole)
-                    .forEach(role -> {
-                        if (!userRoleRepository.existsByUserAndRole(firstUser, role)) {
-                            userRoleRepository.save(new UserRole(firstUser, role, true));
-                        }
-                    });
+            if (!userRoleRepository.existsByUserAndRole(firstUser, adminRole)) {
+                userRoleRepository.save(new UserRole(firstUser, adminRole, true));
+            }
 
 
             System.out.println("Admin User created");
@@ -130,4 +128,21 @@ public class DmsApplication implements CommandLineRunner {
             e.printStackTrace();
         }
     }
+
+    @Bean
+    public ApplicationListener<ApplicationReadyEvent> filterChainInspector() {
+        return event -> {
+            FilterChainProxy filterChainProxy = event.getApplicationContext()
+                    .getBean(FilterChainProxy.class);
+
+            System.out.println("\n===== SECURITY FILTER CHAIN ORDER =====");
+            filterChainProxy.getFilterChains().forEach(chain -> {
+                System.out.println("\nDefault filters:");
+                chain.getFilters().forEach(filter ->
+                        System.out.println("- " + filter.getClass().getSimpleName()));
+            });
+            System.out.println("===== END FILTER CHAIN =====");
+        };
+    }
+
 }

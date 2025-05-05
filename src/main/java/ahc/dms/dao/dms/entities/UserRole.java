@@ -36,6 +36,9 @@ public class UserRole {
     @Column(name = "ur_id")
     private Long urId;
 
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
+    private Boolean status = true;
+
     @ManyToOne(
             optional = false,
             fetch = FetchType.EAGER
@@ -49,9 +52,6 @@ public class UserRole {
     )
     @JoinColumn(name = "role_id")
     private Role role;
-
-    @Column(name = "status", columnDefinition = "boolean default true")
-    private Boolean status = true;
 
     // Audit Fields
     @CreationTimestamp

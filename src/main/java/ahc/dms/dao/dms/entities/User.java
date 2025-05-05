@@ -49,6 +49,8 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false, length=100)
     private String password;
     private String about;
+    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
+    private Boolean status = true;
 
     // Audit Fields
     @CreationTimestamp
@@ -71,36 +73,14 @@ public class User implements UserDetails {
     )
     private Set<UserRole> userRoles = new HashSet<>();
 
-    // Utility method to add roles
-    public void addRole(Role role, boolean status) {
-        UserRole userRole = new UserRole(this, role, status);
-        userRoles.add(userRole);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        // finding active roles in user-role as well as role (master) entities
-        Set<UserRole> activeUserRoles = new HashSet<>();
-        for (UserRole eachUserRole :  userRoles) {
-            if (eachUserRole.getStatus() && eachUserRole.getRole().getStatus()) {
-                activeUserRoles.add(eachUserRole);
-            }
-        }
-
-        /*
-        List<SimpleGrantedAuthority> authorities = this.userRoles.stream()
-                .map((userRole) -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
+        // find the active role in user-role as well as in role (master) entities
+        return this.getUserRoles().stream()
+                .filter(userRole -> userRole.getStatus() && userRole.getRole().getStatus())
+                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
-
-         */
-        // setting only those roles which are active at user-role and global (role) entity level
-        List<SimpleGrantedAuthority> authorities = activeUserRoles
-                .stream()
-                .map(activeUserRole -> new SimpleGrantedAuthority(activeUserRole.getRole().getRoleName()))
-                .collect(Collectors.toList());
-
-        return authorities;
     }
 
     @Override
@@ -127,4 +107,40 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+
+    /*
+    public void assignNewActiveRole (Role role) {
+        //deactivate all userroles first
+        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
+        //check if user already has given role (just inactive)
+        Optional<UserRole> existingUserRole = this.getUserRoles()
+                .stream()
+                .filter(userRole -> userRole.getRole().equals(role))
+                .findFirst();
+
+        if (existingUserRole.isPresent()) {
+            //reactivate role mapping
+            existingUserRole.get().setStatus(true);
+        } else {
+            //create new active role
+            UserRole newUserRole = new UserRole(this, role, true);
+            this.getUserRoles().add(newUserRole);
+        }
+    }
+
+    */
+
+    public void deactivateAllUserRoles(){
+        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
+    }
+
+    public Optional<Role> getActiveUserRole() {
+        return this.getUserRoles()
+                .stream()
+                .filter(userRole -> userRole.getStatus())
+                .map(userRole -> userRole.getRole())
+                .findFirst();
+    }
+
 }
