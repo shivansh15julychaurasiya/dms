@@ -127,8 +127,9 @@ public class UserService {
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
         userDto.setUserRoles(null);
-        user.getActiveUserRole().ifPresent(role ->
-                userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))));
+        user.getActiveUserRole()
+                .ifPresentOrElse(role -> userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))),
+                        () -> userDto.setRoles(new HashSet<>()));
 
         return userDto;
     }
@@ -140,8 +141,9 @@ public class UserService {
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
         userDto.setUserRoles(null);
-        user.getActiveUserRole().ifPresent(role ->
-                userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))));
+        user.getActiveUserRole()
+                .ifPresentOrElse(role -> userDto.setRoles(Set.of(modelMapper.map(role, RoleDto.class))),
+                        () -> userDto.setRoles(new HashSet<>()));
 
         return userDto;
     }
