@@ -36,14 +36,18 @@ public class RoleController {
             @Valid @RequestBody RoleDto roleDto
     ){
         requestLogService.logRequest(request);
-
         RoleDto createdRoleDto = roleService.createRole(roleDto);
         return ResponseEntity.ok(ResponseUtil.success(createdRoleDto, "role created"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{roleId}")
-    public ResponseEntity<ApiResponse<RoleDto>> updateRole(@Valid @RequestBody RoleDto roleDto, @PathVariable("roleId") Integer roleId) {
+    public ResponseEntity<ApiResponse<RoleDto>> updateRole(
+            HttpServletRequest httpRequest,
+            @Valid @RequestBody RoleDto roleDto,
+            @PathVariable("roleId") Integer roleId
+    ) {
+        requestLogService.logRequest(httpRequest);
         RoleDto updatedRole = roleService.updateRole(roleDto, roleId);
         return ResponseEntity.ok(ResponseUtil.success(updatedRole, "role updated"));
     }
@@ -73,29 +77,43 @@ public class RoleController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/disable/{roleId}")
-    public ResponseEntity<ApiResponse<?>> disableRole(@PathVariable("roleId") Integer roleId){
+    public ResponseEntity<ApiResponse<?>> disableRole(
+            HttpServletRequest httpRequest,
+            @PathVariable("roleId") Integer roleId
+    ){
+        requestLogService.logRequest(httpRequest);
         roleService.disableRole(roleId);
         return ResponseEntity.ok(ResponseUtil.success(null, "role disabled"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/enable/{roleId}")
-    public ResponseEntity<ApiResponse<?>> enableRole(@PathVariable("roleId") Integer roleId){
+    public ResponseEntity<ApiResponse<?>> enableRole(
+            HttpServletRequest httpRequest,
+            @PathVariable("roleId") Integer roleId
+    ){
+        requestLogService.logRequest(httpRequest);
         roleService.enableRole(roleId);
         return ResponseEntity.ok(ResponseUtil.success(null, "role enabled"));
     }
 
     @PostMapping("/assign-role")
-    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
-
+    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(
+            HttpServletRequest httpRequest,
+            @Valid @RequestBody UserRoleDto userRoleDto
+    ){
+        requestLogService.logRequest(httpRequest);
         UserDto updatedUserDto = userRoleService.assignRole(userRoleDto);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
 
     }
 
     @PostMapping("/deassign-role")
-    public ResponseEntity<ApiResponse<UserDto>> deassignRoleToUser(@Valid @RequestBody UserRoleDto userRoleDto){
-
+    public ResponseEntity<ApiResponse<UserDto>> deassignRoleToUser(
+            HttpServletRequest httpRequest,
+            @Valid @RequestBody UserRoleDto userRoleDto
+    ){
+        requestLogService.logRequest(httpRequest);
         UserDto updatedUserDto = userRoleService.deassignRole(userRoleDto);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role de-assigned"));
 

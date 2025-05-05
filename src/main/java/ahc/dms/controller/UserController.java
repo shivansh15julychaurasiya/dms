@@ -1,6 +1,7 @@
 package ahc.dms.controller;
 
 import ahc.dms.config.AppConstants;
+import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.UserDto;
@@ -23,10 +24,15 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private RequestLogService requestLogService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto){
-
+    public ResponseEntity<ApiResponse<UserDto>> createUser(
+            HttpServletRequest httpRequest,
+            @Valid @RequestBody UserDto userDto
+    ){
+        requestLogService.logRequest(httpRequest);
         UserDto createdUserDto = userService.createUser(userDto);
         return ResponseEntity.ok(ResponseUtil.success(createdUserDto, "user created"));
 
@@ -34,9 +40,11 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDto>> updateUser(
+            HttpServletRequest httpRequest,
             @Valid @RequestBody UserDto userDto,
             @PathVariable("userId") Long userId)
     {
+        requestLogService.logRequest(httpRequest);
         UserDto updatedUser = userService.updateUser(userDto, userId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
     }
@@ -45,8 +53,9 @@ public class UserController {
     @GetMapping("/deactivate/{username}")
     public ResponseEntity<ApiResponse<?>> deactivateUser(
             @PathVariable("username") String loginId,
-            HttpServletRequest request
+            HttpServletRequest httpRequest
     ){
+        requestLogService.logRequest(httpRequest);
         userService.deactivateUser(loginId);
         return ResponseEntity.ok(ResponseUtil.success(null, "user deactivated"));
     }
@@ -55,26 +64,27 @@ public class UserController {
     @GetMapping("/activate/{username}")
     public ResponseEntity<ApiResponse<?>> activateUser(
             @PathVariable("username") String loginId,
-            HttpServletRequest request
+            HttpServletRequest httpRequest
     ){
+        requestLogService.logRequest(httpRequest);
         userService.activateUser(loginId);
         return ResponseEntity.ok(ResponseUtil.success(null, "user activated"));
     }
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(
+            HttpServletRequest httpRequest,
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
     ){
-        //return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
+        requestLogService.logRequest(httpRequest);
         return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), "user fetched"));
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Long userId){
-        //return ResponseEntity.ok(userService.getUserById(userId));
         return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
     }
 
