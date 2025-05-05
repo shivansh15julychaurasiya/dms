@@ -1,5 +1,6 @@
 package ahc.dms.controller;
 
+import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.UserDto;
@@ -58,9 +59,14 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(){
+    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ){
         //return ResponseEntity.of(Optional.ofNullable(userService.getAllUsers()));
-        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(), "user fetched"));
+        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), "user fetched"));
     }
 
     @GetMapping("/{userId}")
