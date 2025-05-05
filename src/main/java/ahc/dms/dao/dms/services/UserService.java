@@ -87,7 +87,7 @@ public class UserService {
         User updatedUser = userRepository.findById(userId)
                 .map(user -> {
                     if (Boolean.FALSE.equals(user.getStatus())) {
-                        throw new ApiException("User is disabled");
+                        throw new ApiException("User is deactivated. First activate the user.");
                     }
                     user.setLoginId(userDto.getLoginId());
                     user.setName(userDto.getName());
@@ -213,19 +213,6 @@ public class UserService {
         if (userRepository.existsByPhone(userDto.getPhone())) {
             throw new DuplicateResourceException("Phone number", userDto.getPhone());
         }
-    }
-
-    private User fetchUserOrThrow(Long userId) {
-        return Optional.ofNullable(userId)
-                .map(id -> userRepository.findById(id)
-                        .map(user -> {
-                            if (Boolean.FALSE.equals(user.getStatus())) {
-                                throw new ApiException("User is disabled");
-                            }
-                            return user;
-                        })
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", id)))
-                .orElseThrow(() -> new ApiException("User Id cannot be null"));
     }
 
     private Role fetchRoleOrThrow(Integer roleId) {
