@@ -19,7 +19,7 @@ public class RoleDto {
     @JsonIgnore
     private Long version;
     @JsonProperty("role_id")
-    private Long roleId;
+    private Integer roleId;
     @JsonProperty("role_name")
     private String roleName;
     private Boolean status;

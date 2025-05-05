@@ -14,7 +14,6 @@ import ahc.dms.dao.dms.repositories.UserRepository;
 import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,20 +40,19 @@ public class UserService {
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto createUser(UserDto userDto) {
+        // loginId, email, phone
         dataIntegrityValidation(userDto);
 
-        // get the provided user-role from userDto
-        UserRoleDto userRoleDto = Optional.ofNullable(userDto.getUserRoles())
-                .filter(urDto -> urDto.size() == 1)
-                .map(urDto -> urDto.iterator().next())
-                .orElseThrow(() -> new ApiException(
-                        userDto.getUserRoles() == null ? "User-role must be provide" :
-                                userDto.getUserRoles().isEmpty() ? "At-least one user-role mapping must be provided" :
-                                        "Not more than one user-role mapping is allowed"
-                ));
-
-        // find the provided role object
-        Role providedRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+        // Extract and validate a single RoleDto from userDto
+        Set<RoleDto> roles = userDto.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            throw new ApiException("role_id must be provided");
+        }
+        if (roles.size() > 1) {
+            throw new ApiException("Only one role_id is allowed");
+        }
+        // Fetch the Role entity by ID
+        Role providedRole = fetchRoleOrThrow(roles.iterator().next().getRoleId());
 
         // now save new user and the correct user-role mapping
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -62,32 +60,30 @@ public class UserService {
         User newUser = userRepository.saveAndFlush(modelMapper.map(userDto, User.class));
         UserRole userRole = userRoleRepository.saveAndFlush(new UserRole(newUser, providedRole, true));
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
-        roleDto.setStatus(userRole.getStatus());
+        // role should be active at user-role and roles level
+        roleDto.setStatus(userRole.getStatus() && providedRole.getStatus());
 
         //preparing response
-        UserDto newUserDto = modelMapper.map(newUser, UserDto.class);
-        newUserDto.setRoles(new HashSet<>(Collections.singletonList(roleDto)));
-        newUserDto.setUserRoles(null);
+        UserDto savedUserDto = modelMapper.map(newUser, UserDto.class);
+        savedUserDto.setRoles(new HashSet<>(Collections.singletonList(roleDto)));
+        savedUserDto.setUserRoles(null);
 
-        return newUserDto;
-        //return modelMapper.map(savedUser, UserDto.class);
+        return savedUserDto;
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto updateUser(UserDto userDto, Long userId) {
 
-        // get the provided user-role from userDto
-        UserRoleDto userRoleDto = Optional.ofNullable(userDto.getUserRoles())
-                .filter(urDto -> urDto.size() == 1)
-                .map(urDto -> urDto.iterator().next())
-                .orElseThrow(() -> new ApiException(
-                        userDto.getUserRoles() == null ? "User-role must be provide" :
-                                userDto.getUserRoles().isEmpty() ? "At-least one user-role mapping must be provided" :
-                                        "Not more than one user-role mapping is allowed"
-                ));
-
-        // find the provided role object
-        Role providedRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+        // Extract and validate a single RoleDto from userDto
+        Set<RoleDto> roles = userDto.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            throw new ApiException("role_id must be provided");
+        }
+        if (roles.size() > 1) {
+            throw new ApiException("Only one role_id is allowed");
+        }
+        // Fetch the Role entity by ID
+        Role providedRole = fetchRoleOrThrow(roles.iterator().next().getRoleId());
         // find and update user
         User updatedUser = userRepository.findById(userId)
                 .map(user -> {
@@ -108,7 +104,7 @@ public class UserService {
         // if user-role exists then update status to true or create new active user-role
         UserRole userRole = userRoleRepository.findByUserAndRole(updatedUser, providedRole)
                 .map(existingUserRole -> {
-                    // If exists, update status to true if it's not already true
+                    // If exists, update status to true (since previous ones are disabled)
                     existingUserRole.setStatus(true);
                     return userRoleRepository.save(existingUserRole);
                 })
@@ -118,7 +114,8 @@ public class UserService {
         //preparing response
         UserDto updatedUserDto = modelMapper.map(updatedUser, UserDto.class);
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
-        roleDto.setStatus(userRole.getStatus());
+        // role should be active at user-role and roles level
+        roleDto.setStatus(userRole.getStatus() && userRole.getRole().getStatus());
         updatedUserDto.setRoles(new HashSet<>(Set.of(roleDto)));
         updatedUserDto.setUserRoles(null);
         return updatedUserDto;
