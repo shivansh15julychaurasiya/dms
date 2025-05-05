@@ -23,6 +23,7 @@ public class UserDto {
 
     @JsonIgnore
     private Long version;
+    @JsonProperty("user_id")
     private Long userId;
 
     @NotBlank
@@ -72,5 +73,5 @@ public class UserDto {
     public void setPassword(String password){
         this.password = password;
     }
-    
+
 }

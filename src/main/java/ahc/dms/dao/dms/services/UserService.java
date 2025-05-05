@@ -43,12 +43,6 @@ public class UserService {
     public UserDto createUser(UserDto userDto) {
         dataIntegrityValidation(userDto);
 
-        // if user is present with provided login id
-        userRepository.findByLoginId(userDto.getLoginId())
-                .ifPresent(existingUser -> {
-                    throw new DuplicateResourceException("Username (Login Id)", userDto.getLoginId());
-                });
-
         // get the provided user-role from userDto
         UserRoleDto userRoleDto = Optional.ofNullable(userDto.getUserRoles())
                 .filter(urDto -> urDto.size() == 1)
@@ -105,15 +99,11 @@ public class UserService {
                     user.setEmail(userDto.getEmail());
                     user.setAbout(userDto.getAbout());
                     user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+                    // Deactivate all roles
                     user.getUserRoles().forEach(userRole -> userRole.setStatus(false));
-                    return userRepository.save(user);
+                    return userRepository.saveAndFlush(user);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-
-        // Deactivate all roles
-        Set<UserRole> userRoles = userRoleRepository.findByUser(updatedUser);
-        userRoles.forEach(ur -> ur.setStatus(false));
-        userRoleRepository.saveAll(userRoles);
 
         // if user-role exists then update status to true or create new active user-role
         UserRole userRole = userRoleRepository.findByUserAndRole(updatedUser, providedRole)
@@ -122,13 +112,14 @@ public class UserService {
                     existingUserRole.setStatus(true);
                     return userRoleRepository.save(existingUserRole);
                 })
-                .orElseGet(() -> userRoleRepository.save(new UserRole(updatedUser, providedRole, true)));
+                .orElseGet(() ->
+                        userRoleRepository.save(new UserRole(updatedUser, providedRole, true)));
 
         //preparing response
         UserDto updatedUserDto = modelMapper.map(updatedUser, UserDto.class);
         RoleDto roleDto = modelMapper.map(userRole.getRole(), RoleDto.class);
         roleDto.setStatus(userRole.getStatus());
-        updatedUserDto.setRoles(new HashSet<>(Collections.singletonList(roleDto)));
+        updatedUserDto.setRoles(new HashSet<>(Set.of(roleDto)));
         updatedUserDto.setUserRoles(null);
         return updatedUserDto;
     }
