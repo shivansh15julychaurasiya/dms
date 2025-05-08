@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "token")
+@Table(name = "jw_token")
 @Getter
 @Setter
 @NoArgsConstructor
