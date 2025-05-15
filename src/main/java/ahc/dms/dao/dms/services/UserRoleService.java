@@ -10,7 +10,6 @@ import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
-import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,10 @@ public class UserRoleService {
     private UserRoleRepository userRoleRepository;
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public UserDto assignRole(UserRoleDto userRoleDto) {
-
+    public UserDto assignRole(String loginId, Integer roleId) {
         //check for existing user and role
-        User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
-        Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+        User existingUser = fetchUserOrThrow(loginId);
+        Role existingRole = fetchRoleOrThrow(roleId);
 
         //check for existing role-mapping
         Optional<UserRole> existingUserRole = userRoleRepository.findByUserAndRole(existingUser, existingRole);
@@ -71,11 +69,11 @@ public class UserRoleService {
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public UserDto deassignRole(UserRoleDto userRoleDto) {
+    public UserDto deassignRole(String loginId, Integer roleId) {
 
         //check for existing user and role
-        User existingUser = fetchUserOrThrow(userRoleDto.getUserId());
-        Role existingRole = fetchRoleOrThrow(userRoleDto.getRoleId());
+        User existingUser = fetchUserOrThrow(loginId);
+        Role existingRole = fetchRoleOrThrow(roleId);
 
         //check for existing role-mapping
         // if found active then disable it and if not found throw exception
@@ -100,17 +98,17 @@ public class UserRoleService {
         return theUserDto;
     }
 
-    private User fetchUserOrThrow(Long userId) {
-        return Optional.ofNullable(userId)
-                .map(id -> userRepository.findById(id)
+    private User fetchUserOrThrow(String loginId) {
+        return Optional.ofNullable(loginId)
+                .map(lId -> userRepository.findByLoginId(lId)
                         .map(user -> {
                             if (Boolean.FALSE.equals(user.getStatus())) {
                                 throw new ApiException("User is disabled");
                             }
                             return user;
                         })
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "User Id", id)))
-                .orElseThrow(() -> new ApiException("User Id cannot be null"));
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId)))
+                .orElseThrow(() -> new ApiException("Login Id cannot be null"));
     }
 
     private Role fetchRoleOrThrow(Integer roleId) {

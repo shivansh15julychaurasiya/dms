@@ -7,7 +7,6 @@ import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
-import ahc.dms.payload.UserRoleDto;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -97,26 +96,26 @@ public class RoleController {
         return ResponseEntity.ok(ResponseUtil.success(null, "role enabled"));
     }
 
-    @PostMapping("/assign-role")
-    public ResponseEntity<ApiResponse<UserDto>> assignRoleToUser(
+    @GetMapping("/assign-role")
+    public ResponseEntity<ApiResponse<UserDto>> assignRole(
             HttpServletRequest httpRequest,
-            @Valid @RequestBody UserRoleDto userRoleDto
-    ){
+            @RequestParam(value = "loginId") String loginId,
+            @RequestParam(value = "roleId") Integer roleId
+    ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUserDto = userRoleService.assignRole(userRoleDto);
+        UserDto updatedUserDto = userRoleService.assignRole(loginId, roleId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
-
     }
 
-    @PostMapping("/deassign-role")
-    public ResponseEntity<ApiResponse<UserDto>> deassignRoleToUser(
+    @GetMapping("/deassign-role")
+    public ResponseEntity<ApiResponse<UserDto>> deassignRole(
             HttpServletRequest httpRequest,
-            @Valid @RequestBody UserRoleDto userRoleDto
-    ){
+            @RequestParam(value = "loginId") String loginId,
+            @RequestParam(value = "roleId") Integer roleId
+    ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUserDto = userRoleService.deassignRole(userRoleDto);
-        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role de-assigned"));
-
+        UserDto updatedUserDto = userRoleService.deassignRole(loginId, roleId);
+        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
     }
 
 }
