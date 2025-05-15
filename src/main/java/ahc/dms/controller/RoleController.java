@@ -4,10 +4,7 @@ import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.dao.dms.services.UserRoleService;
-import ahc.dms.payload.ApiResponse;
-import ahc.dms.payload.RoleDto;
-import ahc.dms.payload.UserDto;
-import ahc.dms.payload.UserRoleDto;
+import ahc.dms.payload.*;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -52,16 +49,28 @@ public class RoleController {
         return ResponseEntity.ok(ResponseUtil.success(updatedRole, "role updated"));
     }
 
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(
+//            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+//            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+//            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_ROLE_BY, required = false) String sortBy,
+//            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+//    ){
+//        List<RoleDto> roles = roleService.getAllRoles(pageNumber, pageSize, sortBy, sortDir);
+//        return ResponseEntity.ok(ResponseUtil.success(roles, "role list"));
+//    }
+
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoleDto>>> getRoles(
+    public ResponseEntity<ApiResponse<PageResponse<RoleDto>>> getRoles(
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_ROLE_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
-    ){
-        List<RoleDto> roles = roleService.getAllRoles(pageNumber, pageSize, sortBy, sortDir);
-        return ResponseEntity.ok(ResponseUtil.success(roles, "role list"));
+    ) {
+        PageResponse<RoleDto> pageResponse = roleService.getAllRoles(pageNumber, pageSize, sortBy, sortDir);
+        return ResponseEntity.ok(ResponseUtil.success(pageResponse, "Role list fetched successfully"));
     }
+
 
     @GetMapping("/roleId/{roleId}")
     public ResponseEntity<ApiResponse<RoleDto>> getRoleById(@PathVariable("roleId") Integer roleId) {

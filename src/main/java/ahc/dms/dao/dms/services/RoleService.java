@@ -4,6 +4,7 @@ import ahc.dms.dao.dms.entities.Role;
 import ahc.dms.dao.dms.repositories.RoleRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.ResourceNotFoundException;
+import ahc.dms.payload.PageResponse;
 import ahc.dms.payload.RoleDto;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -52,14 +53,37 @@ public class RoleService {
         return modelMapper.map(updatedRole, RoleDto.class);
     }
 
-    public List<RoleDto> getAllRoles(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+//    public List<RoleDto> getAllRoles(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+//
+//        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+//        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+//        Page<Role> pageRole = roleRepository.findAll(pageable);
+//        List<Role> roles = pageRole.getContent();
+//        return roles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
+//    }
 
-        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+    public PageResponse<RoleDto> getAllRoles(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Role> pageRole = roleRepository.findAll(pageable);
-        List<Role> roles = pageRole.getContent();
-        return roles.stream().map(role -> modelMapper.map(role, RoleDto.class)).collect(Collectors.toList());
+
+        List<RoleDto> roleDtos = pageRole.getContent()
+                .stream()
+                .map(role -> modelMapper.map(role, RoleDto.class))
+                .collect(Collectors.toList());
+
+        PageResponse<RoleDto> pageResponse = new PageResponse<>();
+        pageResponse.setContent(roleDtos);
+        pageResponse.setPageNumber(pageRole.getNumber());
+        pageResponse.setPageSize(pageRole.getSize());
+        pageResponse.setTotalElements(pageRole.getTotalElements());
+        pageResponse.setTotalPages(pageRole.getTotalPages());
+        pageResponse.setLastPage(pageRole.isLast());
+
+        return pageResponse;
     }
+
 
 
     public RoleDto getRoleByRoleId(Integer roleId) {
