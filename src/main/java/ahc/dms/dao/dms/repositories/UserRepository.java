@@ -7,6 +7,11 @@ import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;       // ✔️ Correct
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.util.Optional;
 
 @Repository
@@ -19,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     boolean existsByLoginId(String loginId);
     boolean existsByPhone(String phone);
+
+    Page<User> findAll(Pageable pageable);
 }

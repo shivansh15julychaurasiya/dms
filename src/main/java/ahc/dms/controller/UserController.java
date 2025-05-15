@@ -4,6 +4,7 @@ import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.UserRoleService;
 import ahc.dms.payload.ApiResponse;
+import ahc.dms.payload.PageResponse;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.utils.ResponseUtil;
@@ -71,17 +72,29 @@ public class UserController {
         return ResponseEntity.ok(ResponseUtil.success(null, "user activated"));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(
-            HttpServletRequest httpRequest,
-            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
-    ){
-        requestLogService.logRequest(httpRequest);
-        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), "user fetched"));
-    }
+//    @GetMapping("/")
+//    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(
+//            HttpServletRequest httpRequest,
+//            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+//            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+//            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
+//            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+//    ){
+//        requestLogService.logRequest(httpRequest);
+//        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), "user fetched"));
+//    }
+@GetMapping("/")
+public ResponseEntity<ApiResponse<PageResponse<UserDto>>> getAllUsers(
+        HttpServletRequest httpRequest,
+        @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+        @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
+        @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+    requestLogService.logRequest(httpRequest);
+    PageResponse<UserDto> users = userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
+    return ResponseEntity.ok(ResponseUtil.success(users, "user fetched"));
+}
+
 
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Long userId){
