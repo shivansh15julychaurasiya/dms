@@ -84,7 +84,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> getSingleUser(@PathVariable("userId") Long userId){
+    public ResponseEntity<ApiResponse<UserDto>> getUserProfile(@PathVariable("userId") Long userId){
         return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
     }
 
