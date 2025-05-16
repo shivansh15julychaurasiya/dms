@@ -8,11 +8,13 @@ import ahc.dms.dao.dms.repositories.UserRoleRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.DuplicateResourceException;
 import ahc.dms.exceptions.ResourceNotFoundException;
+import ahc.dms.payload.PageResponse;
 import ahc.dms.payload.RoleDto;
 import ahc.dms.payload.UserDto;
 import ahc.dms.dao.dms.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -148,23 +150,26 @@ public class UserService {
         return userDto;
     }
 
-    public List<UserDto> getAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
-
-        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+    public PageResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<User> userPage = userRepository.findAll(pageable);
 
-        return userRepository.findAll(pageable).getContent().stream().map(user -> {
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            userDto.setUserRoles(null);
+        List<UserDto> userDtos = userPage.getContent().stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
 
-            user.getActiveUserRole().ifPresentOrElse(role -> {
-                RoleDto roleDto = modelMapper.map(role, RoleDto.class);
-                userDto.setRoles(Set.of(roleDto));
-            }, () -> userDto.setRoles(new HashSet<>()));
+        PageResponse<UserDto> response = new PageResponse<>();
+        response.setContent(userDtos);
+        response.setPageNumber(userPage.getNumber());
+        response.setPageSize(userPage.getSize());
+        response.setTotalElements(userPage.getTotalElements());
+        response.setTotalPages(userPage.getTotalPages());
+        response.setLastPage(userPage.isLast());
 
-            return userDto;
-        }).collect(Collectors.toList());
+        return response;
     }
+
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public void deactivateUser(String loginId) {

@@ -256,7 +256,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                   </Col>
                   <Col xs="6">
                     <Button type="submit" color="success" className="w-100">
-                      {isEditMode ? "Update User" : "Register User"}
+                      {isEditMode ? "Update User" : "Create User"}
                     </Button>
                   </Col>
                 </Row>
