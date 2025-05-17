@@ -1,11 +1,7 @@
 package ahc.dms;
 
-import ahc.dms.dao.dms.entities.Role;
-import ahc.dms.dao.dms.entities.User;
-import ahc.dms.dao.dms.entities.UserRole;
-import ahc.dms.dao.dms.repositories.RoleRepository;
-import ahc.dms.dao.dms.repositories.UserRepository;
-import ahc.dms.dao.dms.repositories.UserRoleRepository;
+import ahc.dms.dao.dms.entities.*;
+import ahc.dms.dao.dms.repositories.*;
 import ahc.dms.payload.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -45,6 +41,10 @@ public class DmsApplication implements CommandLineRunner {
     private UserRepository userRepository;
     @Autowired
     private UserRoleRepository userRoleRepository;
+    @Autowired
+    private ObjectMasterRepository omRepository;
+    @Autowired
+    private ObjectRoleRepository orRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(DmsApplication.class, args);
@@ -123,6 +123,31 @@ public class DmsApplication implements CommandLineRunner {
             }
 
             // Object master filter
+            ObjectMaster userObjectMaster = omRepository.findByRequestUriAndRequestMethod("/dms/users/", "GET")
+                            .orElseGet(() -> {
+                                ObjectMaster userOm =  new ObjectMaster();
+                                userOm.setRequestUri("/dms/users/");
+                                userOm.setRequestMethod("GET");
+                                userOm.setStatus(true);
+                                return omRepository.saveAndFlush(userOm);
+                            });
+
+            ObjectMaster roleObjectMaster = omRepository.findByRequestUriAndRequestMethod("/dms/role", "GET")
+                    .orElseGet(() -> {
+                        ObjectMaster userOm =  new ObjectMaster();
+                        userOm.setRequestUri("/dms/role");
+                        userOm.setRequestMethod("GET");
+                        userOm.setStatus(true);
+                        return omRepository.saveAndFlush(userOm);
+                    });
+
+            // For each or, check if it exists first
+            if (!orRepository.existsByObjectMasterAndRole(userObjectMaster, adminRole)) {
+                orRepository.save(new ObjectRole(userObjectMaster, adminRole, true));
+            }
+            if (!orRepository.existsByObjectMasterAndRole(roleObjectMaster, adminRole)) {
+                orRepository.save(new ObjectRole(roleObjectMaster, adminRole, true));
+            }
 
 
 

@@ -17,7 +17,12 @@ public class ObjectMaster {
 
     @Id
     @Column(name = "om_id")
-    private Long omId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "om_seq")
+    @SequenceGenerator(
+            name = "om_seq",
+            sequenceName = "om_sequence", // This is the name of the DB sequence
+            allocationSize = 1 // Optional: 1 means no batch caching
+    )    private Long omId;
 
     @Column(name = "request_uri")
     private String requestUri;
