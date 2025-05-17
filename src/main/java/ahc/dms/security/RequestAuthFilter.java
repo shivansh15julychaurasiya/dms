@@ -35,13 +35,6 @@ public class RequestAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
 
-        logger.info("DispatcherType: {}", request.getDispatcherType());
-        // Skip if already authenticated (prevents double filtering)
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            logger.info("Preventing filter run from internal forwards/redirects");
-            return true;
-        }
-
         logger.info("Checking REQUEST_AUTH_IGNORED_URLS for : {}", request.getRequestURI());
         return AppConstants.REQUEST_AUTH_IGNORED_URLS.stream()
                 .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
