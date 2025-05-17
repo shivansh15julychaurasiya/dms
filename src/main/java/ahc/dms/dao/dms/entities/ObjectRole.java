@@ -17,10 +17,11 @@ public class ObjectRole {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "or_seq")
     @SequenceGenerator(
             name = "or_seq",
-            sequenceName = "user_sequence", // This is the name of the DB sequence
+            sequenceName = "or_sequence", // This is the name of the DB sequence
             allocationSize = 1 // Optional: 1 means no batch caching
     )
     private Long orId;
+
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private Boolean status;
 
@@ -38,4 +39,9 @@ public class ObjectRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    public ObjectRole(ObjectMaster objectMaster, Role role, Boolean status) {
+        this.objectMaster = objectMaster;
+        this.role = role;
+        this.status = status;
+    }
 }
