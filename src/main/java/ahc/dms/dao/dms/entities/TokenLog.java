@@ -19,7 +19,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Token {
+public class TokenLog {
 
     @Version  // ← Optimistic lock column
     private Long version = 0L;
@@ -37,6 +37,8 @@ public class Token {
     private String username;
     @Column(name = "jw_token")
     private String jwToken;
+    @Column(name = "token_type")
+    private String token_type;
     @Column(name = "expiration_date")
     private Date expirationDate;
     @Column(name = "token_status")

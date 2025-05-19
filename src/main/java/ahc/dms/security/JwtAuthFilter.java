@@ -30,7 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
-    private JwtTokenHelper jwtTokenHelper;
+    private JwtHelper jwtHelper;
     private final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
@@ -68,7 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("Extracting Token");
             token = authHeader.substring(7);
             try {
-                username = this.jwtTokenHelper.getUsernameFromToken(token);
+                username = this.jwtHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
                 logger.info("Unable to get user");
             } catch (ExpiredJwtException e) {
@@ -84,7 +84,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //validating token
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.jwtTokenHelper.validateToken(token, userDetails)) {
+            if (this.jwtHelper.validateToken(token, userDetails)) {
                 //now set the authentication
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(

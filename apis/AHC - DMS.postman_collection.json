@@ -41,7 +41,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"rahul\",\n    \"email\": \"rahul@gmail.com\",\n    \"login_id\": \"11445\",\n    \"about\": \"artist hai\",\n    \"password\": \"1234\",\n    \"phone\": \"8815167136\"\n}",
+							"raw": "{\n\t\"name\": \"rahul\",\n    \"email\": \"rahul@gmail.com\",\n    \"username\": \"11445\",\n    \"about\": \"artist hai\",\n    \"password\": \"1234\",\n    \"phone\": \"8815167136\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -96,7 +96,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"ankit\",\n    \"email\": \"ankit@gmail.com\",\n    \"login_id\": \"11707\",\n    \"about\": \"translation\",\n    \"password\": \"1234\",\n    \"phone\": \"9876543210\",\n    \"roles\" : [\n        {\"role_id\" : 2}\n    ]\n}",
+							"raw": "{\n\t\"name\": \"ankit\",\n    \"email\": \"ankit@gmail.com\",\n    \"username\": \"11707\",\n    \"about\": \"translation\",\n    \"password\": \"1234\",\n    \"phone\": \"9876543210\",\n    \"roles\" : [\n        {\"role_id\" : 2}\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -165,7 +165,7 @@
 					"response": []
 				},
 				{
-					"name": "singleuser",
+					"name": "userprofile",
 					"event": [
 						{
 							"listen": "test",
@@ -248,7 +248,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"ankit singh\",\n    \"email\": \"ankit@gmail.com\",\n    \"about\": \"translator\",\n    \"login_id\": \"11707\",\n    \"phone\" : \"987654321\",\n    \"password\": \"1234\",\n    \"roles\": [\n        {\n            \"role_id\" : 1\n        }\n    ]\n}",
+							"raw": "{\n\t\"name\": \"ankit singh\",\n    \"email\": \"ankit@gmail.com\",\n    \"about\": \"translator\",\n    \"username\": \"11707\",\n    \"phone\" : \"987654321\",\n    \"password\": \"1234\",\n    \"roles\": [\n        {\n            \"role_id\" : 1\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -488,7 +488,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/role/assign-role?loginId=11448&roleId=1",
+							"raw": "{{localhost}}:{{dms_port}}/dms/role/assign-role?username=11448&roleId=1",
 							"host": [
 								"{{localhost}}"
 							],
@@ -500,7 +500,7 @@
 							],
 							"query": [
 								{
-									"key": "loginId",
+									"key": "username",
 									"value": "11448"
 								},
 								{
@@ -544,7 +544,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/role/deassign-role?loginId=11448&roleId=1",
+							"raw": "{{localhost}}:{{dms_port}}/dms/role/deassign-role?username=11448&roleId=1",
 							"host": [
 								"{{localhost}}"
 							],
@@ -556,7 +556,7 @@
 							],
 							"query": [
 								{
-									"key": "loginId",
+									"key": "username",
 									"value": "11448"
 								},
 								{
@@ -578,10 +578,52 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});"
+									"});",
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>Status</th>",
+									"        <th>Role ID</th>",
+									"        <th>Role Name</th>",
+									"        <th>Created At</th>",
+									"        <th>Updated At</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.data.content}}",
+									"        <tr>",
+									"            <td>{{status}}</td>",
+									"            <td>{{role_id}}</td>",
+									"            <td>{{role_name}}</td>",
+									"            <td>{{created_at}}</td>",
+									"            <td>{{updated_at}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()}",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -591,7 +633,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{vault:authorization-secret}}",
+									"value": "{{jwt}}",
 									"type": "string"
 								}
 							]
@@ -716,51 +758,6 @@
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
-					"name": "updateuser",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful PUT request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"anuragi\",\n    \"email\": \"anuragi@yahoo.com\",\n    \"about\": \"anuragi's blog\",\n    \"password\": \"1234\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/users/3",
-							"host": [
-								"{{localhost}}"
-							],
-							"port": "{{dms_port}}",
-							"path": [
-								"dms",
-								"users",
-								"3"
-							]
-						},
-						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
 					},
 					"response": []
 				},
@@ -908,6 +905,54 @@
 			"name": "security",
 			"item": [
 				{
+					"name": "login otp (bsnl)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://103.234.185.173/api/swsendnk.asp?username=HCALLD&pass=4yFqGgEwjbzC&sender=HCALLD&sendto=8601837554&templateID=1107168551150460623&message=OTP to login in DMS : 1234 - Allahabad High Court",
+							"protocol": "http",
+							"host": [
+								"103",
+								"234",
+								"185",
+								"173"
+							],
+							"path": [
+								"api",
+								"swsendnk.asp"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "HCALLD"
+								},
+								{
+									"key": "pass",
+									"value": "4yFqGgEwjbzC"
+								},
+								{
+									"key": "sender",
+									"value": "HCALLD"
+								},
+								{
+									"key": "sendto",
+									"value": "8601837554"
+								},
+								{
+									"key": "templateID",
+									"value": "1107168551150460623"
+								},
+								{
+									"key": "message",
+									"value": "OTP to login in DMS : 1234 - Allahabad High Court"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "logout",
 					"event": [
 						{
@@ -954,62 +999,7 @@
 					"response": []
 				},
 				{
-					"name": "resetpass",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Successful POST request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-									"});",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{vault:authorization-secret}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"login_id\": \"11448\",\n    \"password\": \"1234\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/auth/reset-password",
-							"host": [
-								"{{localhost}}"
-							],
-							"port": "{{dms_port}}",
-							"path": [
-								"dms",
-								"auth",
-								"reset-password"
-							]
-						},
-						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
-					},
-					"response": []
-				},
-				{
-					"name": "login-pass",
+					"name": "login (password)",
 					"event": [
 						{
 							"listen": "test",
@@ -1054,7 +1044,7 @@
 					"response": []
 				},
 				{
-					"name": "login-otp",
+					"name": "login (otp)",
 					"event": [
 						{
 							"listen": "test",
@@ -1102,6 +1092,199 @@
 								"dms",
 								"auth",
 								"login-otp"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp (reset)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"4359\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/verify-reset-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"verify-reset-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp (forgot)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"1181\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/verify-forgot-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"verify-forgot-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp (login)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"1181\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/login-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"login-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request-otp (reset)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp_type\" :  \"Reset\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/request-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"request-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request-otp (login)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp_type\" :  \"Login\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/request-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"request-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request-otp (forgot)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"11448\",\n    \"otp_type\": \"Forgot\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/request-otp",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"request-otp"
 							]
 						},
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -1214,171 +1397,69 @@
 			]
 		},
 		{
-			"name": "sms",
+			"name": "case_file",
 			"item": [
 				{
-					"name": "login otp (bsnl)",
+					"name": "getfile",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://103.234.185.173/api/swsendnk.asp?username=HCALLD&pass=44312074&sender=HCALLD&sendto=8601837554&templateID=1107168551150460623&message=OTP to login in DMS : 1234 - Allahabad High Court",
-							"protocol": "http",
-							"host": [
-								"103",
-								"234",
-								"185",
-								"173"
-							],
-							"path": [
-								"api",
-								"swsendnk.asp"
-							],
-							"query": [
-								{
-									"key": "username",
-									"value": "HCALLD"
-								},
-								{
-									"key": "pass",
-									"value": "44312074"
-								},
-								{
-									"key": "sender",
-									"value": "HCALLD"
-								},
-								{
-									"key": "sendto",
-									"value": "8601837554"
-								},
-								{
-									"key": "templateID",
-									"value": "1107168551150460623"
-								},
-								{
-									"key": "message",
-									"value": "OTP to login in DMS : 1234 - Allahabad High Court"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "reset otp",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"login_id\" : \"11823\",\n    \"otp_type\" :  \"Reset\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/auth/request-otp",
+							"raw": "{{localhost}}:{{dms_port}}/dms/cfd/1",
 							"host": [
 								"{{localhost}}"
 							],
 							"port": "{{dms_port}}",
 							"path": [
 								"dms",
-								"auth",
-								"request-otp"
+								"cfd",
+								"1"
 							]
 						}
 					},
 					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwt}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				},
 				{
-					"name": "verify reset otp",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\" : \"11823\",\n    \"otp\": \"4359\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/auth/verify-reset-otp",
-							"host": [
-								"{{localhost}}"
-							],
-							"port": "{{dms_port}}",
-							"path": [
-								"dms",
-								"auth",
-								"verify-reset-otp"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "verify login otp",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"6213\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/auth/login-otp",
-							"host": [
-								"{{localhost}}"
-							],
-							"port": "{{dms_port}}",
-							"path": [
-								"dms",
-								"auth",
-								"login-otp"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "login otp",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"login_id\" : \"11448\",\n    \"otp_type\" :  \"Login\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}:{{dms_port}}/dms/auth/request-otp",
-							"host": [
-								"{{localhost}}"
-							],
-							"port": "{{dms_port}}",
-							"path": [
-								"dms",
-								"auth",
-								"request-otp"
-							]
-						}
-					},
-					"response": []
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}
@@ -1408,15 +1489,15 @@
 	"variable": [
 		{
 			"key": "localhost",
-			"value": ""
+			"value": "localhost"
 		},
 		{
 			"key": "dms_port",
-			"value": ""
+			"value": "8081"
 		},
 		{
 			"key": "jwt",
-			"value": "",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMTQ0OCIsImlhdCI6MTc0NzYzMTY1MCwiZXhwIjoxNzQ3NjY3NjUwfQ.PTVp1eeNaMVkGLRvJWbCuKBFdadIEpz6ly5rTE135YTE7M-7teROf-Ut5_LrITbp1cLt_VekXd9tZeegl64gvA",
 			"type": "string"
 		}
 	]

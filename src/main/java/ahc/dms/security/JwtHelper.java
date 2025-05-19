@@ -2,7 +2,7 @@ package ahc.dms.security;
 
 import ahc.dms.config.AppConstants;
 import ahc.dms.payload.TokenDto;
-import ahc.dms.dao.dms.services.TokenService;
+import ahc.dms.dao.dms.services.TokenLogService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtTokenHelper {
+public class JwtHelper {
 
     @Autowired
-    private TokenService tokenService;
+    private TokenLogService tokenLogService;
     private SecretKey key;
-    private final Logger logger = LoggerFactory.getLogger(JwtTokenHelper.class);
+    private final Logger logger = LoggerFactory.getLogger(JwtHelper.class);
 
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
     // preventing the repeated creation of the key and enhancing performance
@@ -51,12 +51,12 @@ public class JwtTokenHelper {
                 .compact();
 
         logger.info("token : {}", token);
-        TokenDto existingTokenDto = tokenService.getTokenByUsername(userDetails.getUsername());
+        TokenDto existingTokenDto = tokenLogService.getTokenByUsername(userDetails.getUsername());
         if (existingTokenDto!=null) {
             logger.info("renewing token!!!");
             existingTokenDto.setJwToken(token);
             existingTokenDto.setTokenStatus(true);
-            tokenService.saveToken(existingTokenDto);
+            tokenLogService.saveToken(existingTokenDto);
         } else {
             logger.info("creating new token!!!");
             TokenDto tokenDto = new TokenDto();
@@ -64,7 +64,7 @@ public class JwtTokenHelper {
             tokenDto.setUsername(userDetails.getUsername());
             tokenDto.setExpirationDate(expiration);
             tokenDto.setTokenStatus(true);
-            tokenService.saveToken(tokenDto);
+            tokenLogService.saveToken(tokenDto);
         }
         logger.info("returning token!!!!");
         return token;
@@ -78,7 +78,7 @@ public class JwtTokenHelper {
         //if toke is valid
         if (validToken) {
             //check token status from db
-            TokenDto existingToken = tokenService.getToken(token, userDetails.getUsername());
+            TokenDto existingToken = tokenLogService.getToken(token, userDetails.getUsername());
             return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;

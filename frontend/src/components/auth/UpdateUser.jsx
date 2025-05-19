@@ -18,7 +18,7 @@ import { showAlert } from "../../utils/helpers";
 import { getUserById, updateUser } from "../../services/userService"; // ✅ imported helper functions
 
 const UpdateUser = () => {
-  const { token } = useContext(AuthContext);
+  const { tokenLog } = useContext(AuthContext);
   const { userId } = useParams();
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const UpdateUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const data = await getUserById(userId, token);
+        const data = await getUserById(userId, tokenLog);
         setFormData({
           name: data.data.name || "", // Ensure default empty string if undefined
           email: data.data.email || "", // Ensure default empty string if undefined
@@ -48,7 +48,7 @@ const UpdateUser = () => {
       }
     };
     fetchUser();
-  }, [userId, token]);
+  }, [userId, tokenLog]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -63,7 +63,7 @@ const UpdateUser = () => {
     setSuccessMsg("");
 
     try {
-      await updateUser(userId, formData, token);
+      await updateUser(userId, formData, tokenLog);
       setSuccessMsg("User updated successfully!");
       setTimeout(() => navigate("/home/admindashboard"), 2000);
     } catch (err) {

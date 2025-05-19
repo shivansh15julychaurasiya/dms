@@ -11,6 +11,8 @@ public class AppConstants {
             "/dms/auth/request-otp",
             "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
+            "/dms/auth/verify-forgot-otp",
+            "/dms/auth/verify-login-otp",
             "/actuator/**"
     };
 
@@ -35,6 +37,8 @@ public class AppConstants {
             "/dms/auth/request-otp",
             "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
+            "/dms/auth/verify-forgot-otp",
+            "/dms/auth/verify-login-otp",
             "/actuator/**"
     );
 
@@ -45,6 +49,8 @@ public class AppConstants {
             "/dms/auth/request-otp",
             "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
+            "/dms/auth/verify-forgot-otp",
+            "/dms/auth/verify-login-otp",
             "/actuator/**"
     );
 
@@ -59,9 +65,9 @@ public class AppConstants {
     public static final String JWT_CREATED = "Created";
     public static final String JWT_REVOKED = "Revoked";
 
-    public static final String OTP_TYPE_LOGIN = "Login";
-    public static final String OTP_TYPE_RESET = "Reset";
-    public static final String OTP_TYPE_FORGOT = "Forgot";
+    public static final String LOGIN_TOKEN = "Login";
+    public static final String RESET_TOKEN = "Reset";
+    public static final String FORGOT_TOKEN = "Forgot";
 
     public static final String LOGIN_OTP_URI = "http://103.234.185.173/api/swsendnk.asp";
     public static final String LOGIN_OTP_USERNAME = "HCALLD";

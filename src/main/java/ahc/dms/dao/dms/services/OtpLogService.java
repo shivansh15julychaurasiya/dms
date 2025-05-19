@@ -29,10 +29,14 @@ public class OtpLogService {
     }
 
     public boolean verifyLoginOtp(String username, String otp) {
-        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValue(username, AppConstants.OTP_TYPE_LOGIN, otp).isPresent();
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.LOGIN, otp).isPresent();
     }
 
     public boolean verifyResetOtp(String username, String otp) {
-        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValue(username, AppConstants.OTP_TYPE_RESET, otp).isPresent();
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.RESET_TOKEN, otp).isPresent();
+    }
+
+    public boolean verifyForgotOtp(String username, String otp) {
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.FORGOT_TOKEN, otp).isPresent();
     }
 }

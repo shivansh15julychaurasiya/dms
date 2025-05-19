@@ -15,9 +15,9 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const checkTokenAndFetch = () => {
-      const token = localStorage.getItem("token");
-      if (!token || isTokenExpired(token)) {
-        localStorage.removeItem("token");
+      const tokenLog = localStorage.getItem("tokenLog");
+      if (!tokenLog || isTokenExpired(tokenLog)) {
+        localStorage.removeItem("tokenLog");
         navigate("/home/login");
       } else {
         fetchUsers(setUsers, setError, navigate);
@@ -28,9 +28,9 @@ const UserDashboard = () => {
 
     checkTokenAndFetch();
     const intervalId = setInterval(() => {
-      const token = localStorage.getItem("token");
-      if (!token || isTokenExpired(token)) {
-        localStorage.removeItem("token");
+      const tokenLog = localStorage.getItem("tokenLog");
+      if (!tokenLog || isTokenExpired(tokenLog)) {
+        localStorage.removeItem("tokenLog");
         navigate("/home/login");
       }
     }, 10000);

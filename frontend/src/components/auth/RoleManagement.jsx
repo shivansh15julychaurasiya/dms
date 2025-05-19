@@ -31,12 +31,12 @@ const RoleManagement = ({ onRolesUpdate }) => {
   const [userId, setUserId] = useState("");
   const [deassignRoleId, setDeassignRoleId] = useState("");
 
-  const { token } = useAuth();
+  const { tokenLog } = useAuth();
 
   useEffect(() => {
-    fetchRoles(token, setRoles);
+    fetchRoles(tokenLog, setRoles);
     setLoading(false);
-  }, [token]);
+  }, [tokenLog]);
 
   useEffect(() => {
     // When roles are fetched or updated, pass them to the parent
@@ -46,9 +46,9 @@ const RoleManagement = ({ onRolesUpdate }) => {
   }, [roles, onRolesUpdate]);
 
   const handleCreateRole = async () => {
-    console.log(newRole + token);
+    console.log(newRole + tokenLog);
     if (newRole.trim()) {
-      await createRole(newRole, token);
+      await createRole(newRole, tokenLog);
     }
   };
 

@@ -6,14 +6,14 @@ import { isTokenExpired } from "../../utils/helpers";
 import { showAlert } from "../../utils/helpers";
 
 const ProfileCard = ({ toggleModal }) => {
-  const { user, token, logout } = useAuth();
+  const { user, tokenLog, logout } = useAuth();
 
-  // Auto logout if user/token is missing or token is expired
+  // Auto logout if user/tokenLog is missing or tokenLog is expired
   useEffect(() => {
-    if (!user || !token || isTokenExpired(token)) {
+    if (!user || !tokenLog || isTokenExpired(tokenLog)) {
       logout();
     }
-  }, [user, token, logout]);
+  }, [user, tokenLog, logout]);
 
   const handleLogout = async () => {
     logout();

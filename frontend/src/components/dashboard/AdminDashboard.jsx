@@ -31,7 +31,7 @@ import WidgetsDropdown from "../../widget/WidgetsDropdown";
 import Register from "../auth/Register";
 
 const AdminDashboard = () => {
-  const { token, logout } = useAuth();
+  const { tokenLog, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("1");
@@ -45,23 +45,23 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    if (!token || isTokenExpired(token)) {
+    if (!tokenLog || isTokenExpired(tokenLog)) {
       logout();
       navigate("/login");
     } else {
-      fetchUsers(setUsers, token);
+      fetchUsers(setUsers, tokenLog);
       setLoading(false);
     }
 
     const intervalId = setInterval(() => {
-      if (!token || isTokenExpired(token)) {
+      if (!tokenLog || isTokenExpired(tokenLog)) {
         logout();
         navigate("/login");
       }
     }, 20000);
 
     return () => clearInterval(intervalId);
-  }, [token, logout, navigate]);
+  }, [tokenLog, logout, navigate]);
 
   const deleteHandler = async (userId) => {
     await deleteUser(userId, users, setUsers, navigate);

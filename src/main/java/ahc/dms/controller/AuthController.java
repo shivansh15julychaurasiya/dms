@@ -3,7 +3,7 @@ package ahc.dms.controller;
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.*;
 import ahc.dms.payload.*;
-import ahc.dms.security.JwtTokenHelper;
+import ahc.dms.security.JwtHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,13 +30,13 @@ import java.util.Set;
 public class AuthController {
 
     @Autowired
-    private JwtTokenHelper jwtTokenHelper;
+    private JwtHelper jwtHelper;
     @Autowired
     private OtpHelper otpHelper;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
-    private TokenService tokenService;
+    private TokenLogService tokenLogService;
     @Autowired
     private OtpLogService otpLogService;
     @Autowired
@@ -78,7 +78,7 @@ public class AuthController {
         authUserDto.setRoles(activeRoleSet);
 
 
-        String token = this.jwtTokenHelper.generateToken(userDetails);
+        String token = this.jwtHelper.generateToken(userDetails);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
@@ -104,7 +104,7 @@ public class AuthController {
         if (authStatus) {
             //returns anonymousUser since session creation policy is stateless
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
-            String token = this.jwtTokenHelper.generateToken(userDetails);
+            String token = this.jwtHelper.generateToken(userDetails);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setToken(token);
@@ -120,9 +120,9 @@ public class AuthController {
         requestLogService.logRequest(request);
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
-        String username = this.jwtTokenHelper.getUsernameFromToken(token);
-        TokenDto tokenDto = tokenService.getToken(token, username);
-        TokenDto revokedToken = tokenService.revokeToken(tokenDto.getTokenId());
+        String username = this.jwtHelper.getUsernameFromToken(token);
+        TokenDto tokenDto = tokenLogService.getToken(token, username);
+        TokenDto revokedToken = tokenLogService.revokeToken(tokenDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(revokedToken.getJwToken());
@@ -164,7 +164,7 @@ public class AuthController {
         boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
         if (authStatus) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
-            String token = this.jwtTokenHelper.generateToken(userDetails);
+            String token = this.jwtHelper.generateToken(userDetails);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setToken(token);
@@ -181,17 +181,10 @@ public class AuthController {
             @RequestBody JwtAuthRequest authRequest
     ) {
         requestLogService.logRequest(httpRequest);
-        logger.info("inside verify-reset-otp controller");
-        boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
-        if (authStatus) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
-            String token = this.jwtTokenHelper.generateToken(userDetails);
-
-            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-            jwtAuthResponse.setToken(token);
-            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-
-            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Otp verified successfully"));
+        logger.info("inside verify-forgot-otp controller");
+        boolean otpExists = otpLogService.verifyForgotOtp(authRequest.getUsername(), authRequest.getOtp());
+        if (otpExists) {
+            return ResponseEntity.ok(ResponseUtil.success(null, "Otp verified successfully"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }

@@ -30,8 +30,8 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const { token, user } = await loginUser(values.loginId, values.password);
-        login({ token, user });
+        const { tokenLog, user } = await loginUser(values.loginId, values.password);
+        login({ tokenLog, user });
 
         const roleNames = user.roles.map(role => role.role_name);
         showAlert("Login successful", "success");

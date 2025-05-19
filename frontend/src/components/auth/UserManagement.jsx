@@ -19,7 +19,7 @@ import {
 import Register from "./Register";
 
 const UserManagement = () => {
-  const { token, logout } = useAuth();
+  const { tokenLog, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -29,23 +29,23 @@ const UserManagement = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token || isTokenExpired(token)) {
+    if (!tokenLog || isTokenExpired(tokenLog)) {
       logout();
       navigate("/login");
     } else {
-      fetchUsers(setUsers, token);
+      fetchUsers(setUsers, tokenLog);
       setLoading(false);
     }
 
     const intervalId = setInterval(() => {
-      if (!token || isTokenExpired(token)) {
+      if (!tokenLog || isTokenExpired(tokenLog)) {
         logout();
         navigate("/login");
       }
     }, 20000);
 
     return () => clearInterval(intervalId);
-  }, [token, logout, navigate]);
+  }, [tokenLog, logout, navigate]);
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -165,7 +165,7 @@ const UserManagement = () => {
             <Register
               user={Object.keys(editingUser).length === 0 ? null : editingUser}
               setEditingUser={setEditingUser}
-              refreshUsers={() => fetchUsers(setUsers, token)}
+              refreshUsers={() => fetchUsers(setUsers, tokenLog)}
             />
           </CardBody>
         </Card>

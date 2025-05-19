@@ -28,12 +28,12 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
     setEditingUser(null);
   };
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { tokenLog } = useAuth();
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    fetchRoles(token, setRoles);
-  }, [token]);
+    fetchRoles(tokenLog, setRoles);
+  }, [tokenLog]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -67,11 +67,11 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
       try {
         if (isEditMode) {
           // Update user logic
-          await updateUser(user.userId, userData, token);
+          await updateUser(user.userId, userData, tokenLog);
           showAlert("User Updated Successfully!", "success");
         } else {
           // Create user logic
-          await saveUser(userData, navigate, token);
+          await saveUser(userData, navigate, tokenLog);
           showAlert("User Created Successfully!", "success");
         }
         refreshUsers();
