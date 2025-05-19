@@ -1,9 +1,13 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -11,25 +15,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OtpDto {
+public class TokenLogDto {
 
     @JsonIgnore
     private Long version;
-    private Long otpId;
+    private Long tokenId;
+    private String jwToken;
     private String username;
-    @JsonProperty("otp_type")
-    private String otpType;
-    private String phone;
-    @JsonProperty("otp_value")
-    private String otpValue;
-    @JsonProperty("otp_expiry")
-    private LocalDateTime otpExpiry;
-    @JsonProperty("otp_status")
-    private Boolean otpStatus;
-    private String status;
-    private String message;
-    @JsonProperty("sms_id")
-    private String smsId;
+    private Date expirationDate;
+    private Boolean tokenStatus;
+    @JsonIgnore
+    @JsonProperty("created_by")
+    private String createdBy;
+    @JsonIgnore
+    @JsonProperty("updated_by")
+    private String updatedBy;
 
     // audit fields
     @JsonProperty("created_at")

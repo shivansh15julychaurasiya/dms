@@ -3,7 +3,7 @@ package ahc.dms.dao.edms.services;
 import ahc.dms.dao.edms.entities.TokenLogs;
 import ahc.dms.dao.edms.repositories.TokenLogsRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
-import ahc.dms.payload.TokenDto;
+import ahc.dms.payload.TokenLogDto;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,33 +21,33 @@ public class TokenLogsService {
     private final Logger logger = LoggerFactory.getLogger(TokenLogsService.class);
 
     @Transactional (transactionManager = "msDmsTransactionManager")
-    public TokenDto saveToken(TokenDto tokenDto) {
+    public TokenLogDto saveToken(TokenLogDto tokenLogDto) {
         logger.info("saving token!!!!");
-        TokenLogs newToken = tokenLogsRepository.save(modelMapper.map(tokenDto, TokenLogs.class));
-        return modelMapper.map(newToken, TokenDto.class);
+        TokenLogs newToken = tokenLogsRepository.save(modelMapper.map(tokenLogDto, TokenLogs.class));
+        return modelMapper.map(newToken, TokenLogDto.class);
     }
 
     @Transactional (transactionManager = "msDmsTransactionManager")
-    public TokenDto revokeToken(Long tokenId) {
+    public TokenLogDto revokeToken(Long tokenId) {
         TokenLogs token = tokenLogsRepository.findById(tokenId)
                 .orElseThrow(() -> new ResourceNotFoundException("Token", "Token Id", tokenId));
         token.setTokenStatus(false);
         TokenLogs deletedToken = tokenLogsRepository.save(token);
-        return modelMapper.map(deletedToken, TokenDto.class);
+        return modelMapper.map(deletedToken, TokenLogDto.class);
 
     }
 
-    public TokenDto findTokenByUsername(String username) {
+    public TokenLogDto findTokenByUsername(String username) {
         TokenLogs token = tokenLogsRepository.findByUsername(username);
         if (token != null)
-            return modelMapper.map(token, TokenDto.class);
+            return modelMapper.map(token, TokenLogDto.class);
         return null;
     }
 
-    public TokenDto findToken(String token, String username) {
+    public TokenLogDto findToken(String token, String username) {
         TokenLogs existingToken = tokenLogsRepository.findByUsernameAndJwtToken(username, token);
         if (existingToken != null)
-            return modelMapper.map(existingToken, TokenDto.class);
+            return modelMapper.map(existingToken, TokenLogDto.class);
         return null;
     }
 }

@@ -1,7 +1,7 @@
 package ahc.dms.security;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.payload.TokenDto;
+import ahc.dms.payload.TokenLogDto;
 import ahc.dms.dao.dms.services.TokenLogService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -51,20 +51,20 @@ public class JwtHelper {
                 .compact();
 
         logger.info("token : {}", token);
-        TokenDto existingTokenDto = tokenLogService.getTokenByUsername(userDetails.getUsername());
-        if (existingTokenDto!=null) {
+        TokenLogDto existingTokenLogDto = tokenLogService.getTokenByUsername(userDetails.getUsername());
+        if (existingTokenLogDto !=null) {
             logger.info("renewing token!!!");
-            existingTokenDto.setJwToken(token);
-            existingTokenDto.setTokenStatus(true);
-            tokenLogService.saveToken(existingTokenDto);
+            existingTokenLogDto.setJwToken(token);
+            existingTokenLogDto.setTokenStatus(true);
+            tokenLogService.saveToken(existingTokenLogDto);
         } else {
             logger.info("creating new token!!!");
-            TokenDto tokenDto = new TokenDto();
-            tokenDto.setJwToken(token);
-            tokenDto.setUsername(userDetails.getUsername());
-            tokenDto.setExpirationDate(expiration);
-            tokenDto.setTokenStatus(true);
-            tokenLogService.saveToken(tokenDto);
+            TokenLogDto tokenLogDto = new TokenLogDto();
+            tokenLogDto.setJwToken(token);
+            tokenLogDto.setUsername(userDetails.getUsername());
+            tokenLogDto.setExpirationDate(expiration);
+            tokenLogDto.setTokenStatus(true);
+            tokenLogService.saveToken(tokenLogDto);
         }
         logger.info("returning token!!!!");
         return token;
@@ -78,7 +78,7 @@ public class JwtHelper {
         //if toke is valid
         if (validToken) {
             //check token status from db
-            TokenDto existingToken = tokenLogService.getToken(token, userDetails.getUsername());
+            TokenLogDto existingToken = tokenLogService.getToken(token, userDetails.getUsername());
             return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;

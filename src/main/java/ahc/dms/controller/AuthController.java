@@ -121,8 +121,8 @@ public class AuthController {
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
         String username = this.jwtHelper.getUsernameFromToken(token);
-        TokenDto tokenDto = tokenLogService.getToken(token, username);
-        TokenDto revokedToken = tokenLogService.revokeToken(tokenDto.getTokenId());
+        TokenLogDto tokenLogDto = tokenLogService.getToken(token, username);
+        TokenLogDto revokedToken = tokenLogService.revokeToken(tokenLogDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(revokedToken.getJwToken());
@@ -132,16 +132,16 @@ public class AuthController {
     }
 
     @PostMapping("/request-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> requestOtp(
+    public ResponseEntity<ApiResponse<OtpLogDto>> requestOtp(
             HttpServletRequest httpRequest,
-            @RequestBody OtpDto requestOtp
+            @RequestBody OtpLogDto requestOtp
     ) {
         requestLogService.logRequest(httpRequest);
         logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByUsername(requestOtp.getUsername());
         logger.info("savedUser : {}", savedUser);
-        OtpDto otpLog = otpLogService.getOtpLogByUsernameAndOtpType(requestOtp.getUsername(), requestOtp.getOtpType());
+        OtpLogDto otpLog = otpLogService.getOtpLogByUsernameAndOtpType(requestOtp.getUsername(), requestOtp.getOtpType());
         logger.info("otpLog : {}", otpLog);
         otpHelper.sendLoginOtp(savedUser.getPhone(), otp);
         otpLog.setOtpValue(otp);
