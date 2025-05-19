@@ -34,14 +34,11 @@ public class OtpLogService {
         return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.LOGIN_TOKEN, otp).isPresent();
     }
 
-    public boolean verifyResetOtp(String username, String otp) {
-        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.RESET_TOKEN, otp).isPresent();
-    }
-
     public boolean verifyForgotOtp(String username, String otp) {
         Optional<OtpLog> otpLog = otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.FORGOT_TOKEN, otp);
         if (otpLog.isPresent()) {
             OtpLog log = otpLog.get();
+            // disable otp so that it can't be used more than once and more importantly for login auth
             log.setOtpStatus(false);
             otpLogRepository.save(log);
             return true;
