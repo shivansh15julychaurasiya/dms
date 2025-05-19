@@ -66,14 +66,13 @@ public class AuthController {
             // 2. MANUALLY set the security context (critical for stateless apps)
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception ex) {
-            if (ex instanceof BadCredentialsException) {
-                Throwable cause = ex.getCause();
-                if (cause instanceof UsernameNotFoundException) {
-                    return ResponseEntity.ok(ResponseUtil.error("User not found"));
-                } else {
-                    return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
-                }
-            } else {
+            if (ex instanceof UsernameNotFoundException) {
+                return ResponseEntity.ok(ResponseUtil.error("User not found"));
+            }
+            else if (ex instanceof BadCredentialsException) {
+                return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
+            }
+            else {
                 return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
             }
         }
@@ -198,14 +197,13 @@ public class AuthController {
                             passDto.getOldPassword()
                     ));
         } catch (Exception ex) {
-            if (ex instanceof BadCredentialsException) {
-                Throwable cause = ex.getCause();
-                if (cause instanceof UsernameNotFoundException) {
-                    return ResponseEntity.ok(ResponseUtil.error("User not found"));
-                } else {
-                    return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
-                }
-            } else {
+            if (ex instanceof UsernameNotFoundException) {
+                return ResponseEntity.ok(ResponseUtil.error("User not found"));
+            }
+            else if (ex instanceof BadCredentialsException) {
+                return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
+            }
+            else {
                 return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
             }
         }

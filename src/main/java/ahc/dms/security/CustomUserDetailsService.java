@@ -27,6 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                     }
                     return user;
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Username", username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
