@@ -35,13 +35,6 @@ public class RequestAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
 
-        logger.info("DispatcherType: {}", request.getDispatcherType());
-        // Skip if already authenticated (prevents double filtering)
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            logger.info("Preventing filter run from internal forwards/redirects");
-            return true;
-        }
-
         logger.info("Checking REQUEST_AUTH_IGNORED_URLS for : {}", request.getRequestURI());
         return AppConstants.REQUEST_AUTH_IGNORED_URLS.stream()
                 .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
@@ -74,9 +67,10 @@ public class RequestAuthFilter extends OncePerRequestFilter {
         logger.info("Auth Role : {}", authRole);
 
         Optional<ObjectMaster> objectMaster = objectMasterRepository
-                .findByRequestUriStartingWithAndRequestMethodAndStatusTrue(uri, method);
+                .findBestMatchingPrefix(uri, method);
 
         if (objectMaster.isPresent()) {
+            logger.info("Object master entity found in database : {}", objectMaster.get().getRequestUri());
             Set<ObjectRole> objectRoles = objectMaster.get().getObjectRoles();
             boolean roleMatched = objectRoles
                     .stream()
@@ -90,15 +84,15 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                                 roleName.equalsIgnoreCase(authRole);
                     });
 
-            logger.info("Auth Role matched : {}", roleMatched);
             if (roleMatched) {
+                logger.info("Auth Role matched");
                 filterChain.doFilter(request, response);
             } else {
-                logger.info("Access Denied");
+                logger.info("Access Denied (Mapping absent or disabled)");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             }
         } else {
-            logger.info("API Not Registered");
+            logger.info("API Not Registered : {}, With Method : {}", uri, method);
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "API Not Registered");
         }
         //filterChain.doFilter(request, response);
