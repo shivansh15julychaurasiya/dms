@@ -86,10 +86,10 @@ public class UserController {
 @GetMapping("/")
 public ResponseEntity<ApiResponse<PageResponse<UserDto>>> getAllUsers(
         HttpServletRequest httpRequest,
-        @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
-        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-        @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
-        @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+        @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+        @RequestParam(value = "pageSize", defaultValue =  AppConstants.PAGE_SIZE) Integer pageSize,
+        @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY) String sortBy,
+        @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR) String sortDir) {
     requestLogService.logRequest(httpRequest);
     PageResponse<UserDto> users = userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
     return ResponseEntity.ok(ResponseUtil.success(users, "user fetched"));

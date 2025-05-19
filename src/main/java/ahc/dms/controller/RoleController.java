@@ -125,7 +125,7 @@ public class RoleController {
     ) {
         requestLogService.logRequest(httpRequest);
         UserDto updatedUserDto = userRoleService.deassignRole(loginId, roleId);
-        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
+        return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role de-assigned"));
     }
 
 }
