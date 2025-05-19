@@ -25,12 +25,15 @@ public class OtpLog {
     @Column(name = "otp_id")
     private Long otpId;
 
-    @Column(name = "login_id", nullable = false)
-    private String loginId;
-
+    @Column(name = "username", nullable = false)
+    private String username;
+    @Column(name = "otp_value")
     private String otpValue;
+    @Column(name = "otp_type")
     private String otpType;
+    @Column(name = "otp_expiry")
     private LocalDateTime otpExpiry;
+    @Column(name = "otp_status")
     private boolean otpStatus;
 
     // Audit Fields

@@ -32,9 +32,9 @@ public class UserRoleService {
     private UserRoleRepository userRoleRepository;
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public UserDto assignRole(String loginId, Integer roleId) {
+    public UserDto assignRole(String username, Integer roleId) {
         //check for existing user and role
-        User existingUser = fetchUserOrThrow(loginId);
+        User existingUser = fetchUserOrThrow(username);
         Role existingRole = fetchRoleOrThrow(roleId);
 
         //check for existing role-mapping
@@ -69,10 +69,10 @@ public class UserRoleService {
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public UserDto deassignRole(String loginId, Integer roleId) {
+    public UserDto deassignRole(String username, Integer roleId) {
 
         //check for existing user and role
-        User existingUser = fetchUserOrThrow(loginId);
+        User existingUser = fetchUserOrThrow(username);
         Role existingRole = fetchRoleOrThrow(roleId);
 
         //check for existing role-mapping
@@ -98,16 +98,16 @@ public class UserRoleService {
         return theUserDto;
     }
 
-    private User fetchUserOrThrow(String loginId) {
-        return Optional.ofNullable(loginId)
-                .map(lId -> userRepository.findByLoginId(lId)
+    private User fetchUserOrThrow(String username) {
+        return Optional.ofNullable(username)
+                .map(lId -> userRepository.findByUsername(lId)
                         .map(user -> {
                             if (Boolean.FALSE.equals(user.getStatus())) {
                                 throw new ApiException("User is disabled");
                             }
                             return user;
                         })
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId)))
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", username)))
                 .orElseThrow(() -> new ApiException("Login Id cannot be null"));
     }
 

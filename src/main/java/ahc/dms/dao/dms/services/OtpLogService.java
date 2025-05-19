@@ -23,16 +23,16 @@ public class OtpLogService {
         return modelMapper.map(newOtp, OtpDto.class);
     }
 
-    public OtpDto getOtpLogByLoginIdAndOtpType(String loginId, String otpType) {
-        OtpLog otpLog = otpLogRepository.findByLoginIdAndOtpType(loginId, otpType).orElse(new OtpLog());
+    public OtpDto getOtpLogByUsernameAndOtpType(String username, String otpType) {
+        OtpLog otpLog = otpLogRepository.findByUsernameAndOtpType(username, otpType).orElse(new OtpLog());
         return modelMapper.map(otpLog, OtpDto.class);
     }
 
-    public boolean verifyLoginOtp(String loginId, String otp) {
-        return otpLogRepository.findByLoginIdAndOtpTypeAndOtpValue(loginId, AppConstants.OTP_TYPE_LOGIN, otp).isPresent();
+    public boolean verifyLoginOtp(String username, String otp) {
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValue(username, AppConstants.OTP_TYPE_LOGIN, otp).isPresent();
     }
 
-    public boolean verifyResetOtp(String loginId, String otp) {
-        return otpLogRepository.findByLoginIdAndOtpTypeAndOtpValue(loginId, AppConstants.OTP_TYPE_RESET, otp).isPresent();
+    public boolean verifyResetOtp(String username, String otp) {
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValue(username, AppConstants.OTP_TYPE_RESET, otp).isPresent();
     }
 }

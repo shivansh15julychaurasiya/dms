@@ -109,22 +109,22 @@ public class RoleController {
     @GetMapping("/assign-role")
     public ResponseEntity<ApiResponse<UserDto>> assignRole(
             HttpServletRequest httpRequest,
-            @RequestParam(value = "loginId") String loginId,
+            @RequestParam(value = "username") String username,
             @RequestParam(value = "roleId") Integer roleId
     ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUserDto = userRoleService.assignRole(loginId, roleId);
+        UserDto updatedUserDto = userRoleService.assignRole(username, roleId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role assigned"));
     }
 
     @GetMapping("/deassign-role")
     public ResponseEntity<ApiResponse<UserDto>> deassignRole(
             HttpServletRequest httpRequest,
-            @RequestParam(value = "loginId") String loginId,
+            @RequestParam(value = "username") String username,
             @RequestParam(value = "roleId") Integer roleId
     ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUserDto = userRoleService.deassignRole(loginId, roleId);
+        UserDto updatedUserDto = userRoleService.deassignRole(username, roleId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUserDto, "role de-assigned"));
     }
 

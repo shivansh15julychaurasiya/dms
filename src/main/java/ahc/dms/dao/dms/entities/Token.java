@@ -33,12 +33,13 @@ public class Token {
     )
     @Column(name = "token_id")
     private Long tokenId;
-
-    @Column(name = "login_id", nullable = false)
-    private String loginId;
-
-    private String jwtToken;
+    @Column(name = "username", nullable = false)
+    private String username;
+    @Column(name = "jw_token")
+    private String jwToken;
+    @Column(name = "expiration_date")
     private Date expirationDate;
+    @Column(name = "token_status")
     private boolean tokenStatus;
 
     // Audit Fields

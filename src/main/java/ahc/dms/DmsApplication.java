@@ -105,11 +105,11 @@ public class DmsApplication implements CommandLineRunner {
                         return roleRepository.save(newRole);
                     });
 
-            User firstUser = userRepository.findByLoginId("11448")
+            User firstUser = userRepository.findByUsername("11448")
                     .orElseGet(() -> {
                         User newUser = new User();
                         newUser.setName("Vijay Chaurasiya");
-                        newUser.setLoginId("11448");
+                        newUser.setUsername("11448");
                         newUser.setEmail("vijaychaurasiya@gmail.com");
                         newUser.setAbout("admin");
                         newUser.setPhone("9721308763");

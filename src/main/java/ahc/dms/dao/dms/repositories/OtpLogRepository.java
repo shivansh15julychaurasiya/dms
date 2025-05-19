@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface OtpLogRepository extends JpaRepository<OtpLog, Long> {
-    Optional<OtpLog> findByLoginIdAndOtpType(String loginId, String otpType);
-    Optional<OtpLog> findByLoginIdAndOtpTypeAndOtpValue(String loginId, String otpTypeLogin, String otp);
+    Optional<OtpLog> findByUsernameAndOtpType(String username, String otpType);
+    Optional<OtpLog> findByUsernameAndOtpTypeAndOtpValue(String username, String otpTypeLogin, String otp);
 }

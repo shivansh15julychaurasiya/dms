@@ -37,15 +37,15 @@ public class TokenLogsService {
 
     }
 
-    public TokenDto findTokenByLoginId(String loginId) {
-        TokenLogs token = tokenLogsRepository.findByLoginId(loginId);
+    public TokenDto findTokenByUsername(String username) {
+        TokenLogs token = tokenLogsRepository.findByUsername(username);
         if (token != null)
             return modelMapper.map(token, TokenDto.class);
         return null;
     }
 
-    public TokenDto findToken(String token, String loginId) {
-        TokenLogs existingToken = tokenLogsRepository.findByLoginIdAndJwtToken(loginId, token);
+    public TokenDto findToken(String token, String username) {
+        TokenLogs existingToken = tokenLogsRepository.findByUsernameAndJwtToken(username, token);
         if (existingToken != null)
             return modelMapper.map(existingToken, TokenDto.class);
         return null;

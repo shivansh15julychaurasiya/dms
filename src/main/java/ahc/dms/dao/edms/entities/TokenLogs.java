@@ -23,8 +23,8 @@ public class TokenLogs {
     )
     @Column(name = "token_id")
     private Long tokenId;
-    @Column(name = "login_id", nullable = false)
-    private String loginId;
+    @Column(name = "username", nullable = false)
+    private String username;
     private String jwtToken;
     private Date expirationDate;
     private boolean tokenStatus;

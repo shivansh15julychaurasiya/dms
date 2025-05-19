@@ -41,7 +41,7 @@ public class UserService {
 
     @Transactional(transactionManager = "dmsTransactionManager")
     public UserDto createUser(UserDto userDto) {
-        // loginId, email, phone
+        // username, email, phone
         dataIntegrityValidation(userDto);
 
         // Extract and validate a single RoleDto from userDto
@@ -91,7 +91,7 @@ public class UserService {
                     if (Boolean.FALSE.equals(user.getStatus())) {
                         throw new ApiException("User is deactivated. First activate the user.");
                     }
-                    user.setLoginId(userDto.getLoginId());
+                    user.setUsername(userDto.getUsername());
                     user.setName(userDto.getName());
                     user.setEmail(userDto.getEmail());
                     user.setAbout(userDto.getAbout());
@@ -136,10 +136,10 @@ public class UserService {
         return userDto;
     }
 
-    public UserDto getUserByLoginId(String loginId) {
+    public UserDto getUserByUsername(String username) {
         User user = userRepository
-                .findByLoginId(loginId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", loginId));
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username", username));
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
         userDto.setUserRoles(null);
@@ -172,8 +172,8 @@ public class UserService {
 
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public void deactivateUser(String loginId) {
-        userRepository.findByLoginId(loginId)
+    public void deactivateUser(String username) {
+        userRepository.findByUsername(username)
                 .map(user -> {
                     if (Boolean.FALSE.equals(user.getStatus())) {
                         throw new ApiException("User is already deactivated");
@@ -181,12 +181,12 @@ public class UserService {
                     user.setStatus(false);
                     return userRepository.save(user);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", loginId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", username));
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
-    public void activateUser(String loginId) {
-        userRepository.findByLoginId(loginId)
+    public void activateUser(String username) {
+        userRepository.findByUsername(username)
                 .map(user -> {
                     if (Boolean.TRUE.equals(user.getStatus())) {
                         throw new ApiException("User is already active");
@@ -194,11 +194,11 @@ public class UserService {
                     user.setStatus(true);
                     return userRepository.save(user);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", loginId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", username));
     }
 
-    public UserDto resetPassword(String loginId, String password) {
-        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new ResourceNotFoundException("User", " Login Id ", loginId));
+    public UserDto resetPassword(String username, String password) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", " Username", username));
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         return modelMapper.map(user, UserDto.class);
@@ -210,9 +210,9 @@ public class UserService {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new DuplicateResourceException("Email", userDto.getEmail());
         }
-        // Check if loginId already exists
-        if (userRepository.existsByLoginId(userDto.getLoginId())) {
-            throw new DuplicateResourceException("Login ID", userDto.getLoginId());
+        // Check if username already exists
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            throw new DuplicateResourceException("Username", userDto.getUsername());
         }
         // Check if phone already exists
         if (userRepository.existsByPhone(userDto.getPhone())) {

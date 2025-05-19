@@ -20,13 +20,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         //User user = userRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("User", "Email "+username, 0));
         return userRepository
-                .findByLoginId(username)
+                .findByUsername(username)
                 .map(user -> {
                     if (Boolean.FALSE.equals(user.getStatus())) {
                         throw new ApiException("User is disabled");
                     }
                     return user;
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Login Id", username));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Username", username));
     }
 }

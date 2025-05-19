@@ -51,17 +51,17 @@ public class JwtTokenHelper {
                 .compact();
 
         logger.info("token : {}", token);
-        TokenDto existingTokenDto = tokenService.findTokenByLoginId(userDetails.getUsername());
+        TokenDto existingTokenDto = tokenService.getTokenByUsername(userDetails.getUsername());
         if (existingTokenDto!=null) {
             logger.info("renewing token!!!");
-            existingTokenDto.setJwtToken(token);
+            existingTokenDto.setJwToken(token);
             existingTokenDto.setTokenStatus(true);
             tokenService.saveToken(existingTokenDto);
         } else {
             logger.info("creating new token!!!");
             TokenDto tokenDto = new TokenDto();
-            tokenDto.setJwtToken(token);
-            tokenDto.setLoginId(userDetails.getUsername());
+            tokenDto.setJwToken(token);
+            tokenDto.setUsername(userDetails.getUsername());
             tokenDto.setExpirationDate(expiration);
             tokenDto.setTokenStatus(true);
             tokenService.saveToken(tokenDto);
@@ -78,7 +78,7 @@ public class JwtTokenHelper {
         //if toke is valid
         if (validToken) {
             //check token status from db
-            TokenDto existingToken = tokenService.findToken(token, userDetails.getUsername());
+            TokenDto existingToken = tokenService.getToken(token, userDetails.getUsername());
             return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;

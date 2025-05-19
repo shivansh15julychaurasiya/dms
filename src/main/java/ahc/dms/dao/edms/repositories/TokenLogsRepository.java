@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TokenLogsRepository extends JpaRepository<TokenLogs, Long> {
 
-    TokenLogs findByLoginId(String loginId);
-    TokenLogs findByLoginIdAndJwtToken(String loginId, String token);
+    TokenLogs findByUsername(String username);
+    TokenLogs findByUsernameAndJwtToken(String username, String token);
 
 }

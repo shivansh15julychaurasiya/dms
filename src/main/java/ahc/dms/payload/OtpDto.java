@@ -16,13 +16,15 @@ public class OtpDto {
     @JsonIgnore
     private Long version;
     private Long otpId;
-    @JsonProperty("login_id")
-    private String loginId;
+    private String username;
     @JsonProperty("otp_type")
     private String otpType;
     private String phone;
+    @JsonProperty("otp_value")
     private String otpValue;
+    @JsonProperty("otp_expiry")
     private LocalDateTime otpExpiry;
+    @JsonProperty("otp_status")
     private Boolean otpStatus;
     private String status;
     private String message;

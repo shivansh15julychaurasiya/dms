@@ -1,8 +1,6 @@
 package ahc.dms.payload;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.Column;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +30,7 @@ public class UserDto {
 
     @NotBlank
     @Size(min=4, message = "Must be greater than 4 characters.")
-    @JsonProperty("login_id")
-    private String loginId;
+    private String username;
     @Email(message = "Email address not valid")
     private String email;
     //@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")

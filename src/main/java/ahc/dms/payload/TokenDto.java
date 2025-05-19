@@ -20,8 +20,8 @@ public class TokenDto {
     @JsonIgnore
     private Long version;
     private Long tokenId;
-    private String jwtToken;
-    private String loginId;
+    private String jwToken;
+    private String username;
     private Date expirationDate;
     private Boolean tokenStatus;
     @JsonIgnore

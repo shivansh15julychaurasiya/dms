@@ -9,6 +9,7 @@ public class AppConstants {
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
+            "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"
     };
@@ -32,6 +33,7 @@ public class AppConstants {
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
+            "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"
     );
@@ -41,6 +43,7 @@ public class AppConstants {
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
+            "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
             "/actuator/**"
     );
@@ -58,10 +61,11 @@ public class AppConstants {
 
     public static final String OTP_TYPE_LOGIN = "Login";
     public static final String OTP_TYPE_RESET = "Reset";
+    public static final String OTP_TYPE_FORGOT = "Forgot";
 
     public static final String LOGIN_OTP_URI = "http://103.234.185.173/api/swsendnk.asp";
     public static final String LOGIN_OTP_USERNAME = "HCALLD";
-    public static final String LOGIN_OTP_PASSWORD = "44312074";
+    public static final String LOGIN_OTP_PASSWORD = "4yFqGgEwjbzC";
     public static final String LOGIN_OTP_SENDER = "HCALLD";
     public static final String LOGIN_OTP_TEMPLATE_ID = "1107168551150460623";
     public static final String LOGIN_OTP_MSG_BEGIN = "OTP to login in DMS : ";

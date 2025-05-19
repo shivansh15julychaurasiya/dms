@@ -53,43 +53,32 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deactivate/{username}")
     public ResponseEntity<ApiResponse<?>> deactivateUser(
-            @PathVariable("username") String loginId,
+            @PathVariable("username") String username,
             HttpServletRequest httpRequest
     ){
         requestLogService.logRequest(httpRequest);
-        userService.deactivateUser(loginId);
+        userService.deactivateUser(username);
         return ResponseEntity.ok(ResponseUtil.success(null, "user deactivated"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/activate/{username}")
     public ResponseEntity<ApiResponse<?>> activateUser(
-            @PathVariable("username") String loginId,
+            @PathVariable("username") String username,
             HttpServletRequest httpRequest
     ){
         requestLogService.logRequest(httpRequest);
-        userService.activateUser(loginId);
+        userService.activateUser(username);
         return ResponseEntity.ok(ResponseUtil.success(null, "user activated"));
     }
 
-//    @GetMapping("/")
-//    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(
-//            HttpServletRequest httpRequest,
-//            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-//            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-//            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
-//            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
-//    ){
-//        requestLogService.logRequest(httpRequest);
-//        return ResponseEntity.ok(ResponseUtil.success(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), "user fetched"));
-//    }
 @GetMapping("/")
 public ResponseEntity<ApiResponse<PageResponse<UserDto>>> getAllUsers(
         HttpServletRequest httpRequest,
-        @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
-        @RequestParam(value = "pageSize", defaultValue =  AppConstants.PAGE_SIZE) Integer pageSize,
-        @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY) String sortBy,
-        @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR) String sortDir) {
+        @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+        @RequestParam(value = "pageSize", defaultValue =  AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+        @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
+        @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir) {
     requestLogService.logRequest(httpRequest);
     PageResponse<UserDto> users = userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
     return ResponseEntity.ok(ResponseUtil.success(users, "user fetched"));

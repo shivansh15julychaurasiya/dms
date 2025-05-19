@@ -38,8 +38,8 @@ public class User implements UserDetails {
     )
     private Long userId;
 
-    @Column(name = "login_id", nullable = false, length=100, unique = true)
-    private String loginId;
+    @Column(name = "username", nullable = false, length=100, unique = true)
+    private String username;
     @Column(name = "name", nullable = false, length=100)
     private String name;
     @Column(name = "email", nullable = false, length=100, unique = true)
@@ -85,7 +85,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.loginId;
+        return this.username;
     }
 
     @Override

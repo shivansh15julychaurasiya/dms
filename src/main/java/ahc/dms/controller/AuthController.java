@@ -121,30 +121,32 @@ public class AuthController {
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
         String username = this.jwtTokenHelper.getUsernameFromToken(token);
-        TokenDto tokenDto = tokenService.findToken(token, username);
+        TokenDto tokenDto = tokenService.getToken(token, username);
         TokenDto revokedToken = tokenService.revokeToken(tokenDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setToken(revokedToken.getJwtToken());
+        jwtAuthResponse.setToken(revokedToken.getJwToken());
         jwtAuthResponse.setMessage(AppConstants.JWT_REVOKED);
 
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Logged out successfully"));
     }
 
     @PostMapping("/request-otp")
-    public ResponseEntity<ApiResponse<OtpDto>> loginOtp(
+    public ResponseEntity<ApiResponse<OtpDto>> requestOtp(
             HttpServletRequest httpRequest,
             @RequestBody OtpDto requestOtp
     ) {
         requestLogService.logRequest(httpRequest);
         logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
-        UserDto savedUser = userService.getUserByLoginId(requestOtp.getLoginId());
-        OtpDto otpLog = otpLogService.getOtpLogByLoginIdAndOtpType(requestOtp.getLoginId(), requestOtp.getOtpType());
+        UserDto savedUser = userService.getUserByUsername(requestOtp.getUsername());
+        logger.info("savedUser : {}", savedUser);
+        OtpDto otpLog = otpLogService.getOtpLogByUsernameAndOtpType(requestOtp.getUsername(), requestOtp.getOtpType());
+        logger.info("otpLog : {}", otpLog);
         otpHelper.sendLoginOtp(savedUser.getPhone(), otp);
         otpLog.setOtpValue(otp);
-        otpLog.setLoginId(requestOtp.getLoginId());
-        otpLog.setPhone(requestOtp.getPhone());
+        otpLog.setUsername(requestOtp.getUsername());
+        otpLog.setPhone(savedUser.getPhone());
         otpLog.setOtpType(requestOtp.getOtpType());
         otpLog.setOtpStatus(true);
         otpLog.setOtpExpiry(LocalDateTime.now());
@@ -173,6 +175,27 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
+    @PostMapping("/verify-forgot-otp")
+    public ResponseEntity<ApiResponse<?>> verifyForgotOtp(
+            HttpServletRequest httpRequest,
+            @RequestBody JwtAuthRequest authRequest
+    ) {
+        requestLogService.logRequest(httpRequest);
+        logger.info("inside verify-reset-otp controller");
+        boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
+        if (authStatus) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
+            String token = this.jwtTokenHelper.generateToken(userDetails);
+
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(token);
+            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Otp verified successfully"));
+        }
+        return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
+    }
+
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<?>> resetUserPassword(
@@ -180,7 +203,7 @@ public class AuthController {
             @RequestBody UserDto userDto
     ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUser = userService.resetPassword(userDto.getLoginId(), userDto.getPassword());
+        UserDto updatedUser = userService.resetPassword(userDto.getUsername(), userDto.getPassword());
         return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 
