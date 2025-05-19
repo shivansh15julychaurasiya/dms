@@ -36,10 +36,11 @@ public class JwtHelper {
     }
 
     //GENERATE TOKEN FOR USER
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String tokenType) {
 
         logger.info("user details object username = {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
+        claims.put("tokenType", tokenType);
         Date expiration = new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY);
         logger.info("Token will expire at {}", expiration);
         String token = Jwts.builder()
@@ -51,7 +52,7 @@ public class JwtHelper {
                 .compact();
 
         logger.info("token : {}", token);
-        TokenLogDto existingTokenLogDto = tokenLogService.getTokenByUsername(userDetails.getUsername());
+        TokenLogDto existingTokenLogDto = tokenLogService.getTokenByUsernameAndTokenType(userDetails.getUsername(), tokenType);
         if (existingTokenLogDto !=null) {
             logger.info("renewing token!!!");
             existingTokenLogDto.setJwToken(token);
@@ -63,6 +64,7 @@ public class JwtHelper {
             tokenLogDto.setJwToken(token);
             tokenLogDto.setUsername(userDetails.getUsername());
             tokenLogDto.setExpirationDate(expiration);
+            tokenLogDto.setTokenType(tokenType);
             tokenLogDto.setTokenStatus(true);
             tokenLogService.saveToken(tokenLogDto);
         }
@@ -71,14 +73,14 @@ public class JwtHelper {
     }
 
     //VALIDATE TOKEN
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, String tokenType, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         //check username and token expiry
         boolean validToken = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         //if toke is valid
         if (validToken) {
             //check token status from db
-            TokenLogDto existingToken = tokenLogService.getToken(token, userDetails.getUsername());
+            TokenLogDto existingToken = tokenLogService.getToken(token, tokenType, userDetails.getUsername());
             return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;
@@ -102,6 +104,11 @@ public class JwtHelper {
     //GET USERNAME FROM TOKEN
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getTokenTypeFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get("tokenType", String.class);
     }
 
     //CHECKS TOKEN EXPIRY

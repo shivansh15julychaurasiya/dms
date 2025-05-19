@@ -78,7 +78,7 @@ public class AuthController {
         authUserDto.setRoles(activeRoleSet);
 
 
-        String token = this.jwtHelper.generateToken(userDetails);
+        String token = this.jwtHelper.generateToken(userDetails, AppConstants.LOGIN_TOKEN);
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
@@ -104,7 +104,7 @@ public class AuthController {
         if (authStatus) {
             //returns anonymousUser since session creation policy is stateless
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
-            String token = this.jwtHelper.generateToken(userDetails);
+            String token = this.jwtHelper.generateToken(userDetails, AppConstants.LOGIN_TOKEN);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setToken(token);
@@ -121,7 +121,8 @@ public class AuthController {
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
         String username = this.jwtHelper.getUsernameFromToken(token);
-        TokenLogDto tokenLogDto = tokenLogService.getToken(token, username);
+        String tokenType = this.jwtHelper.getTokenTypeFromToken(token);
+        TokenLogDto tokenLogDto = tokenLogService.getToken(token, tokenType, username);
         TokenLogDto revokedToken = tokenLogService.revokeToken(tokenLogDto.getTokenId());
 
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -164,7 +165,7 @@ public class AuthController {
         boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
         if (authStatus) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
-            String token = this.jwtHelper.generateToken(userDetails);
+            String token = this.jwtHelper.generateToken(userDetails, AppConstants.RESET_TOKEN);
 
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setToken(token);

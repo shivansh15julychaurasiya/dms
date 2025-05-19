@@ -23,6 +23,7 @@ public class TokenLogDto {
     private String jwToken;
     private String username;
     private Date expirationDate;
+    private String tokenType;
     private Boolean tokenStatus;
     @JsonIgnore
     @JsonProperty("created_by")

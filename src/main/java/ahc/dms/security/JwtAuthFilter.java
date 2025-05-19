@@ -62,13 +62,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String username = null;
         String token = null;
+        String tokenType = null;
 
         //getting username from token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             logger.info("Extracting Token");
             token = authHeader.substring(7);
+            tokenType = this.jwtHelper.getTokenTypeFromToken(token);
+            logger.info("Token type : {}", tokenType);
             try {
                 username = this.jwtHelper.getUsernameFromToken(token);
+                logger.info("Username : {}", username);
             } catch (IllegalArgumentException e) {
                 logger.info("Unable to get user");
             } catch (ExpiredJwtException e) {
@@ -84,7 +88,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //validating token
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.jwtHelper.validateToken(token, userDetails)) {
+            if (this.jwtHelper.validateToken(token, tokenType, userDetails)) {
                 //now set the authentication
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(

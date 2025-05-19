@@ -29,7 +29,7 @@ public class OtpLogService {
     }
 
     public boolean verifyLoginOtp(String username, String otp) {
-        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.LOGIN, otp).isPresent();
+        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.LOGIN_TOKEN, otp).isPresent();
     }
 
     public boolean verifyResetOtp(String username, String otp) {
