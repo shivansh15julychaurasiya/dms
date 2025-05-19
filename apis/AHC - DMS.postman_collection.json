@@ -141,7 +141,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt}}",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJMb2dpbiIsInN1YiI6IjExNDQ4IiwiaWF0IjoxNzQ3NjY2NjQ2LCJleHAiOjE3NDc3MDI2NDZ9.7vPko3C8ANdao8roYkQ1K3_cDc3Fxj7lPd3fe__eklBS_GenwFHoqxzWV_gKcb9OTiGjYnAv9qdVP6Yf9K6Bpw",
 									"type": "string"
 								}
 							]
@@ -975,7 +975,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{vault:authorization-secret}}",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJMb2dpbiIsInN1YiI6IjExNDQ4IiwiaWF0IjoxNzQ3NjY2NjQ2LCJleHAiOjE3NDc3MDI2NDZ9.7vPko3C8ANdao8roYkQ1K3_cDc3Fxj7lPd3fe__eklBS_GenwFHoqxzWV_gKcb9OTiGjYnAv9qdVP6Yf9K6Bpw",
 									"type": "string"
 								}
 							]
@@ -1134,7 +1134,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"1181\"\n}",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"otp\": \"7451\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1288,6 +1288,102 @@
 							]
 						},
 						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "change-pass (forgot)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJGb3Jnb3QiLCJzdWIiOiIxMTQ0OCIsImlhdCI6MTc0NzY2Mjg4NSwiZXhwIjoxNzQ3Njk4ODg1fQ.diNFIYSeJGj-nPSdg1lICZRkN1LXq3Z3ubJVkyoYQut3bgzDDQb8jdyHhSqPHDddxQJGNHOfwLaKTEDPgyypww",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"11448\",\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/change-password/forgot",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"change-password",
+								"forgot"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "change-pass (reset)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlblR5cGUiOiJMb2dpbiIsInN1YiI6IjExNDQ4IiwiaWF0IjoxNzQ3NjcxMjM5LCJleHAiOjE3NDc3MDcyMzl9.rAlQ_LUGR4NT6G3Gd_qbBROycBpcUeRQQeNphJrBuUnOq5QUvxQhKLmW0PncmRSTmbk_T9Dp9XV8KxNLfdlq4g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"11448\",\n    \"old_password\" :  \"12345\",\n    \"new_password\" : \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}:{{dms_port}}/dms/auth/change-password/reset",
+							"host": [
+								"{{localhost}}"
+							],
+							"port": "{{dms_port}}",
+							"path": [
+								"dms",
+								"auth",
+								"change-password",
+								"reset"
+							]
+						}
 					},
 					"response": []
 				}
