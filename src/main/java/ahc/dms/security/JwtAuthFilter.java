@@ -72,7 +72,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             logger.info("Token type : {}", tokenType);
             try {
                 username = this.jwtHelper.getUsernameFromToken(token);
-                logger.info("Username : {}", username);
             } catch (IllegalArgumentException e) {
                 logger.info("Unable to get user");
             } catch (ExpiredJwtException e) {

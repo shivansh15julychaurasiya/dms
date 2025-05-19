@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Table(name = "jw_token")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class TokenLog {

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "request_logs")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class RequestLog {

@@ -171,7 +171,7 @@ public class AuthController {
             jwtAuthResponse.setToken(token);
             jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
 
-            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Otp verified successfully"));
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Reset-Otp verified successfully"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
@@ -185,19 +185,36 @@ public class AuthController {
         logger.info("inside verify-forgot-otp controller");
         boolean otpExists = otpLogService.verifyForgotOtp(authRequest.getUsername(), authRequest.getOtp());
         if (otpExists) {
-            return ResponseEntity.ok(ResponseUtil.success(null, "Otp verified successfully"));
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
+            String token = this.jwtHelper.generateToken(userDetails, AppConstants.FORGOT_TOKEN);
+
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(token);
+            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Forgot-Otp verified successfully"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<?>> resetUserPassword(
+    @PostMapping("/change-password/reset")
+    public ResponseEntity<ApiResponse<?>> resetPassword(
             HttpServletRequest httpRequest,
             @RequestBody UserDto userDto
     ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUser = userService.resetPassword(userDto.getUsername(), userDto.getPassword());
+        UserDto updatedUser = userService.changePassword(userDto.getUsername(), userDto.getPassword());
+        return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
+    }
+
+    @PostMapping("/change-password/forgot")
+    public ResponseEntity<ApiResponse<?>> forgotPassword(
+            HttpServletRequest httpRequest,
+            @RequestBody UserDto userDto
+    ) {
+        requestLogService.logRequest(httpRequest);
+        UserDto updatedUser = userService.changePassword(userDto.getUsername(), userDto.getPassword());
         return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 

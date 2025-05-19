@@ -197,7 +197,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "Username Id", username));
     }
 
-    public UserDto resetPassword(String username, String password) {
+    public UserDto changePassword(String username, String password) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", " Username", username));
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);

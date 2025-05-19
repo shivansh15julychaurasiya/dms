@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class OtpLogService {
 
@@ -37,6 +39,14 @@ public class OtpLogService {
     }
 
     public boolean verifyForgotOtp(String username, String otp) {
-        return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.FORGOT_TOKEN, otp).isPresent();
+        Optional<OtpLog> otpLog = otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.FORGOT_TOKEN, otp);
+        if (otpLog.isPresent()) {
+            OtpLog log = otpLog.get();
+            log.setOtpStatus(false);
+            otpLogRepository.save(log);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
