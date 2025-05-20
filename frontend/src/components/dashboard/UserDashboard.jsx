@@ -15,22 +15,20 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const checkTokenAndFetch = () => {
-      const tokenLog = localStorage.getItem("tokenLog");
-      if (!tokenLog || isTokenExpired(tokenLog)) {
-        localStorage.removeItem("tokenLog");
+      const token = localStorage.getItem("token");
+      if (!token || isTokenExpired(token)) {
+        localStorage.removeItem("token");
         navigate("/home/login");
       } else {
         fetchUsers(setUsers, setError, navigate);
       }
     };
 
-
-
     checkTokenAndFetch();
     const intervalId = setInterval(() => {
-      const tokenLog = localStorage.getItem("tokenLog");
-      if (!tokenLog || isTokenExpired(tokenLog)) {
-        localStorage.removeItem("tokenLog");
+      const token = localStorage.getItem("token");
+      if (!token || isTokenExpired(token)) {
+        localStorage.removeItem("token");
         navigate("/home/login");
       }
     }, 10000);
@@ -38,14 +36,14 @@ const UserDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(users.length / usersPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   return (
@@ -111,19 +109,36 @@ const UserDashboard = () => {
           {totalPages > 1 && (
             <nav>
               <ul className="pagination justify-content-center">
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={prevPage}>Previous</button>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button className="page-link" onClick={prevPage}>
+                    Previous
+                  </button>
                 </li>
                 {[...Array(totalPages)].map((_, i) => (
                   <li
                     key={i + 1}
-                    className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                    className={`page-item ${
+                      currentPage === i + 1 ? "active" : ""
+                    }`}
                   >
-                    <button className="page-link" onClick={() => paginate(i + 1)}>{i + 1}</button>
+                    <button
+                      className="page-link"
+                      onClick={() => paginate(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={nextPage}>Next</button>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
+                  <button className="page-link" onClick={nextPage}>
+                    Next
+                  </button>
                 </li>
               </ul>
             </nav>

@@ -10,14 +10,15 @@ export const API_PATHS = {
   GET_USER: (id) => `/users/${id}`,
 
   REQUEST_OTP: "/auth/request-otp",
-  VERIFY_OTP: "/auth/verify-reset-otp",
+  VERIFY_OTP: "/auth/verify-forgot-otp",
   RESET_PASSWORD: "/auth/reset-password", // for frontend navigation
 };
 
 // Role-related API paths
 export const ROLE_API_PATHS = {
+  
   // Role management
-  ROLES: "/role/",// Get all roles
+  ROLES: "/role",// Get all roles
   GET_ROLE: (roleId) => `/role/${roleId}`,  // Get specific role by ID
   CREATE_ROLE: "/role/", // Create a new role
   UPDATE_ROLE: (roleId) => `/role/${roleId}/update`, // Update specific role by ID

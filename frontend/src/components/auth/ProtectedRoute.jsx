@@ -4,8 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 import { isTokenExpired } from "../../services/userService";
 
 const ProtectedRoute = ({ children }) => {
-  const { tokenLog } = useAuth()
-  if (!tokenLog || isTokenExpired(tokenLog)) {
+  const { token } = useAuth()
+  if (!token || isTokenExpired(token)) {
     return <Navigate to="/" />;
   }
 

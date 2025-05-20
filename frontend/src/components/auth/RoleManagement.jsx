@@ -1,5 +1,3 @@
-// src/components/admin/RoleManagement.js
-
 import {
   Table,
   Form,
@@ -11,7 +9,6 @@ import {
   Label,
   Input,
   Button,
-  Alert,
 } from "reactstrap";
 import { FaPlus, FaUserMinus, FaTrash, FaEdit } from "react-icons/fa";
 import { useState, useEffect } from "react";
@@ -20,6 +17,7 @@ import {
   createRole,
   deleteRole,
   deassignRoleFromUser,
+  assignRoleToUser,
 } from "../../services/roleServices";
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
@@ -27,44 +25,91 @@ import { showAlert } from "../../utils/helpers";
 const RoleManagement = ({ onRolesUpdate }) => {
   const [roles, setRoles] = useState([]);
   const [newRole, setNewRole] = useState("");
-  const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState("");
   const [deassignRoleId, setDeassignRoleId] = useState("");
+  const [assignUserId, setAssignUserId] = useState("");
+  const [assignRoleId, setAssignRoleId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
 
-  const { tokenLog } = useAuth();
+  const loadRoles = async () => {
+    setLoading(true);
+    try {
+      // Call fetchRoles without pagination
+      await fetchRoles(setRoles, token);
+    } catch (error) {
+      showAlert("Error fetching roles.", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchRoles(tokenLog, setRoles);
-    setLoading(false);
-  }, [tokenLog]);
+    if (token) {
+      loadRoles();
+    }
+  }, [token]);
 
   useEffect(() => {
-    // When roles are fetched or updated, pass them to the parent
     if (roles.length > 0) {
-      onRolesUpdate(roles); // Pass roles back to parent
+      onRolesUpdate(roles);
     }
   }, [roles, onRolesUpdate]);
 
-  const handleCreateRole = async () => {
-    console.log(newRole + tokenLog);
-    if (newRole.trim()) {
-      await createRole(newRole, tokenLog);
+const handleCreateRole = async () => {
+  if (newRole.trim()) {
+    try {
+      const response = await createRole(newRole, token);
+      console.log(response)
+      if (response) {
+        showAlert("Role created successfully.", "success");
+        setNewRole("");
+        // await loadRoles(); // reload roles after creation
+      } else {
+        showAlert(response.data.message || "Failed to create role.", "error");
+      }
+    } catch (error) {
+      showAlert("Server error while creating role.", "error");
     }
-  };
+  } else {
+    showAlert("Role name cannot be empty.", "warning");
+  }
+};
 
-  const handleDeleteRole = async (roleId) => {
-    await deleteRole(roleId, setRoles);
-  };
 
-  const handleDeassignRole = async () => {
-    if (userId && deassignRoleId) {
+  //  Deassign role
+ const handleDeassignRole = async () => {
+  console.log(userId + deassignRoleId);
+  if (!userId || !deassignRoleId) {
+    showAlert("Please provide both User ID and Role ID.");
+    return;
+  }
+
+  try {
+    const response = await deassignRoleFromUser(userId, deassignRoleId, token);
+    // Use API response message on success
+    showAlert(response.data.message || "Role deassigned successfully.", "success");
+    setUserId("");
+    setDeassignRoleId("");
+  } catch (error) {
+    console.error("Error deassigning role:", error);
+    // Use backend error message if available
+    const apiErrorMessage = error?.response?.data?.message || "Failed to deassign role.";
+    showAlert(apiErrorMessage, "error");
+  }
+};
+
+
+  const handleAssignRole = async () => {
+    if (assignUserId && assignRoleId) {
       try {
-        await deassignRoleFromUser(Number(userId), Number(deassignRoleId));
-        showAlert("Role de-assigned successfully.");
-        setUserId("");
-        setDeassignRoleId("");
-      } catch  {
-        showAlert("Failed to de-assign role.");
+        await assignRoleToUser(assignUserId, assignRoleId, token); // <- pass token here
+        showAlert("Role assigned successfully.","success");
+        setAssignUserId("");
+        setAssignRoleId("");
+      } catch (error) {
+        console.error("Assign Role Error:", error);
+        showAlert("Failed to assign role.");
       }
     } else {
       showAlert("Please fill all fields.");
@@ -73,11 +118,11 @@ const RoleManagement = ({ onRolesUpdate }) => {
 
   return (
     <div>
-
-      <Row>
-        {/* Create Role - Left Column */}
-        <Col md={6}>
-          <Card className="shadow-sm bg-light-subtle">
+      {/* Forms Row */}
+      <Row className="gy-3">
+        {/* Create Role */}
+        <Col md={4}>
+          <Card className="shadow-sm bg-light-subtle h-100">
             <CardBody>
               <h6 className="text-success mb-3">
                 <FaPlus className="me-2" />
@@ -98,8 +143,7 @@ const RoleManagement = ({ onRolesUpdate }) => {
                     placeholder="e.g., role_admin"
                   />
                 </FormGroup>
-                <Button color="primary" type="submit">
-                  <FaPlus className="me-2" />
+                <Button color="success" type="submit" className="w-100">
                   Create Role
                 </Button>
               </Form>
@@ -107,9 +151,57 @@ const RoleManagement = ({ onRolesUpdate }) => {
           </Card>
         </Col>
 
-        {/* De-assign Role - Right Column */}
-        <Col md={6}>
-          <Card className="shadow-sm bg-light-subtle">
+        {/* Assign Role */}
+        <Col md={4}>
+          <Card className="shadow-sm bg-light-subtle h-100">
+            <CardBody>
+              <h6 className="text-success mb-3">
+                <FaPlus className="me-2" />
+                Assign Role to User
+              </h6>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAssignRole();
+                }}
+              >
+                <FormGroup>
+                  <Label for="assignUserId">User ID</Label>
+                  <Input
+                    id="assignUserId"
+                    type="number"
+                    placeholder="Enter User ID"
+                    value={assignUserId}
+                    onChange={(e) => setAssignUserId(e.target.value)}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="assignRoleSelect">Select Role</Label>
+                  <Input
+                    id="assignRoleSelect"
+                    type="select"
+                    value={assignRoleId}
+                    onChange={(e) => setAssignRoleId(e.target.value)}
+                  >
+                    <option value="">Select a Role</option>
+                    {roles.map((role) => (
+                      <option key={role.role_id} value={role.role_id}>
+                        {role.role_name.replace("ROLE_", "")}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
+                <Button color="success" type="submit" className="w-100">
+                  Assign Role
+                </Button>
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
+
+        {/* Deassign Role */}
+        <Col md={4}>
+          <Card className="shadow-sm bg-light-subtle h-100">
             <CardBody>
               <h6 className="text-danger mb-3">
                 <FaUserMinus className="me-2" />
@@ -131,7 +223,6 @@ const RoleManagement = ({ onRolesUpdate }) => {
                     onChange={(e) => setUserId(e.target.value)}
                   />
                 </FormGroup>
-
                 <FormGroup>
                   <Label for="roleSelect">Select Role</Label>
                   <Input
@@ -142,14 +233,13 @@ const RoleManagement = ({ onRolesUpdate }) => {
                   >
                     <option value="">Select a Role</option>
                     {roles.map((role) => (
-                      <option key={role.roleId} value={role.roleId}>
+                      <option key={role.role_id} value={role.role_id}>
                         {role.role_name.replace("ROLE_", "")}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
-
-                <Button color="danger" type="submit">
+                <Button color="danger" type="submit" className="w-100">
                   De-assign Role
                 </Button>
               </Form>
@@ -158,52 +248,56 @@ const RoleManagement = ({ onRolesUpdate }) => {
         </Col>
       </Row>
 
-      {/* Role List Table */}
-      {loading ? (
-        <div className="text-center mt-4">Loading roles...</div>
-      ) : (
-        <Table responsive bordered hover className="mt-4 ">
-          <thead className="table-dark table-sm text-center">
+      {/* Roles Table */}
+      {/* <Table responsive bordered hover className="mt-4">
+        <thead className="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Role_Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
             <tr>
-              <th>#</th>
-              <th>Role Name</th>
-              <th>Actions</th>
+              <td colSpan="3" className="text-center">
+                Loading...
+              </td>
             </tr>
-          </thead>
-          <tbody className="text-center">
-            {roles.length > 0 ? (
-              roles.map((role, index) => (
-                <tr key={role.roleId}>
-                  <td>{index + 1}</td>
-                  <td>{role.role_name.replace("ROLE_", "")}</td>
-                  <td>
-                    <Button
-                      color="success px-2 me-2"
-                      size="sm"
-                      onClick={() => handleDeleteRole(role.roleId)}
-                    >
-                      <FaEdit />
-                    </Button>
-                    <Button
-                      color="danger"
-                      size="sm"
-                      onClick={() => handleDeleteRole(role.roleId)}
-                    >
-                      <FaTrash />
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" className="text-center">
-                  No roles found
+          ) : roles.length > 0 ? (
+            roles.map((role) => (
+              <tr key={role.roleId}>
+                <td>{role.roleId}</td>
+                <td>{role.role_name}</td>
+                <td>
+                  <Button
+                    color="warning"
+                    size="sm"
+                    className="me-2"
+                    title="Update Role"
+                  >
+                    <FaEdit />
+                  </Button>
+                  <Button
+                    color="danger"
+                    size="sm"
+                    onClick={() => handleDeleteRole(role.role_id)}
+                    title="Delete Role"
+                  >
+                    <FaTrash />
+                  </Button>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      )}
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3" className="text-center">
+                No roles found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table> */}
     </div>
   );
 };
