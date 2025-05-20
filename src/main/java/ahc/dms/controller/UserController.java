@@ -3,9 +3,9 @@ package ahc.dms.controller;
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.UserRoleService;
-import ahc.dms.payload.ApiResponse;
-import ahc.dms.payload.PageResponse;
-import ahc.dms.payload.UserDto;
+import ahc.dms.payload.response.ApiResponse;
+import ahc.dms.payload.response.PageResponse;
+import ahc.dms.payload.dto.UserDto;
 import ahc.dms.dao.dms.services.UserService;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/dms/users")

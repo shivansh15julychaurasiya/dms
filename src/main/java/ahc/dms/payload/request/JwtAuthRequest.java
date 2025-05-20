@@ -1,4 +1,4 @@
-package ahc.dms.payload;
+package ahc.dms.payload.request;
 
 import lombok.*;
 

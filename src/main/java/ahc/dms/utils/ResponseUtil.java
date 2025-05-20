@@ -1,6 +1,6 @@
 package ahc.dms.utils;
 
-import ahc.dms.payload.ApiResponse;
+import ahc.dms.payload.response.ApiResponse;
 
 import java.util.Map;
 

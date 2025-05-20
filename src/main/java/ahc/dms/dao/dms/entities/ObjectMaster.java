@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class ObjectMaster {
 
+    // COLUMNS
     @Id
     @Column(name = "om_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "om_seq")
@@ -31,6 +32,7 @@ public class ObjectMaster {
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private Boolean status;
 
+    // MAPPING TO OBJECT-ROLES
     @OneToMany(
             mappedBy = "objectMaster",
             orphanRemoval = true,

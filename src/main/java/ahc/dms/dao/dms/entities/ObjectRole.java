@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ObjectRole {
 
+    // COLUMNS
     @Id
     @Column(name = "or_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "or_seq")
@@ -21,10 +22,10 @@ public class ObjectRole {
             allocationSize = 1 // Optional: 1 means no batch caching
     )
     private Long orId;
-
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private Boolean status;
 
+    // MAPPING TO OBJECT-MASTER
     @ManyToOne(
             optional = false,
             fetch = FetchType.EAGER
@@ -32,6 +33,7 @@ public class ObjectRole {
     @JoinColumn(name = "om_id")
     private ObjectMaster objectMaster;
 
+    // MAPPING TO ROLES
     @ManyToOne(
             optional = false,
             fetch = FetchType.EAGER
@@ -39,6 +41,7 @@ public class ObjectRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    // CONSTRUCTORS
     public ObjectRole(ObjectMaster objectMaster, Role role, Boolean status) {
         this.objectMaster = objectMaster;
         this.role = role;

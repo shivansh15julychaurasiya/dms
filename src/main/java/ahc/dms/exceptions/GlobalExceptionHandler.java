@@ -1,6 +1,6 @@
 package ahc.dms.exceptions;
 
-import ahc.dms.payload.ApiResponse;
+import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.utils.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

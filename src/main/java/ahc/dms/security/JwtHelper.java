@@ -1,7 +1,7 @@
 package ahc.dms.security;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.payload.TokenLogDto;
+import ahc.dms.payload.dto.TokenLogDto;
 import ahc.dms.dao.dms.services.TokenLogService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

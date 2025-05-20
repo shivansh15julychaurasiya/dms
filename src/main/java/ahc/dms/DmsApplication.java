@@ -2,7 +2,7 @@ package ahc.dms;
 
 import ahc.dms.dao.dms.entities.*;
 import ahc.dms.dao.dms.repositories.*;
-import ahc.dms.payload.UserRoleDto;
+import ahc.dms.payload.dto.UserRoleDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;

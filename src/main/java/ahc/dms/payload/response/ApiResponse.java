@@ -1,4 +1,4 @@
-package ahc.dms.payload;
+package ahc.dms.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

@@ -1,32 +1,35 @@
-package ahc.dms.payload;
+package ahc.dms.payload.dto;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserRoleDto {
+public class OtpLogDto {
 
     @JsonIgnore
     private Long version;
-    @JsonProperty("ur_id")
-    private Long urId;
-    @JsonProperty("user_id")
-    private Long userId;
-    @JsonProperty("role_id")
-    private Integer roleId;
-    @JsonProperty("status")
-    private Boolean status;
+    private Long otpId;
+    private String username;
+    @JsonProperty("otp_type")
+    private String otpType;
+    private String phone;
+    @JsonProperty("otp_value")
+    private String otpValue;
+    @JsonProperty("otp_expiry")
+    private LocalDateTime otpExpiry;
+    @JsonProperty("otp_status")
+    private Boolean otpStatus;
+    private String status;
+    private String message;
+    @JsonProperty("sms_id")
+    private String smsId;
 
     // audit fields
     @JsonProperty("created_at")
@@ -35,4 +38,5 @@ public class UserRoleDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
+
 }

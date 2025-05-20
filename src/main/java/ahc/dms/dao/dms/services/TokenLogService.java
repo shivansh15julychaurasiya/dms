@@ -1,7 +1,7 @@
 package ahc.dms.dao.dms.services;
 
 import ahc.dms.dao.dms.entities.TokenLog;
-import ahc.dms.payload.TokenLogDto;
+import ahc.dms.payload.dto.TokenLogDto;
 import ahc.dms.dao.dms.repositories.TokenLogRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;

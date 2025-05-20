@@ -1,36 +1,31 @@
-package ahc.dms.payload;
+package ahc.dms.payload.dto;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TokenLogDto {
+public class UserRoleDto {
 
     @JsonIgnore
     private Long version;
-    private Long tokenId;
-    private String jwToken;
-    private String username;
-    private Date expirationDate;
-    private String tokenType;
-    private Boolean tokenStatus;
-    @JsonIgnore
-    @JsonProperty("created_by")
-    private String createdBy;
-    @JsonIgnore
-    @JsonProperty("updated_by")
-    private String updatedBy;
+    @JsonProperty("ur_id")
+    private Long urId;
+    @JsonProperty("user_id")
+    private Long userId;
+    @JsonProperty("role_id")
+    private Integer roleId;
+    @JsonProperty("status")
+    private Boolean status;
 
     // audit fields
     @JsonProperty("created_at")
@@ -39,5 +34,4 @@ public class TokenLogDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
-
 }

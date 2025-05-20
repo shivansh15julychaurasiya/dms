@@ -1,4 +1,4 @@
-package ahc.dms.payload;
+package ahc.dms.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

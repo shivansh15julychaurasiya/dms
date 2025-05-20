@@ -1,35 +1,28 @@
-package ahc.dms.payload;
+package ahc.dms.payload.dto;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OtpLogDto {
+public class RoleDto {
 
     @JsonIgnore
     private Long version;
-    private Long otpId;
-    private String username;
-    @JsonProperty("otp_type")
-    private String otpType;
-    private String phone;
-    @JsonProperty("otp_value")
-    private String otpValue;
-    @JsonProperty("otp_expiry")
-    private LocalDateTime otpExpiry;
-    @JsonProperty("otp_status")
-    private Boolean otpStatus;
-    private String status;
-    private String message;
-    @JsonProperty("sms_id")
-    private String smsId;
+    @JsonProperty("role_id")
+    private Integer roleId;
+    @JsonProperty("role_name")
+    private String roleName;
+    private Boolean status;
 
     // audit fields
     @JsonProperty("created_at")
@@ -38,5 +31,4 @@ public class OtpLogDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
-
 }

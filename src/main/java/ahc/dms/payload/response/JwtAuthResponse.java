@@ -1,5 +1,6 @@
-package ahc.dms.payload;
+package ahc.dms.payload.response;
 
+import ahc.dms.payload.dto.UserDto;
 import lombok.*;
 
 @Getter
