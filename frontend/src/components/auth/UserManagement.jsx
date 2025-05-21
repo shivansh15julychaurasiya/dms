@@ -25,7 +25,6 @@ import { useAuth } from "../../context/AuthContext";
 import {
   isTokenExpired,
   fetchUsers,
-  deleteUser,
   activateUser,
   deactivateUser,
 } from "../../services/userService";

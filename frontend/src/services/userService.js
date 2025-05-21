@@ -74,30 +74,12 @@ export const fetchUsers = async (pageNumber, pageSize, setUsers, setPageData, to
 };
 
 
-
-// Delete user
-export const deleteUser = (userId, users, setUsers) => {
-  if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-  axiosInstance
-    .delete(API_PATHS.DELETE_USER(userId), {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-    .then(() => {
-      setUsers(users.filter((user) => user.userId !== userId));
-      showAlert("User Deleted Successfully!","success")
-    })
-    .catch((err) => handleError(err, "Could not delete user."));
-};
-
 // Register/save user
 
 export const saveUser = async (userData, token) => {
   try {
     const response = await axios.post(
-      "http://localhost:8081/dms/users/create",
+     API_PATHS.CREATE_USER,
       userData,
       {
         headers: {
@@ -168,12 +150,11 @@ export const verifyForgotOtp = (loginId, otp, setMessage, navigate) => {
     });
 };
 
-// Reset password
+// forgot  password
 export const resetPassword = async (loginId, newPassword, token) => {
   console.log(token)
   try {
-    const response = await axiosInstance.post(
-      "/auth/change-password/forgot",  //  Corrected path
+    const response = await axiosInstance.post(API_PATHS.RESET_PASSWORD,  //  Corrected path
       {
         username: loginId,             //  Match cURL: use "username"
         password: newPassword,
@@ -192,10 +173,10 @@ export const resetPassword = async (loginId, newPassword, token) => {
 };
 
 
-
+// change password
 export const changePassword = async (username, old_password, newPassword, token) => {
   const response = await axiosInstance.post(
-    "/auth/change-password/reset",
+    API_PATHS.CHANGE_PASSWORD,
     {
       username,
       old_password: old_password,
@@ -211,11 +192,11 @@ export const changePassword = async (username, old_password, newPassword, token)
 };
 
 
-
+// Activate user 
 
 export const activateUser = async (userId, token) => {
   return await axiosInstance.get(
-    `/users/activate/${userId}`,
+    API_PATHS.ACTIVATE_USER(userId),
 
     {
       headers: {
@@ -225,9 +206,10 @@ export const activateUser = async (userId, token) => {
   );
 };
 
+// De-activate user
 export const deactivateUser = async (userId, token) => {
   return await axiosInstance.get(
-    `/users/deactivate/${userId}`,
+    API_PATHS.DEACTIVATE_USER(userId),
     
     {
       headers: {
