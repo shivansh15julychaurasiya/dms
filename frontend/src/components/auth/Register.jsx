@@ -1,5 +1,4 @@
-// Register.js
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -30,13 +29,11 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
   const { token } = useAuth();
   const [roles, setRoles] = useState([]);
 
- 
-   useEffect(() => {
-     if (token) {
-      fetchRoles( setRoles,  token);
-     }
-     console.log(roles)
-   }, [token]);
+  useEffect(() => {
+    if (token) {
+      fetchRoles(setRoles, token);
+    }
+  }, [token]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -68,8 +65,8 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
         about: values.about,
         password: values.password,
         phone: values.phone,
-        login_id: values.login_id,
-        roles: [ { role_id: values.role_name } ],
+        username: values.login_id, // backend expects 'username'
+        roles: [{ role_id: values.role }],
       };
 
       try {
@@ -77,7 +74,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
           await updateUser(user.user_id, userData, token);
           showAlert("User Updated Successfully!", "success");
         } else {
-          await saveUser(userData, navigate, token);
+          await saveUser(userData, token);
           showAlert("User Created Successfully!", "success");
         }
         refreshUsers();
@@ -235,8 +232,8 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                     </FormGroup>
                   </Col>
                   <Col>
-                   <Label>Status</Label>
-                   {/* <Col>{console.log(formik.values.status)}</Col> */}
+                    <Label>Status</Label>
+                    {/* Future Status field or placeholder */}
                   </Col>
                 </Row>
 

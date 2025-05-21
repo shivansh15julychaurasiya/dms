@@ -93,22 +93,26 @@ export const deleteUser = (userId, users, setUsers) => {
 };
 
 // Register/save user
-export const saveUser = async (userData, navigate, token) => {
-  console.log("saveUser called with token:", token);
-  try {
-    // const response = await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
-        await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
 
-      headers: {
-        Authorization: `Bearer ${token}`, // Add token in the Authorization header
-      },
-    });
-    navigate("/home/admindashboard");
+export const saveUser = async (userData, token) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8081/dms/users/create",
+      userData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
   } catch (error) {
-    const message = error.response?.data?.message || "Failed to save user.";
-    throw new Error(message);
+    // console.error('saveUser error:', error.response);
+    throw error.response?.data || new Error("Failed to create user");
   }
 };
+
 
 // Update user
 export const updateUser = async (userId, data, token) => {
