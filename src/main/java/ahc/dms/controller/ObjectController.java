@@ -27,6 +27,20 @@ public class ObjectController {
     @Autowired
     private RequestLogService requestLogService;
 
+    // Actions without Roles
+    @PostMapping("/create")
+    public ResponseEntity<ApiResponse<ObjectMasterDto>> createObjectMaster(
+            HttpServletRequest request,
+            @Valid @RequestBody ObjectMasterDto omDto
+    ){
+        requestLogService.logRequest(request);
+        ObjectMasterDto createdDto = omService.createObjectMaster(omDto);
+        return ResponseEntity.ok(ResponseUtil.success(createdDto, "object (url) created"));
+    }
+
+
+    // Actions With Roles
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<ObjectRoleResponse>> createObjectRole(
             HttpServletRequest request,
