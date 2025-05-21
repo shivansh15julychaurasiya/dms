@@ -14,4 +14,6 @@ public interface ObjectRoleRepository extends JpaRepository<ObjectRole, Long> {
     boolean existsByObjectMasterAndRole(ObjectMaster objectMaster, Role role);
 
     Optional<ObjectRole> findByObjectMasterAndRole(ObjectMaster om, Role role);
+
+    Optional<ObjectRole> findByObjectMasterAndRoleAndStatusTrue(ObjectMaster existingOm, Role role);
 }

@@ -37,4 +37,24 @@ public class ObjectController {
         return ResponseEntity.ok(ResponseUtil.success(objectRoleResponse, "object-role mapping created"));
     }
 
+    @PostMapping("/assign-role")
+    public ResponseEntity<ApiResponse<ObjectRoleResponse>> assignRoleToObject(
+            HttpServletRequest request,
+            @Valid @RequestBody ObjectRoleRequest orRequest
+    ){
+        requestLogService.logRequest(request);
+        ObjectRoleResponse objectRoleResponse = orService.assignRoleToObject(orRequest);
+        return ResponseEntity.ok(ResponseUtil.success(objectRoleResponse, "role assigned"));
+    }
+
+    @PostMapping("/de-assign-role")
+    public ResponseEntity<ApiResponse<ObjectRoleResponse>> deAssignRoleFromObject(
+            HttpServletRequest request,
+            @Valid @RequestBody ObjectRoleRequest orRequest
+    ){
+        requestLogService.logRequest(request);
+        ObjectRoleResponse objectRoleResponse = orService.deAssignRoleFromObject(orRequest);
+        return ResponseEntity.ok(ResponseUtil.success(objectRoleResponse, "role de-assigned"));
+    }
+
 }

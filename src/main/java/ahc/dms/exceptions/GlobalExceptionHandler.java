@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ApiResponse<?>> duplicateResourceExceptionHandler(DuplicateResourceException ex) {
         String message = ex.getMessage();
-        return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.BAD_REQUEST);
     }
 
     // for database errors
@@ -27,6 +27,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         String message = ex.getMessage();
         return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.NOT_FOUND);
+    }
+
+    // for database errors
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<ApiResponse<?>> invalidRequestExceptionHandler(InvalidRequestException ex) {
+        String message = ex.getMessage();
+        return new ResponseEntity<>(ResponseUtil.error(message), HttpStatus.BAD_REQUEST);
     }
 
     // for request validation errors

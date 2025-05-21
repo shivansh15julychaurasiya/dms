@@ -5,6 +5,7 @@ import ahc.dms.dao.dms.entities.ObjectRole;
 import ahc.dms.dao.dms.entities.Role;
 import ahc.dms.dao.dms.repositories.*;
 import ahc.dms.exceptions.ApiException;
+import ahc.dms.exceptions.InvalidRequestException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.dto.ObjectMasterDto;
 import ahc.dms.payload.dto.RoleDto;
@@ -85,6 +86,97 @@ public class ObjectRoleService {
 
     }
 
+    public ObjectRoleResponse assignRoleToObject(@Valid ObjectRoleRequest orRequest) {
+
+        ObjectMasterDto omDto = orRequest.getObjectMasterDto();
+        Set<Role> roles = new HashSet<>();
+        Set<RoleDto> roleDtos = new HashSet<>();
+
+        ObjectMaster existingOm = fetchObjectMasterOrThrow(omDto.getRequestUri(), omDto.getRequestMethod());
+
+        // Get all the distinct roles in the Set<Role>
+        for (RoleDto roleDto : orRequest.getRoleDtos()) {
+            if (roleDto.getRoleId() != null) {
+                Role role = fetchRoleOrThrow(roleDto.getRoleId());
+                roles.add(role);
+            }
+        }
+        logger.info("No of distinct roles : {}", roles.size());
+
+        for (Role role : roles) {
+            orRepository.findByObjectMasterAndRole(existingOm, role)
+                    .orElseGet(() -> {
+                                roleDtos.add(modelMapper.map(role, RoleDto.class));
+                                return orRepository.saveAndFlush(new ObjectRole(existingOm, role, true));
+                    });
+        }
+
+        ObjectRoleResponse orResponse =  new ObjectRoleResponse();
+        orResponse.setObjectMasterDto(modelMapper.map(existingOm, ObjectMasterDto.class));
+        orResponse.setRoleDtos(roleDtos);
+        return orResponse;
+    }
+
+    public ObjectRoleResponse deAssignRoleFromObject(@Valid ObjectRoleRequest orRequest) {
+        ObjectMasterDto omDto = orRequest.getObjectMasterDto();
+        Set<Role> roles = new HashSet<>();
+        Set<RoleDto> roleDtos = new HashSet<>();
+
+        ObjectMaster existingOm = fetchObjectMasterOrThrow(omDto.getRequestUri(), omDto.getRequestMethod());
+        // Get all the distinct roles in the Set<Role>
+        for (RoleDto roleDto : orRequest.getRoleDtos()) {
+            if (roleDto.getRoleId() != null) {
+                Role role = fetchRoleOrThrow(roleDto.getRoleId());
+                roles.add(role);
+            }
+        }
+        logger.info("No of distinct roles : {}", roles.size());
+
+        // First check if all the given object-role mapping exist
+        for (Role role : roles) {
+            orRepository.findByObjectMasterAndRole(existingOm, role)
+                    .map(objectRole -> {
+                        if (Boolean.FALSE.equals(objectRole.getStatus())) {
+                            throw new InvalidRequestException(
+                                    existingOm.getRequestUri(),
+                                    existingOm.getRequestMethod(),
+                                    " RoleId " + role.getRoleId() + " already de-assigned");
+                        }
+                        return objectRole;
+                    })
+                    .orElseThrow(() -> new ResourceNotFoundException(existingOm.getRequestUri(), "method", existingOm.getRequestMethod()));
+        }
+
+        for (Role role : roles) {
+            orRepository.findByObjectMasterAndRole(existingOm, role)
+                    .map(objectRole -> {
+                        RoleDto roleDto = modelMapper.map(role, RoleDto.class);
+                        roleDto.setStatus(false);
+                        roleDtos.add(roleDto);
+                        objectRole.setStatus(false);
+                        return orRepository.save(objectRole);
+                    });
+        }
+
+        ObjectRoleResponse orResponse =  new ObjectRoleResponse();
+        orResponse.setObjectMasterDto(modelMapper.map(existingOm, ObjectMasterDto.class));
+        orResponse.setRoleDtos(roleDtos);
+        return orResponse;
+
+
+    }
+
+    private ObjectMaster fetchObjectMasterOrThrow(String requestUri, String requestMethod) {
+        return omRepository.findByRequestUriAndRequestMethod(requestUri, requestMethod)
+                .map(objectMaster -> {
+                    if (Boolean.FALSE.equals(objectMaster.getStatus())) {
+                        throw new ApiException("Object-url is disabled");
+                    }
+                    return objectMaster;
+                })
+                .orElseThrow(() -> new ResourceNotFoundException(requestUri, "method", requestMethod));
+    }
+
     // UTILITY FUNCTIONS
     private Role fetchRoleOrThrow(Integer roleId) {
         return Optional.ofNullable(roleId)
@@ -98,6 +190,5 @@ public class ObjectRoleService {
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", id)))
                 .orElseThrow(() -> new ApiException("Role Id cannot be null"));
     }
-
 
 }
