@@ -2,10 +2,9 @@ package ahc.dms.dao.dms.services;
 
 import ahc.dms.dao.dms.entities.ObjectMaster;
 import ahc.dms.dao.dms.repositories.ObjectMasterRepository;
-import ahc.dms.dao.dms.repositories.ObjectRoleRepository;
-import ahc.dms.dao.dms.repositories.RoleRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.DuplicateResourceException;
+import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.dto.ObjectMasterDto;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ObjectMasterService {
@@ -24,6 +24,7 @@ public class ObjectMasterService {
     private final Logger logger = LoggerFactory.getLogger(ObjectMasterService.class);
 
 
+    @Transactional(transactionManager = "dmsTransactionManager")
     public ObjectMasterDto createObjectMaster(@Valid ObjectMasterDto omDto) {
 
 
@@ -47,4 +48,34 @@ public class ObjectMasterService {
 
     }
 
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public ObjectMasterDto enableObjectMaster(Long omId) {
+
+        ObjectMaster enabledOm = omRepository.findById(omId)
+                .map(om -> {
+                    if (Boolean.TRUE.equals(om.getStatus())) {
+                        throw new ApiException("Object (url) already enabled");
+                    }
+                    om.setStatus(Boolean.TRUE);
+                    return omRepository.save(om);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Object (url)", "Object Id", omId));
+
+        return modelMapper.map(enabledOm, ObjectMasterDto.class);
+    }
+
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public ObjectMasterDto disableObjectMaster(Long omId) {
+        ObjectMaster disabledOm = omRepository.findById(omId)
+                .map(om -> {
+                    if (Boolean.FALSE.equals(om.getStatus())) {
+                        throw new ApiException("Object (url) already disabled");
+                    }
+                    om.setStatus(Boolean.FALSE);
+                    return omRepository.save(om);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Object (url)", "Object Id", omId));
+
+        return modelMapper.map(disabledOm, ObjectMasterDto.class);
+    }
 }

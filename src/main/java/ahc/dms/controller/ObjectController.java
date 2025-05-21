@@ -4,17 +4,13 @@ import ahc.dms.dao.dms.services.*;
 import ahc.dms.payload.request.ObjectRoleRequest;
 import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.payload.dto.ObjectMasterDto;
-import ahc.dms.payload.dto.ObjectRoleDto;
 import ahc.dms.payload.response.ObjectRoleResponse;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/dms/object")
@@ -38,6 +34,25 @@ public class ObjectController {
         return ResponseEntity.ok(ResponseUtil.success(createdDto, "object (url) created"));
     }
 
+    @GetMapping("/enable/{omId}")
+    public ResponseEntity<ApiResponse<ObjectMasterDto>> enableObjectMaster(
+            HttpServletRequest request,
+            @PathVariable("omId") Long omId
+    ){
+        requestLogService.logRequest(request);
+        ObjectMasterDto enabledDto = omService.enableObjectMaster(omId);
+        return ResponseEntity.ok(ResponseUtil.success(enabledDto, "object (url) enabled"));
+    }
+
+    @GetMapping("/disable/{omId}")
+    public ResponseEntity<ApiResponse<ObjectMasterDto>> disableObjectMaster(
+            HttpServletRequest request,
+            @PathVariable("omId") Long omId
+    ){
+        requestLogService.logRequest(request);
+        ObjectMasterDto disabledDto = omService.disableObjectMaster(omId);
+        return ResponseEntity.ok(ResponseUtil.success(disabledDto, "object (url) disabled"));
+    }
 
     // Actions With Roles
 
