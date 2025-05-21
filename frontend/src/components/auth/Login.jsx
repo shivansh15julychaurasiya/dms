@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, Button, Alert } from "reactstrap";
 import { useFormik } from "formik";
@@ -30,8 +30,8 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const { tokenLog, user } = await loginUser(values.loginId, values.password);
-        login({ tokenLog, user });
+        const { token, user } = await loginUser(values.loginId, values.password);
+        login({ token, user });
 
         const roleNames = user.roles.map(role => role.role_name);
         showAlert("Login successful", "success");

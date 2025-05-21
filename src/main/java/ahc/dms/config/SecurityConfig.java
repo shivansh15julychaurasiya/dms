@@ -95,6 +95,8 @@ public class SecurityConfig {
 
         authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
+        //allows catching of UsernameNotFoundException (hidden for security reasons)
+        authProvider.setHideUserNotFoundExceptions(false);
 
         return authProvider;
     }

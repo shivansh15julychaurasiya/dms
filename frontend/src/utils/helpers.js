@@ -38,7 +38,7 @@ export const showAlert = (msg, type = "error") => {
   if (type === "error") {
     toast.error(msg, {
       position: "top-center",
-      autoClose: 3000, // Adjust auto-close time as needed
+      autoClose: 1000, // Adjust auto-close time as needed
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -46,8 +46,8 @@ export const showAlert = (msg, type = "error") => {
     });
   } else if (type === "success") {
     toast.success(msg, {
-      position: "top-right",
-      autoClose: 3000, // Adjust auto-close time as needed
+      position: "top-center",
+      autoClose: 1000, // Adjust auto-close time as needed
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

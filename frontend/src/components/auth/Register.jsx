@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+// Register.js
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { saveUser, updateUser } from "../../services/userService"; // updateUser added for update
+import { saveUser, updateUser } from "../../services/userService";
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
-import "../../assets/styles.css"
+import { fetchRoles } from "../../services/roleServices";
+
 import {
   Container,
   Row,
@@ -17,23 +19,24 @@ import {
   Label,
   Input,
   Button,
-  Alert,
 } from "reactstrap";
+
 import "../../assets/styles.css";
-import { fetchRoles } from "../../services/roleServices";
 
 const Register = ({ user, setEditingUser, refreshUsers }) => {
   const isEditMode = !!user;
-  const handleCancel = () => {
-    setEditingUser(null);
-  };
+  const handleCancel = () => setEditingUser(null);
   const navigate = useNavigate();
-  const { tokenLog } = useAuth();
+  const { token } = useAuth();
   const [roles, setRoles] = useState([]);
 
-  useEffect(() => {
-    fetchRoles(tokenLog, setRoles);
-  }, [tokenLog]);
+ 
+   useEffect(() => {
+     if (token) {
+      fetchRoles( setRoles,  token);
+     }
+     console.log(roles)
+   }, [token]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -41,60 +44,55 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
     phone: Yup.string().required("Phone is required"),
     login_id: Yup.string().required("Login ID is required"),
     password: Yup.string()
-      .min(6, "Password too short")
+      .min(4, "Password too short")
       .required("Password is required"),
     about: Yup.string().max(200, "Too long"),
-    role: Yup.string().required("Role is required"),
+    role: Yup.number().required("Role is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      name: isEditMode ? user.name : "",
-      email: isEditMode ? user.email : "",
-      about: isEditMode ? user.about : "",
+      name: user?.name || "",
+      email: user?.email || "",
+      about: user?.about || "",
       password: "",
-      phone: isEditMode ? user.phone : "",
-      login_id: isEditMode ? user.login_id : "",
-      role: isEditMode ? user.roles[0].role_id : "",
+      phone: user?.phone || "",
+      login_id: user?.login_id || "",
+      role: user?.roles?.[0]?.role_id || "",
     },
     validationSchema,
     onSubmit: async (values) => {
       const userData = {
-        ...values,
-        user_roles: [{ role_id: values.role }],
+        name: values.name,
+        email: values.email,
+        about: values.about,
+        password: values.password,
+        phone: values.phone,
+        login_id: values.login_id,
+        roles: [ { role_id: values.role_name } ],
       };
 
       try {
         if (isEditMode) {
-          // Update user logic
-          await updateUser(user.userId, userData, tokenLog);
+          await updateUser(user.user_id, userData, token);
           showAlert("User Updated Successfully!", "success");
         } else {
-          // Create user logic
-          await saveUser(userData, navigate, tokenLog);
+          await saveUser(userData, navigate, token);
           showAlert("User Created Successfully!", "success");
         }
         refreshUsers();
-        setEditingUser(null); // Close the form after submit
+        setEditingUser(null);
       } catch (error) {
         console.error("Error saving user:", error);
-        showAlert("Something went wrong!", "error");
+        showAlert(error.message || "Something went wrong!", "error");
       }
     },
   });
 
   return (
-    <div className="wrapperStyle   register-background " style={{ minHeight: "100vh" } }>
-      <Container fluid className="py-4 px-2 d-flex justify-content-center align-items-center"
-      >
-        <Col
-          xs={12}
-          sm={11}
-          md={10}
-          lg={9}
-          xl={8}
-          style={{ maxWidth: "960px" }}
-        >
+    <div className="wrapperStyle register-background" style={{ minHeight: "100vh" }}>
+      <Container fluid className="py-4 px-2 d-flex justify-content-center align-items-center">
+        <Col xs={12} sm={11} md={10} lg={9} xl={8} style={{ maxWidth: "960px" }}>
           <Card className="cardStyle shadow rounded-4 border-0">
             <CardBody className="p-5">
               <Form onSubmit={formik.handleSubmit}>
@@ -116,6 +114,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                       )}
                     </FormGroup>
                   </Col>
+
                   <Col md={6} className="mb-2">
                     <FormGroup>
                       <Label for="email">Email</Label>
@@ -153,6 +152,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                       )}
                     </FormGroup>
                   </Col>
+
                   <Col md={6} className="mb-2">
                     <FormGroup>
                       <Label for="login_id">Employee ID (Login ID)</Label>
@@ -162,15 +162,11 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                         value={formik.values.login_id}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        invalid={
-                          formik.touched.login_id && !!formik.errors.login_id
-                        }
+                        invalid={formik.touched.login_id && !!formik.errors.login_id}
                         placeholder="Enter login ID"
                       />
                       {formik.touched.login_id && formik.errors.login_id && (
-                        <div className="text-danger">
-                          {formik.errors.login_id}
-                        </div>
+                        <div className="text-danger">{formik.errors.login_id}</div>
                       )}
                     </FormGroup>
                   </Col>
@@ -186,18 +182,15 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                         value={formik.values.password}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        invalid={
-                          formik.touched.password && !!formik.errors.password
-                        }
+                        invalid={formik.touched.password && !!formik.errors.password}
                         placeholder="Create a password"
                       />
                       {formik.touched.password && formik.errors.password && (
-                        <div className="text-danger">
-                          {formik.errors.password}
-                        </div>
+                        <div className="text-danger">{formik.errors.password}</div>
                       )}
                     </FormGroup>
                   </Col>
+
                   <Col md={6} className="mb-2">
                     <FormGroup>
                       <Label for="about">About</Label>
@@ -241,16 +234,15 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                       )}
                     </FormGroup>
                   </Col>
+                  <Col>
+                   <Label>Status</Label>
+                   {/* <Col>{console.log(formik.values.status)}</Col> */}
+                  </Col>
                 </Row>
 
                 <Row className="mb-3">
-                  <Col xs="6" className="mt-xsds2">
-                    <Button
-                      type="button"
-                      color="secondary"
-                      onClick={handleCancel}
-                      className="w-100"
-                    >
+                  <Col xs="6">
+                    <Button type="button" color="secondary" onClick={handleCancel} className="w-100">
                       Cancel
                     </Button>
                   </Col>

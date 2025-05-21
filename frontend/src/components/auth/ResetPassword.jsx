@@ -24,15 +24,16 @@ const ResetPassword = () => {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    const tokenLog = localStorage.getItem("tokenLog");
+    const token = localStorage.getItem("resetToken");
+    console.log(token)
 
-    if (!tokenLog) {
-      showAlert("Reset tokenLog not found. Please verify OTP again.");
+    if (!token) {
+      showAlert("Reset token not found. Please verify OTP again.");
       return;
     }
 
     try {
-      await resetPassword(loginId, newPassword, tokenLog);
+      await resetPassword(loginId, newPassword, token);
       showAlert("Password has been reset successfully!", "success");
       setTimeout(() => navigate("/"), 1000);
     } catch (error) {

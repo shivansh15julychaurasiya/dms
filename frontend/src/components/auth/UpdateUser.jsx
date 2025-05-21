@@ -15,10 +15,10 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
-import { getUserById, updateUser } from "../../services/userService"; // ✅ imported helper functions
+import { getUserById, updateUser } from "../../services/userService"; 
 
 const UpdateUser = () => {
-  const { tokenLog } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const { userId } = useParams();
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const UpdateUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const data = await getUserById(userId, tokenLog);
+        const data = await getUserById(userId, token);
         setFormData({
           name: data.data.name || "", // Ensure default empty string if undefined
           email: data.data.email || "", // Ensure default empty string if undefined
@@ -48,7 +48,7 @@ const UpdateUser = () => {
       }
     };
     fetchUser();
-  }, [userId, tokenLog]);
+  }, [userId, token]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -63,7 +63,7 @@ const UpdateUser = () => {
     setSuccessMsg("");
 
     try {
-      await updateUser(userId, formData, tokenLog);
+      await updateUser(userId, formData, token);
       setSuccessMsg("User updated successfully!");
       setTimeout(() => navigate("/home/admindashboard"), 2000);
     } catch (err) {

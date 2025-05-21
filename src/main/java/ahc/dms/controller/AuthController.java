@@ -18,13 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -72,8 +71,16 @@ public class AuthController {
                     ));
             // 2. MANUALLY set the security context (critical for stateless apps)
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.ok(ResponseUtil.error("User is disabled"));
+        } catch (Exception ex) {
+            if (ex instanceof UsernameNotFoundException) {
+                return ResponseEntity.ok(ResponseUtil.error("User not found"));
+            }
+            else if (ex instanceof BadCredentialsException) {
+                return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
+            }
+            else {
+                return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
+            }
         }
         //returns anonymousUser since session creation policy is stateless
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
@@ -161,27 +168,6 @@ public class AuthController {
         return ResponseEntity.ok(ResponseUtil.success(null, "otp sent successfully"));
     }
 
-    @PostMapping("/verify-reset-otp")
-    public ResponseEntity<ApiResponse<?>> verifyResetOtp(
-            HttpServletRequest httpRequest,
-            @RequestBody JwtAuthRequest authRequest
-    ) {
-        requestLogService.logRequest(httpRequest);
-        logger.info("inside verify-reset-otp controller");
-        boolean authStatus = otpLogService.verifyResetOtp(authRequest.getUsername(), authRequest.getOtp());
-        if (authStatus) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
-            String token = this.jwtHelper.generateToken(userDetails, AppConstants.RESET_TOKEN);
-
-            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-            jwtAuthResponse.setToken(token);
-            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-
-            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Otp verified successfully"));
-        }
-        return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
-    }
-
     @PostMapping("/verify-forgot-otp")
     public ResponseEntity<ApiResponse<?>> verifyForgotOtp(
             HttpServletRequest httpRequest,
@@ -191,19 +177,53 @@ public class AuthController {
         logger.info("inside verify-forgot-otp controller");
         boolean otpExists = otpLogService.verifyForgotOtp(authRequest.getUsername(), authRequest.getOtp());
         if (otpExists) {
-            return ResponseEntity.ok(ResponseUtil.success(null, "Otp verified successfully"));
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
+            String token = this.jwtHelper.generateToken(userDetails, AppConstants.FORGOT_TOKEN);
+
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(token);
+            jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
+
+            return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, "Forgot-Otp verified successfully"));
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<?>> resetUserPassword(
+    @PostMapping("/change-password/reset")
+    public ResponseEntity<ApiResponse<?>> resetPassword(
+            HttpServletRequest httpRequest,
+            @RequestBody ResetPasswordDto passDto
+    ) {
+        requestLogService.logRequest(httpRequest);
+        try {
+            this.authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(
+                            passDto.getUsername(),
+                            passDto.getOldPassword()
+                    ));
+        } catch (Exception ex) {
+            if (ex instanceof UsernameNotFoundException) {
+                return ResponseEntity.ok(ResponseUtil.error("User not found"));
+            }
+            else if (ex instanceof BadCredentialsException) {
+                return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
+            }
+            else {
+                return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
+            }
+        }
+        UserDto updatedUser = userService.changePassword(passDto.getUsername(), passDto.getNewPassword());
+        return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
+    }
+
+    @PostMapping("/change-password/forgot")
+    public ResponseEntity<ApiResponse<?>> forgotPassword(
             HttpServletRequest httpRequest,
             @RequestBody UserDto userDto
     ) {
         requestLogService.logRequest(httpRequest);
-        UserDto updatedUser = userService.resetPassword(userDto.getUsername(), userDto.getPassword());
+        UserDto updatedUser = userService.changePassword(userDto.getUsername(), userDto.getPassword());
         return ResponseEntity.ok(ResponseUtil.success(null, "Password has been reset"));
     }
 

@@ -49,15 +49,31 @@ export const getUserById = async (userId, token) => {
   return response.data;
 };
 
-// Fetch all users
-export const fetchUsers = (setUsers, token) => {
-  axiosInstance
-    .get(API_PATHS.USERS, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => setUsers(res.data.data))
-    // .catch(() => showAlert("Error loading users. You may not be authorized."));
+export const fetchUsers = async (pageNumber, pageSize, setUsers, setPageData, token) => {
+  try {
+    const res = await axiosInstance.get(API_PATHS.USERS, {
+      params: {
+        pageNumber, // should be a number, e.g., 0-based page index
+        pageSize,   // number of users per page
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log(res.data.data.totalPages)
+
+    // Adjust according to your backend response structure:
+    setUsers(res.data.data.content);
+    setPageData({
+      totalPages: res.data.data.totalPages,
+      currentPage: res.data.data.pageNumber + 1, // if backend is zero-based page
+    });
+  } catch  {
+    // console.error("Error fetching users");
+  }
 };
+
+
 
 // Delete user
 export const deleteUser = (userId, users, setUsers) => {
@@ -78,9 +94,11 @@ export const deleteUser = (userId, users, setUsers) => {
 
 // Register/save user
 export const saveUser = async (userData, navigate, token) => {
-  
+  console.log("saveUser called with token:", token);
   try {
-    const response = await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
+    // const response = await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
+        await axiosInstance.post(API_PATHS.CREATE_USER, userData, {
+
       headers: {
         Authorization: `Bearer ${token}`, // Add token in the Authorization header
       },
@@ -108,49 +126,52 @@ export const updateUser = async (userId, data, token) => {
   }
 };
 
-// Send OTP
-export const requestOtp = (loginId, setMessage, setOtpSent, setTimer) => {
+// Updated Send OTP for Forgot Password
+export const requestForgotOtp = (loginId, setMessage, setOtpSent, setTimer) => {
+  console.log("loginid"+loginId)
   axiosInstance
     .post(API_PATHS.REQUEST_OTP, {
-      login_id: loginId,
-      otp_type: "Reset",
+      username: loginId,
+      otp_type: "Forgot",
     })
     .then(() => {
-      showAlert("OTP has been sent successfully!","success");
+      showAlert("OTP has been sent successfully!", "success");
       setTimeout(() => setMessage(""), 3000);
       setOtpSent(true);
       setTimer(120);
     })
     .catch(() => {
-      showAlert("Failed to send OTP. Please check the Login ID.","error");
+      showAlert("Failed to send OTP. Please check the User ID.", "error");
     });
 };
 
-// Verify OTP
-export const verifyOtp = (loginId, otp, setMessage, navigate) => {
+// Updated Verify OTP for Forgot Password
+export const verifyForgotOtp = (loginId, otp, setMessage, navigate) => {
   axiosInstance
     .post(API_PATHS.VERIFY_OTP, {
       username: loginId,
-      otp,
+      otp: otp,
     })
     .then((res) => {
       const token = res.data.data.token;
-      localStorage.setItem("token", token);
+      console.log(token)
+      localStorage.setItem("resetToken", token);
       navigate("/home/reset");
-      showAlert("OTP has been verified successfully!","success");
+      showAlert("OTP has been verified successfully!", "success");
     })
     .catch(() => {
-      showAlert("Failed to verify OTP. Please check the Login ID.","error");
+      showAlert("Invalid OTP or User ID. Please try again.", "error");
     });
 };
 
 // Reset password
 export const resetPassword = async (loginId, newPassword, token) => {
+  console.log(token)
   try {
     const response = await axiosInstance.post(
-      API_PATHS.RESET_PASSWORD,
+      "/auth/change-password/forgot",  //  Corrected path
       {
-        login_id: loginId,
+        username: loginId,             //  Match cURL: use "username"
         password: newPassword,
       },
       {
@@ -165,5 +186,31 @@ export const resetPassword = async (loginId, newPassword, token) => {
     throw new Error(error.response?.data?.message || "Password reset failed.");
   }
 };
+
+export const activateUser = async (userId, token) => {
+  return await axiosInstance.get(
+    `/users/activate/${userId}`,
+
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const deactivateUser = async (userId, token) => {
+  return await axiosInstance.get(
+    `/users/deactivate/${userId}`,
+    
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+
 
 export { axiosInstance }; // Named export

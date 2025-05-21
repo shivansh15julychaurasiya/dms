@@ -15,7 +15,7 @@ import {
   Button,
   Alert,
 } from "reactstrap";
-import { requestOtp, verifyOtp } from "../../services/userService";
+import { requestForgotOtp, verifyForgotOtp } from "../../services/userService";
 import "../../assets/styles.css"
 import { showAlert } from "../../utils/helpers";
 
@@ -48,13 +48,14 @@ const ForgotPassword = () => {
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    requestOtp(loginId, setMessage, setOtpSent, setTimer);
+    console.log(loginId)
+    requestForgotOtp(loginId, setMessage, setOtpSent, setTimer);
   };
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    verifyOtp(loginId, otp, setMessage, navigate);
-    showAlert("OTP verified Successfully 1")
+    verifyForgotOtp(loginId, otp, setMessage, navigate);
+    // showAlert("OTP verified Successfully 1","success")
   };
 
   return (

@@ -4,8 +4,7 @@ import { isTokenExpired } from "../services/userService";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-
-  const [tokenLog, setToken] = useState(localStorage.getItem("tokenLog") || "");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   const [user, setUser] = useState(() => {
     try {
@@ -17,33 +16,32 @@ export const AuthProvider = ({ children }) => {
   });
   const [role, setRole] = useState(localStorage.getItem("role") || "");
 
-  // Check for tokenLog expiration when tokenLog is available
+  // Check for token expiration when token is available
   useEffect(() => {
-    if (tokenLog && isTokenExpired(tokenLog)) {
+    if (token && isTokenExpired(token)) {
       logout();
     }
-  }, [tokenLog]);
+  }, [token]);
 
   // Syncing state with localStorage
- // Syncing state with localStorage
-useEffect(() => {
-  if (tokenLog && user) {
-    localStorage.setItem("tokenLog", tokenLog);
-    localStorage.setItem("user", JSON.stringify(user));
+  // Syncing state with localStorage
+  useEffect(() => {
+    if (token && user) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-    // Check if the roles array exists and has at least one role before accessing it
-    if (user.roles && user.roles[0] && user.roles[0].role_name) {
-      setRole(user.roles[0].role_name.trim());
-      localStorage.setItem("role", user.roles[0].role_name.trim()); //  Corrected here
-    } else {
-      setRole(""); // Clear role if no valid role found
+      // Check if the roles array exists and has at least one role before accessing it
+      if (user.roles && user.roles[0] && user.roles[0].role_name) {
+        setRole(user.roles[0].role_name.trim());
+        localStorage.setItem("role", user.roles[0].role_name.trim()); //  Corrected here
+      } else {
+        setRole(""); // Clear role if no valid role found
+      }
     }
-  }
-}, [tokenLog, user]);
+  }, [token, user]);
 
-
-  const login = ({ tokenLog, user }) => {
-    setToken(tokenLog);
+  const login = ({ token, user }) => {
+    setToken(token);
     setUser(user);
 
     // Check if the roles array exists and has at least one role
@@ -63,7 +61,7 @@ useEffect(() => {
   };
 
   return (
-    <AuthContext.Provider value={{ tokenLog, user, role, login, logout }}>
+    <AuthContext.Provider value={{ token, user, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

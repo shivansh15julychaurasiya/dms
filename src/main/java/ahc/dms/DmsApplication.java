@@ -111,7 +111,7 @@ public class DmsApplication implements CommandLineRunner {
                         newUser.setName("Vijay Chaurasiya");
                         newUser.setUsername("11448");
                         newUser.setEmail("vijaychaurasiya@gmail.com");
-                        newUser.setAbout("admin");
+                        newUser.setAbout("Java Developer");
                         newUser.setPhone("9721308763");
                         newUser.setPassword(passwordEncoder.encode("1234"));
                         return userRepository.saveAndFlush(newUser);

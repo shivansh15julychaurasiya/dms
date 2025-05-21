@@ -37,7 +37,7 @@ export default function App() {
     <AuthProvider>
       <ToastContainer
         position="top-center" // Position on screen
-        autoClose={2000} // Auto close after 3 seconds
+        autoClose={500} // Auto close after 3 seconds
         hideProgressBar={false} // Show the progress bar
         newestOnTop={false} // Newest toasts appear on top
         closeOnClick // Close on click

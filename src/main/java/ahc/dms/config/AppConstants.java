@@ -4,13 +4,12 @@ import java.util.Set;
 
 public class AppConstants {
 
+    // Ignore urls which are accessible to public
     public static final String[] PUBLIC_URLS = {
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
-            "/dms/auth/reset-password",
-            "/dms/auth/verify-reset-otp",
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
             "/actuator/**"
@@ -30,27 +29,29 @@ public class AppConstants {
             ** - matches zero or more path segments
             {string} - matches a path segment and captures it as a variable
      */
+    // Ignore urls which do not require jwt-based authentication
     public static final Set<String> JWT_IGNORED_URLS = Set.of(
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
             "/dms/auth/register",
             "/dms/auth/request-otp",
-            "/dms/auth/reset-password",
-            "/dms/auth/verify-reset-otp",
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
             "/actuator/**"
     );
 
+    // Ignore urls which do not require role-based permissions (ie performed by everyone)
     public static final Set<String> REQUEST_AUTH_IGNORED_URLS = Set.of(
             "/dms/auth/login-password",
             "/dms/auth/login-otp",
+            "/dms/auth/logout",
             "/dms/auth/register",
             "/dms/auth/request-otp",
-            "/dms/auth/reset-password",
             "/dms/auth/verify-reset-otp",
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
+            "/dms/auth/change-password/forgot",
+            "/dms/auth/change-password/reset",
             "/actuator/**"
     );
 
@@ -66,7 +67,6 @@ public class AppConstants {
     public static final String JWT_REVOKED = "Revoked";
 
     public static final String LOGIN_TOKEN = "Login";
-    public static final String RESET_TOKEN = "Reset";
     public static final String FORGOT_TOKEN = "Forgot";
 
     public static final String LOGIN_OTP_URI = "http://103.234.185.173/api/swsendnk.asp";

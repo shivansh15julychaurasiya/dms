@@ -3,22 +3,21 @@ import { ROLE_API_PATHS } from "../utils/constants";
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
 
 // Fetch all roles
-export const fetchRoles = ( token,setRoles) => {
-    console.log(token)
+export const fetchRoles = async ( setRoles, token) => {
+  try {
+    const res = await axiosInstance.get(ROLE_API_PATHS.ROLES, {
+     
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-
-  axiosInstance
-    .get(ROLE_API_PATHS.ROLES, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => {
-      if (res.data.status) {
-        setRoles(res.data.data); // Assuming roles are in data property
-      } else {
-        showAlert("No roles found.");
-      }
-    })
-    
+    setRoles(res.data.data.content);
+    // console.log(res.data.data.content)
+  
+  } catch (error) {
+    console.error("Failed to fetch roles:", error);
+  }
 };
 
 // Fetch role by ID
@@ -37,16 +36,37 @@ export const fetchRoleById = (roleId, token) => {
     .catch(() => showAlert("Error fetching role."));
 };
 
-// Deassign role
 
-export const deassignRoleFromUser = async (userId, roleId ,token) => {
-  await axiosInstance.post(
-    "http://localhost:8081/dms/role/deassign-role",
-    { user_id: userId, role_id: roleId },
+// Assign role to a user
+export const assignRoleToUser = async (loginId, roleId, token) => {
+  // console.log(loginId+roleId())
+  const response = await axiosInstance.get(
+    `/role/assign-role`,
     {
+      params: { loginId, roleId },
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+
+// Deassign role
+// Deassign role from user (fixed to accept token)
+export const deassignRoleFromUser = async (loginId, roleId, token) => {
+  return await axiosInstance.get(
+    `/role/deassign-role`,
+    {
+      params: {
+        loginId,
+        roleId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     }
   );
@@ -70,20 +90,25 @@ export const removeRoleFromUser = (userId, roleId, token) => {
 };
 
 // Create a new role
-export const createRole = (newRole, token) => {
-  axiosInstance
-    .post(ROLE_API_PATHS.CREATE_ROLE, {role_name: newRole }, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => {
-      if (res.data.status) {
-        showAlert("Role created successfully.","success");
-      } else {
-        showAlert("Failed to create role.");
+export const createRole = async (newRole, token) => {
+  try {
+    const response = await axiosInstance.post(
+      ROLE_API_PATHS.CREATE_ROLE,
+      { role_name: newRole },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-    })
-    .catch(() => showAlert("Error creating role."));
+    );
+    return response.data; // return the API response
+  } catch (error) {
+    // Rethrow for the calling function to handle the error
+    throw error.response?.data || { message: "Unknown error occurred." };
+  }
 };
+
 
 // Update a role
 export const updateRole = (roleId, roleData, token) => {

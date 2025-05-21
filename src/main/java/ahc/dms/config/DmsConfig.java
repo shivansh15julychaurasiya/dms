@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 @Configuration
-@PropertySource({ "classpath:persistence-ahc.properties" })
+@PropertySource({ "classpath:persistence-vijay.properties" })
 @EnableTransactionManagement
 @EnableJpaRepositories(
         basePackages = "ahc.dms.dao.dms.repositories",
