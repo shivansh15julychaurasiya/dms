@@ -11,9 +11,14 @@ export const API_PATHS = {
 
   REQUEST_OTP: "/auth/request-otp",
   VERIFY_OTP: "/auth/verify-forgot-otp",
-  RESET_PASSWORD: "/auth/reset-password", // for frontend navigation
+  RESET_PASSWORD: "/auth/change-password/forgot", // for frontend navigation
 
-  CHANGE_PASSWORD:"/change-password/reset"
+  CHANGE_PASSWORD:"/auth/change-password/reset",
+
+  ACTIVATE_USER:(id)=>`/users/activate/${id}`,
+  DEACTIVATE_USER:(id)=>`/users/deactivate/${id}`
+
+
 };
 
 // Role-related API paths
