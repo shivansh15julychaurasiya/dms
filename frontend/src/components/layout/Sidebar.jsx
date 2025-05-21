@@ -16,13 +16,10 @@ const Sidebar = () => {
   const location = useLocation();
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
-
   const toggleDropdown = (item) =>
     setActiveDropdown((prev) => (prev === item ? "" : item));
-
   const isActive = (path) => location.pathname === path;
 
-  // Automatically open dropdown if URL matches any submenu
   useEffect(() => {
     if (
       location.pathname.startsWith("/home/") ||
@@ -34,10 +31,40 @@ const Sidebar = () => {
     }
   }, [location.pathname]);
 
+ const sidebarHoverStyle = (
+  <style>
+    {`
+      .sidebar-hover:hover {
+        background-color: rgb(126, 61, 231) !important; /* Bootstrap blue */
+        color: #fff !important;
+        border-radius: 5px;
+      }
+
+      .sidebar-hover:hover svg,
+      .sidebar-hover:hover span {
+        color: #fff !important;
+      }
+
+      .sidebar-hover {
+        transition: background-color: rgb(69, 236, 236);
+      }
+         .custom-active-link {
+        background-color: rgb(96, 22, 194) !important;
+        color: #fff !important;
+        border-radius: 5px;
+      }
+    `}
+  </style>
+);
+
+
+
   return (
     <>
+      {sidebarHoverStyle}
+
       <div
-        className={`position-fixed top-0 start-0 h-100 bg-dark border-end shadow-sm ${
+        className={`position-fixed top-0 start-0 h-100 bg-light border-end shadow-sm ${
           isOpen ? "px-3" : "px-2"
         }`}
         style={{
@@ -46,14 +73,14 @@ const Sidebar = () => {
           zIndex: 1000,
         }}
       >
-        <div className="text-center text-light py-3 border-bottom">
+        <div className="text-center text-dark py-3 border-bottom">
           {isOpen && <h5 className="text-primary m-0"></h5>}
         </div>
 
         <ul className="nav flex-column mt-4">
           {/* Home Dropdown */}
           <li className="nav-item">
-            <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-light hover-effect sidebar-hover">
+            <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
               <div
                 onClick={() => toggleDropdown("Home")}
                 style={{ cursor: "pointer", flex: 1 }}
@@ -73,8 +100,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/dashboard"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/home/dashboard") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/home/dashboard") ? "custom-active-link  rounded text-white" : ""
                     }`}
                   >
                     Dashboard
@@ -83,8 +110,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/search"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/home/search") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/home/search") ? "custom-active-link - rounded text-white" : ""
                     }`}
                   >
                     Search
@@ -94,8 +121,8 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link
                       to="/home/admindashboard"
-                      className={`nav-link px-2 text-light ${
-                        isActive("/home/admindashboard") ? "bg-primary rounded" : ""
+                      className={`nav-link px-2 text-dark ${
+                        isActive("/home/admindashboard") ? "custom-active-link  rounded text-white" : ""
                       }`}
                     >
                       Manage Users
@@ -105,8 +132,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/managecauselist"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/home/managecauselist") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/home/managecauselist") ? "custom-active-link  rounded text-white" : ""
                     }`}
                   >
                     Manage CauseList
@@ -115,8 +142,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/reservedcases"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/home/reservedcases") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/home/reservedcases") ? "custom-active-link  rounded text-white" : ""
                     }`}
                   >
                     Reserved Cases
@@ -125,8 +152,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/cases_mgmt/status"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/cases_mgmt/status") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/cases_mgmt/status") ? "custom-active-link  rounded text-white" : ""
                     }`}
                   >
                     Status
@@ -140,8 +167,8 @@ const Sidebar = () => {
           <li className="nav-item">
             <Link
               to="/analytics"
-              className={`nav-link text-light fw-bold d-flex align-items-center hover-effect sidebar-hover ${
-                isActive("/analytics") ? "bg-primary rounded" : ""
+              className={`nav-link text-dark fw-bold d-flex align-items-center sidebar-hover ${
+                isActive("/analytics") ? "bg-primary rounded text-white" : ""
               }`}
             >
               <FaChartBar className="me-2" />
@@ -151,7 +178,7 @@ const Sidebar = () => {
 
           {/* Scheduling Dropdown */}
           <li className="nav-item">
-            <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-light hover-effect sidebar-hover">
+            <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
               <div
                 onClick={() => toggleDropdown("Scheduling")}
                 style={{ cursor: "pointer", flex: 1 }}
@@ -171,8 +198,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/court-calendar"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/scheduling/court-calendar") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/scheduling/court-calendar") ? "bg-primary rounded text-white" : ""
                     }`}
                   >
                     Court Calendar
@@ -181,8 +208,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/hearing-schedule"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/scheduling/hearing-schedule") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/scheduling/hearing-schedule") ? "bg-primary rounded text-white" : ""
                     }`}
                   >
                     Hearing Schedule
@@ -191,8 +218,8 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/set-appointment"
-                    className={`nav-link px-2 text-light ${
-                      isActive("/scheduling/set-appointment") ? "bg-primary rounded" : ""
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/scheduling/set-appointment") ? "bg-primary rounded text-white" : ""
                     }`}
                   >
                     Set Appointment

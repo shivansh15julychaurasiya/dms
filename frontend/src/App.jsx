@@ -60,7 +60,8 @@ export default function App() {
             path="/home/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <AdminDashboard/>
+                {/* <Dashboard /> */}
               </ProtectedRoute>
             }
           />
