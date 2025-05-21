@@ -65,7 +65,7 @@ const ProfileCard = ({ toggleModal }) => {
                 </button>
                 */}
                 <button className="btn btn-warning btn-sm rounded-pill px-2 py-1" onClick={handleChangePassword}>
-                  <i className="bi bi-key me-1"></i>Password
+                  <i className="bi bi-key me-1"></i>Reset-password
                 </button>
                 <button className="btn btn-danger btn-sm rounded-pill px-2 py-1" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right me-1"></i>Logout
