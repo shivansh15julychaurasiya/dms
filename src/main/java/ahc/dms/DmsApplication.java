@@ -123,30 +123,17 @@ public class DmsApplication implements CommandLineRunner {
             }
 
             // Object master filter
-            ObjectMaster userObjectMaster = omRepository.findByRequestUriAndRequestMethod("/dms/users/", "GET")
+            ObjectMaster om = omRepository.findByRequestUriAndRequestMethod("/dms/object/", "POST")
                             .orElseGet(() -> {
                                 ObjectMaster userOm =  new ObjectMaster();
-                                userOm.setRequestUri("/dms/users/");
-                                userOm.setRequestMethod("GET");
+                                userOm.setRequestUri("/dms/object/");
+                                userOm.setRequestMethod("POST");
                                 userOm.setStatus(true);
                                 return omRepository.saveAndFlush(userOm);
                             });
 
-            ObjectMaster roleObjectMaster = omRepository.findByRequestUriAndRequestMethod("/dms/role", "GET")
-                    .orElseGet(() -> {
-                        ObjectMaster userOm =  new ObjectMaster();
-                        userOm.setRequestUri("/dms/role");
-                        userOm.setRequestMethod("GET");
-                        userOm.setStatus(true);
-                        return omRepository.saveAndFlush(userOm);
-                    });
-
-            // For each or, check if it exists first
-            if (!orRepository.existsByObjectMasterAndRole(userObjectMaster, adminRole)) {
-                orRepository.save(new ObjectRole(userObjectMaster, adminRole, true));
-            }
-            if (!orRepository.existsByObjectMasterAndRole(roleObjectMaster, adminRole)) {
-                orRepository.save(new ObjectRole(roleObjectMaster, adminRole, true));
+            if (!orRepository.existsByObjectMasterAndRole(om, adminRole)) {
+                orRepository.save(new ObjectRole(om, adminRole, true));
             }
 
             System.out.println("Admin User created");
