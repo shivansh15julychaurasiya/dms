@@ -149,8 +149,6 @@ public class DmsApplication implements CommandLineRunner {
                 orRepository.save(new ObjectRole(roleObjectMaster, adminRole, true));
             }
 
-
-
             System.out.println("Admin User created");
         } catch (Exception e) {
             e.printStackTrace();
