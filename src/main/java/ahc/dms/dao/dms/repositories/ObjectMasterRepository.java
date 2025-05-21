@@ -15,7 +15,7 @@ public interface ObjectMasterRepository extends JpaRepository<ObjectMaster, Long
     Optional<ObjectMaster> findByRequestUriStartingWithAndRequestMethodAndStatusTrue(String uri, String method);
 
     @Query("SELECT om FROM ObjectMaster om " +
-            "WHERE :uri LIKE CONCAT(om.requestUri, '%') " +
+            "WHERE (:uri = om.requestUri OR :uri LIKE CONCAT(om.requestUri, '/%')) " +
             "AND om.requestMethod = :method AND om.status = true " +
             "ORDER BY LENGTH(om.requestUri) DESC")
     Optional<ObjectMaster> findBestMatchingPrefix(@Param("uri") String uri, @Param("method") String method);

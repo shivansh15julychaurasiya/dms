@@ -122,21 +122,6 @@ public class DmsApplication implements CommandLineRunner {
                 userRoleRepository.save(new UserRole(firstUser, adminRole, true));
             }
 
-            // Object master filter
-            ObjectMaster om = omRepository.findByRequestUriAndRequestMethod("/dms/object/", "POST")
-                            .orElseGet(() -> {
-                                ObjectMaster userOm =  new ObjectMaster();
-                                userOm.setRequestUri("/dms/object/");
-                                userOm.setRequestMethod("POST");
-                                userOm.setStatus(true);
-                                return omRepository.saveAndFlush(userOm);
-                            });
-
-            if (!orRepository.existsByObjectMasterAndRole(om, adminRole)) {
-                orRepository.save(new ObjectRole(om, adminRole, true));
-            }
-
-            System.out.println("Admin User created");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -144,7 +144,11 @@ public class ObjectRoleService {
                         }
                         return objectRole;
                     })
-                    .orElseThrow(() -> new ResourceNotFoundException(existingOm.getRequestUri(), "method", existingOm.getRequestMethod()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            existingOm.getRequestUri() + ":" + existingOm.getRequestMethod(),
+                            "roleId",
+                            role.getRoleId()
+                    ));
         }
 
         for (Role role : roles) {
