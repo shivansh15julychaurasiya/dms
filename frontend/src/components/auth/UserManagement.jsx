@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Switch from "@mui/material/Switch";
-
 import {
   Button,
   Table,
@@ -10,14 +9,9 @@ import {
   Card,
   CardBody,
   Spinner,
+  Modal,
 } from "reactstrap";
-import {
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaToggleOn,
-  FaToggleOff,
-} from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -39,18 +33,16 @@ const UserManagement = () => {
   const [pageData, setPageData] = useState({ totalPages: 0, currentPage: 0 });
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingToggleUser, setPendingToggleUser] = useState(null);
 
   const usersPerPage = 5;
 
   const refreshUsers = useCallback(() => {
     setLoading(true);
-    fetchUsers(
-      currentPage - 1,
-      usersPerPage,
-      setUsers,
-      setPageData,
-      token
-    ).finally(() => setLoading(false));
+    fetchUsers(currentPage - 1, usersPerPage, setUsers, setPageData, token).finally(() =>
+      setLoading(false)
+    );
   }, [currentPage, token]);
 
   useEffect(() => {
@@ -72,14 +64,6 @@ const UserManagement = () => {
     return () => clearInterval(intervalId);
   }, [token, logout, navigate, currentPage, refreshUsers]);
 
-  const deleteHandler = async (userId) => {
-    await deleteUser(userId, users, setUsers, navigate);
-    if (editingUser?.userId === userId) {
-      setEditingUser(null);
-    }
-    refreshUsers();
-  };
-
   const toggleUserStatus = async (user) => {
     try {
       const isActive = user.status;
@@ -92,7 +76,6 @@ const UserManagement = () => {
         toast.success(`${user.name} activated successfully`);
       }
 
-      // Update the user status locally to reflect in UI instantly
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
           u.username === user.username ? { ...u, status: !isActive } : u
@@ -120,6 +103,7 @@ const UserManagement = () => {
               Create User
             </Button>
           </div>
+
           <Table responsive bordered hover>
             <thead className="table-dark">
               <tr>
@@ -161,7 +145,6 @@ const UserManagement = () => {
                       <td>
                         <Button
                           color="warning"
-                          size=""
                           className="px-1 mb-1 me-1"
                           onClick={() => setEditingUser(user)}
                         >
@@ -170,7 +153,10 @@ const UserManagement = () => {
 
                         <Switch
                           checked={user.status}
-                          onChange={() => toggleUserStatus(user)}
+                          onChange={() => {
+                            setPendingToggleUser(user);
+                            setShowConfirmModal(true);
+                          }}
                           size="small"
                         />
                       </td>
@@ -224,6 +210,39 @@ const UserManagement = () => {
           </CardBody>
         </Card>
       )}
+
+      {/* Modal for Activation/Deactivation Confirmation */}
+      <Modal isOpen={showConfirmModal} toggle={() => setShowConfirmModal(false)}>
+        <div className="modal-header">
+          <h5 className="modal-title">
+            {pendingToggleUser?.status ? "Deactivate User" : "Activate User"}
+          </h5>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setShowConfirmModal(false)}
+          ></button>
+        </div>
+        <div className="modal-body">
+          Are you sure you want to {pendingToggleUser?.status ? "deactivate" : "activate"}{" "}
+          <strong>{pendingToggleUser?.name}</strong>?
+        </div>
+        <div className="modal-footer">
+          <Button color="secondary" onClick={() => setShowConfirmModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            color={pendingToggleUser?.status ? "danger" : "success"}
+            onClick={() => {
+              toggleUserStatus(pendingToggleUser);
+              setShowConfirmModal(false);
+              setPendingToggleUser(null);
+            }}
+          >
+            Yes, {pendingToggleUser?.status ? "Deactivate" : "Activate"}
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 };
