@@ -37,8 +37,8 @@ const CustomNavbar = () => {
         className="bg-light shadow-sm border-bottom"
         style={{ height: "50px", zIndex: 1040 }}
       >
-        <Container className="d-flex justify-content-between align-items-center px-5">
-          <NavbarBrand className="fw-bold text-primary">High Court</NavbarBrand>
+        {/* <Container- className="d-flex justify-content-between align-items-center px-5"> */}
+          <NavbarBrand className="fw-bold text-primary px-5"> Allahabad High Court</NavbarBrand>
 
           <div className="d-flex align-items-center gap-3">
             <div className="d-none d-md-inline text-dark small">
@@ -47,7 +47,7 @@ const CustomNavbar = () => {
 
             <Button
               color="link"
-              className="p-0"
+              className="p-0 px-4"
               onClick={toggleModal}
               title="View Profile"
             >
@@ -58,7 +58,7 @@ const CustomNavbar = () => {
               E-High Court
             </span> */}
           </div>
-        </Container>
+        {/* </Container-> */}
       </Navbar>
 
       <div className="mb-1" style={{ height: "40px" }}></div>
