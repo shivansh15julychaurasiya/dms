@@ -21,6 +21,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UpdateUser from "./components/auth/UpdateUser";
 import ReservedCases from "./pages/ReservedCases";
+import ChangePassword from "./components/auth/ChangePassword";
 
 export default function App() {
   useEffect(() => {
@@ -88,10 +89,10 @@ export default function App() {
             }
           />
           <Route
-            path="/home/editprofile"
+            path="/home/changepassword"
             element={
               <ProtectedRoute>
-                <EditProfile />
+                <ChangePassword />
               </ProtectedRoute>
             }
           />

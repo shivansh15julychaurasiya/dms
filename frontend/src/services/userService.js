@@ -187,6 +187,28 @@ export const resetPassword = async (loginId, newPassword, token) => {
   }
 };
 
+
+
+export const changePassword = async (username, old_password, newPassword, token) => {
+  const response = await axiosInstance.post(
+    "/auth/change-password/reset",
+    {
+      username,
+      old_password: old_password,
+      new_password: newPassword,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+
+
+
 export const activateUser = async (userId, token) => {
   return await axiosInstance.get(
     `/users/activate/${userId}`,
