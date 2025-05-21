@@ -1,17 +1,12 @@
-package ahc.dms.payload;
+package ahc.dms.payload.dto;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @NoArgsConstructor
 @Getter

@@ -3,7 +3,7 @@ package ahc.dms.dao.edms.services;
 import ahc.dms.dao.edms.entities.TokenLogs;
 import ahc.dms.dao.edms.repositories.TokenLogsRepository;
 import ahc.dms.exceptions.ResourceNotFoundException;
-import ahc.dms.payload.TokenLogDto;
+import ahc.dms.payload.dto.TokenLogDto;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

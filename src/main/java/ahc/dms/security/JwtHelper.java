@@ -1,8 +1,7 @@
 package ahc.dms.security;
 
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.edms.repositories.TokenLogsRepository;
-import ahc.dms.payload.TokenLogDto;
+import ahc.dms.payload.dto.TokenLogDto;
 import ahc.dms.dao.dms.services.TokenLogService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -28,8 +27,6 @@ public class JwtHelper {
     private TokenLogService tokenLogService;
     private SecretKey key;
     private final Logger logger = LoggerFactory.getLogger(JwtHelper.class);
-    @Autowired
-    private TokenLogsRepository tokenLogsRepository;
 
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
     // preventing the repeated creation of the key and enhancing performance
@@ -84,15 +81,7 @@ public class JwtHelper {
         if (validToken) {
             //check token status from db
             TokenLogDto existingToken = tokenLogService.getToken(token, tokenType, userDetails.getUsername());
-            if (existingToken != null) {
-                logger.info("Token Type : {}", existingToken.getTokenType());
-            }
-            validToken = (existingToken != null) && existingToken.getTokenStatus() && existingToken.getTokenType().equals(tokenType);
-            if (validToken && !existingToken.getTokenType().equals(AppConstants.LOGIN_TOKEN)) {
-                existingToken.setTokenStatus(false);
-                tokenLogService.saveToken(existingToken);
-            }
-            return validToken;
+            return (existingToken != null) && existingToken.getTokenStatus();
         }
         return false;
     }

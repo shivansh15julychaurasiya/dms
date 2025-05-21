@@ -1,4 +1,4 @@
-package ahc.dms.payload;
+package ahc.dms.payload.dto;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.*;

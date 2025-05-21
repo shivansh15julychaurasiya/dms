@@ -3,7 +3,7 @@ package ahc.dms.dao.dms.services;
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.entities.OtpLog;
 import ahc.dms.dao.dms.repositories.OtpLogRepository;
-import ahc.dms.payload.OtpLogDto;
+import ahc.dms.payload.dto.OtpLogDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,7 @@
 package ahc.dms.dao.dms.repositories;
 
 import ahc.dms.dao.dms.entities.ObjectMaster;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +20,5 @@ public interface ObjectMasterRepository extends JpaRepository<ObjectMaster, Long
             "ORDER BY LENGTH(om.requestUri) DESC")
     Optional<ObjectMaster> findBestMatchingPrefix(@Param("uri") String uri, @Param("method") String method);
 
-    Optional<ObjectMaster> findByRequestUriAndRequestMethod(String s, String get);
+    Optional<ObjectMaster> findByRequestUriAndRequestMethod(String requestUri, String requestMethod);
 }

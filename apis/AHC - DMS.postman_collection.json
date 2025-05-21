@@ -1016,6 +1016,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1558,6 +1568,229 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "object_role",
+			"item": [
+				{
+					"name": "register-or",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"object\" : {\n        \"request_uri\" : \"aaaaa\",\n        \"request_method\": \"GET\"\n    },\n    \"roles\" : [\n        {\n            \"role_id\" : 1\n        },\n        {\n            \"role_id\" : 3\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/dms/object/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-om",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"request_uri\" : \"bbbb\",\n    \"request_method\": \"GET\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/dms/object/create",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enable-om",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/dms/object/enable/5",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"enable",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disable-om",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/dms/object/disable/5",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"disable",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "assign-or",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"object\" : {\n        \"request_uri\" : \"aaaaa\",\n        \"request_method\": \"GET\"\n    },\n    \"roles\" : [\n        {\n            \"role_id\" : 1\n        },\n        {\n            \"role_id\" : 2\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/dms/object/assign-role",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"assign-role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "de-assign-or",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"object\" : {\n        \"request_uri\" : \"aaaaa\",\n        \"request_method\": \"GET\"\n    },\n    \"roles\" : [\n        {\n            \"role_id\" : 3\n        },\n        {\n            \"role_id\" : 2\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/dms/object/de-assign-role",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"dms",
+								"object",
+								"de-assign-role"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -1583,10 +1816,6 @@
 		}
 	],
 	"variable": [
-		{
-			"key": "localhost",
-			"value": "localhost"
-		},
 		{
 			"key": "dms_port",
 			"value": "8081"
