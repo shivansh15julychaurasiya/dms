@@ -1,27 +1,29 @@
 import React, { useEffect } from "react";
-import { FaTimes } from "react-icons/fa"; // Use FaTimes instead of FaCross
+import { FaTimes } from "react-icons/fa";
 import { Button } from "reactstrap";
 import { useAuth } from "../../context/AuthContext";
-import { isTokenExpired } from "../../utils/helpers";
-import { showAlert } from "../../utils/helpers";
+import { isTokenExpired, showAlert } from "../../utils/helpers";
 
 const ProfileCard = ({ toggleModal }) => {
   const { user, token, logout } = useAuth();
 
-  // Auto logout if user/token is missing or token is expired
   useEffect(() => {
     if (!user || !token || isTokenExpired(token)) {
       logout();
     }
   }, [user, token, logout]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     logout();
     showAlert("You are logged out!", "success");
   };
 
-  const handleProfile = () => {
-    window.location.href = "/dms/home/editprofile";
+  // const handleProfile = () => {
+  //   window.location.href = "/dms/home/editprofile";
+  // };
+
+  const handleChangePassword = () => {
+    window.location.href = "/dms/home/changepassword";
   };
 
   const manageLogin = () => {
@@ -29,66 +31,49 @@ const ProfileCard = ({ toggleModal }) => {
   };
 
   return (
-    <div className="container d-flex justify-content-center p-0" style={{ marginTop: 0, marginBottom: 0 }}>
-      <div
-        className="card p-3 shadow-sm rounded-4 mx-auto"
-        style={{ maxWidth: "300px", width: "100%", marginTop: 0, marginBottom: 0 }} // Removed top/bottom margin from card
-      >
+    <div className="container d-flex justify-content-center p-0">
+      <div className="card shadow rounded-4 p-4 position-relative" style={{ maxWidth: "330px", width: "100%" }}>
+        {/* Close Button */}
+        <Button
+          color="link"
+          onClick={toggleModal}
+          className="position-absolute top-0 end-0 mt-2 me-2 p-1"
+          style={{ borderRadius: "50%" }}
+          title="Close"
+        >
+          <FaTimes size={16} className="text-danger" />
+        </Button>
+
         <div className="d-flex flex-column align-items-center text-center">
           <img
             src="https://cdn.pixabay.com/photo/2022/09/08/15/16/cute-7441224_1280.jpg"
             alt="Profile"
-            className="rounded-circle mb-2"
-            width="80"
-            height="80"
+            className="rounded-circle mb-3 border"
+            width="75"
+            height="75"
           />
-          <h4 className="mb-0">{user ? user.name : "Guest"}</h4>
-          <small className="text-muted mb-3">
-            {user ? user.email : "Please login to view your details"}
-          </small>
-          <p className="text-center text-muted">
-            {user ? user.about : "You are viewing the profile as a guest."}
-          </p>
+          <h6 className="fw-bold mb-1">{user ? user.name : "Guest"}</h6>
+          <p className="text-muted mb-1 small">{user ? user.email : "Login to view details"}</p>
+          <p className="text-muted small mb-2">{user ? user.about : "You are viewing the profile as a guest."}</p>
 
-          {/* Close Button with FaTimes Icon */}
-          <Button
-            color="link"
-            onClick={toggleModal} // Toggle close modal
-            className="position-absolute top-0 end-0 p-2"
-            style={{
-              zIndex: 1050,
-              borderRadius: "50%", // Ensure round button
-            }}
-            title="Close"
-          >
-            <FaTimes size={20} className="text-primary" /> {/* FaTimes as close button */}
-          </Button>
-
-          <div className="d-flex gap-2">
+          {/* Small Button Group */}
+          <div className="d-flex flex-column gap-1 w-100">
             {user ? (
               <>
-                <button
-                  className="btn btn-primary px-2 rounded-pill"
-                  onClick={handleLogout}
-                >
-                  <i className="bi bi-box-arrow-right p-1 btn-sm"></i>
-                  Log-out
+              {/*  <button className="btn btn-primary btn-sm rounded-pill px-2 py-1" onClick={handleProfile}>
+                  <i className="bi bi-pencil me-1"></i>Edit
                 </button>
-
-                <button
-                  className="btn btn-success btn-sm px-2 rounded-pill"
-                  onClick={handleProfile}
-                >
-                  <i className="bi bi-pencil p-1"></i>
-                  Edit Profile
+                */}
+                <button className="btn btn-warning btn-sm rounded-pill px-2 py-1" onClick={handleChangePassword}>
+                  <i className="bi bi-key me-1"></i>Reset-password
+                </button>
+                <button className="btn btn-danger btn-sm rounded-pill px-2 py-1" onClick={handleLogout}>
+                  <i className="bi bi-box-arrow-right me-1"></i>Logout
                 </button>
               </>
             ) : (
-              <button
-                className="btn btn-outline-primary rounded-pill px-4"
-                onClick={manageLogin}
-              >
-                Login
+              <button className="btn btn-success btn-sm rounded-pill px-3 py-1" onClick={manageLogin}>
+                <i className="bi bi-box-arrow-in-right me-1"></i>Login
               </button>
             )}
           </div>

@@ -38,12 +38,12 @@ export const fetchRoleById = (roleId, token) => {
 
 
 // Assign role to a user
-export const assignRoleToUser = async (loginId, roleId, token) => {
+export const assignRoleToUser = async (username, roleId, token) => {
   // console.log(loginId+roleId())
   const response = await axiosInstance.get(
     `/role/assign-role`,
     {
-      params: { loginId, roleId },
+      params: { username, roleId },
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -54,14 +54,14 @@ export const assignRoleToUser = async (loginId, roleId, token) => {
 };
 
 
-// Deassign role
+
 // Deassign role from user (fixed to accept token)
-export const deassignRoleFromUser = async (loginId, roleId, token) => {
+export const deassignRoleFromUser = async (username, roleId, token) => {
   return await axiosInstance.get(
     `/role/deassign-role`,
     {
       params: {
-        loginId,
+        username,
         roleId,
       },
       headers: {

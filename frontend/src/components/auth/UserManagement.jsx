@@ -86,17 +86,17 @@ const UserManagement = () => {
       const isActive = user.status;
 
       if (isActive) {
-        await deactivateUser(user.login_id, token);
+        await deactivateUser(user.username, token);
         toast.info(`${user.name} deactivated successfully`);
       } else {
-        await activateUser(user.login_id, token);
+        await activateUser(user.username, token);
         toast.success(`${user.name} activated successfully`);
       }
 
       // Update the user status locally to reflect in UI instantly
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
-          u.login_id === user.login_id ? { ...u, status: !isActive } : u
+          u.username === user.username ? { ...u, status: !isActive } : u
         )
       );
     } catch (error) {

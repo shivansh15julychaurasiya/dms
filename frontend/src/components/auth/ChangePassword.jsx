@@ -1,34 +1,31 @@
 import React from "react";
-import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
+import {
+  Container, Row, Col, Card, CardBody,
+  Form, FormGroup, Label, Input, Button
+} from "reactstrap";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { changePassword } from "../../services/userService";
 import { showAlert } from "../../utils/helpers";
+import { useAuth } from "../../context/AuthContext";
 
 const ChangePassword = () => {
-  const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
-    oldPassword: Yup.string().required("Old Password is required"),
-    newPassword: Yup.string()
-      .required("New Password is required")
-      .min(4, "Password must be at least 4 characters"),
-  });
+  const navigate = useNavigate();
+  const { token } = useAuth();
 
   const formik = useFormik({
     initialValues: {
       username: "",
-      oldPassword: "",
-      newPassword: "",
+      old_password: "",
+      new_password: "",
     },
-    validationSchema: validationSchema,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values) => {
       try {
-        await changePassword(values.username, values.oldPassword, values.newPassword);
-        showAlert("Password changed successfully!", "success");
-        resetForm();
+        await changePassword(values.username,values.old_password,values.new_password, token);
+        showAlert("Password reset successfully", "success");
+        navigate("/home/admindashboard");
       } catch (error) {
-        console.error("Password change failed:", error);
-        showAlert("Failed to change password. Please try again.", "error");
+        showAlert("Password reset failed. Please check your credentials.", "error");
       }
     },
   });
@@ -40,7 +37,8 @@ const ChangePassword = () => {
           <Card className="shadow-lg border-1 rounded-4 cardStyle">
             <CardBody>
               <h2 className="text-center text-primary fw-bold mb-4">
-                <i className="bi bi-shield-lock me-2"></i>Change Password
+                <i className="bi bi-shield-lock-fill me-2"></i>
+                Reset Password
               </h2>
 
               <Form onSubmit={formik.handleSubmit}>
@@ -52,46 +50,43 @@ const ChangePassword = () => {
                     name="username"
                     value={formik.values.username}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                     className="rounded-3 border-2"
                     placeholder="Enter your username"
-                    invalid={formik.touched.username && !!formik.errors.username}
+                    required
                   />
                 </FormGroup>
 
                 <FormGroup>
-                  <Label for="oldPassword" className="fw-bold text-primary">Old Password:</Label>
+                  <Label for="old_password" className="fw-bold text-primary">Old Password:</Label>
                   <Input
                     type="password"
-                    id="oldPassword"
-                    name="oldPassword"
-                    value={formik.values.oldPassword}
+                    id="old_password"
+                    name="old_password"
+                    value={formik.values.old_password}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                     className="rounded-3 border-2"
                     placeholder="Enter old password"
-                    invalid={formik.touched.oldPassword && !!formik.errors.oldPassword}
+                    required
                   />
                 </FormGroup>
 
                 <FormGroup>
-                  <Label for="newPassword" className="fw-bold text-primary">New Password:</Label>
+                  <Label for="new_password" className="fw-bold text-primary">New Password:</Label>
                   <Input
                     type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    value={formik.values.newPassword}
+                    id="new_password"
+                    name="new_password"
+                    value={formik.values.new_password}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                     className="rounded-3 border-2"
                     placeholder="Enter new password"
-                    invalid={formik.touched.newPassword && !!formik.errors.newPassword}
+                    required
                   />
                 </FormGroup>
 
-                <div className="d-grid">
-                  <Button color="primary" type="submit" className="py-2 fs-5 rounded-pill hover-shadow">
-                    <i className="bi bi-key-fill me-1"></i> Change Password
+                <div className="d-grid mt-3">
+                  <Button type="submit" color="primary" className="py-2 fs-5 rounded-pill">
+                    Reset Password
                   </Button>
                 </div>
               </Form>
