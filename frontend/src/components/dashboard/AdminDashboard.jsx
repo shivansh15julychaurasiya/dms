@@ -29,8 +29,7 @@ import UserManagement from "../auth/UserManagement";
 import "../../assets/styles.css";
 import WidgetsDropdown from "../../widget/WidgetsDropdown";
 import Register from "../auth/Register";
-import UrlManagement from "../auth/UrlManagement";
-
+import UriManagement from "../../components/auth/UriManagement"
 const AdminDashboard = () => {
   // const { token, logout } = useAuth();
   // const [users, setUsers] = useState([]);
@@ -164,7 +163,7 @@ const AdminDashboard = () => {
             </TabPane>
             <TabPane tabId="3">
               <Card>
-                <UrlManagement setActiveTab={setActiveTab} />{"3"}
+                <UriManagement setActiveTab={setActiveTab} />{"3"}
                 {/* Pass tab control */}
               </Card>
             </TabPane>
