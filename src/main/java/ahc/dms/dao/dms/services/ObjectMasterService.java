@@ -1,18 +1,28 @@
 package ahc.dms.dao.dms.services;
 
 import ahc.dms.dao.dms.entities.ObjectMaster;
+//import ahc.dms.dao.dms.entities.User;
 import ahc.dms.dao.dms.repositories.ObjectMasterRepository;
 import ahc.dms.exceptions.ApiException;
 import ahc.dms.exceptions.DuplicateResourceException;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import ahc.dms.payload.dto.ObjectMasterDto;
+import ahc.dms.payload.dto.UserDto;
+import ahc.dms.payload.response.PageResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ObjectMasterService {
@@ -77,5 +87,30 @@ public class ObjectMasterService {
                 .orElseThrow(() -> new ResourceNotFoundException("Object (url)", "Object Id", omId));
 
         return modelMapper.map(disabledOm, ObjectMasterDto.class);
+    }
+
+    // Find all url objects
+    @Transactional(transactionManager = "dmsTransactionManager")
+    public PageResponse<ObjectMasterDto> getAllUriObjects(int pageNumber, int pageSize, String sortBy, String sortDir){
+
+        //Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ObjectMaster> userPage = omRepository.findAll(pageable);
+        List<ObjectMasterDto> objectMasterDto = userPage.getContent().stream()
+                .map(ObjectMaster -> modelMapper.map(ObjectMaster, ObjectMasterDto.class))
+                .collect(Collectors.toList());
+
+
+
+
+        PageResponse<ObjectMasterDto> response = new PageResponse<>();
+        response.setContent(objectMasterDto);
+        response.setPageNumber(userPage.getNumber());
+        response.setPageSize(userPage.getSize());
+        response.setTotalElements(userPage.getTotalElements());
+        response.setTotalPages(userPage.getTotalPages());
+        response.setLastPage(userPage.isLast());
+
+        return response;
     }
 }

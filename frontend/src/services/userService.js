@@ -219,6 +219,48 @@ export const deactivateUser = async (userId, token) => {
   );
 };
 
+//  Resgister uri with roles
+export const registerUriWithRoles = async (payload, token) => {
+  console.log(token)
+  try {
+    const response = await axiosInstance.post(
+      "/object/register",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // return data on success
+  } catch (error) {
+    // Throw error message for caller to handle
+    throw error.response?.data?.message || error.message || "Failed to register object";
+  }
+};
+
+// Assign roles to an existing URI
+export const assignRolesToUri = async (payload, token) => {
+
+  const res= await axiosInstance.post("/object/assign-role", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  showAlert(res.message)
+};
+
+export const deassignRolesFromUri = async (payload, token) => {
+  const res= await axiosInstance.post("/object/de-assign-role", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  showAlert(res.message)
+
+};
+
 
 
 export { axiosInstance }; // Named export

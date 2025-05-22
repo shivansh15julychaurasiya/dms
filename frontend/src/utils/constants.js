@@ -25,7 +25,7 @@ export const API_PATHS = {
 export const ROLE_API_PATHS = {
   
   // Role management
-  ROLES: "/role",// Get all roles
+  ROLES: "/role/",// Get all roles
   GET_ROLE: (roleId) => `/role/${roleId}`,  // Get specific role by ID
   CREATE_ROLE: "/role/", // Create a new role
   UPDATE_ROLE: (roleId) => `/role/${roleId}/update`, // Update specific role by ID

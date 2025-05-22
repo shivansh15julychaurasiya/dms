@@ -139,7 +139,7 @@ const AdminDashboard = () => {
                 className={activeTab === "3" ? "active" : ""}
                 onClick={() => toggleTab("3")}
               >
-               Url Management
+               Uri Management
               </NavLink>
             </NavItem>
           </Nav>
@@ -163,7 +163,7 @@ const AdminDashboard = () => {
             </TabPane>
             <TabPane tabId="3">
               <Card>
-                <UriManagement setActiveTab={setActiveTab} />{"3"}
+                <UriManagement setActiveTab={setActiveTab} />
                 {/* Pass tab control */}
               </Card>
             </TabPane>

@@ -1,10 +1,13 @@
 package ahc.dms.controller;
 
+import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.services.*;
+import ahc.dms.payload.dto.UserDto;
 import ahc.dms.payload.request.ObjectRoleRequest;
 import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.payload.dto.ObjectMasterDto;
 import ahc.dms.payload.response.ObjectRoleResponse;
+import ahc.dms.payload.response.PageResponse;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -86,6 +89,20 @@ public class ObjectController {
         requestLogService.logRequest(request);
         ObjectRoleResponse objectRoleResponse = orService.deAssignRoleFromObject(orRequest);
         return ResponseEntity.ok(ResponseUtil.success(objectRoleResponse, "role de-assigned"));
+    }
+
+    // GET ALL OBJECT URI
+    @GetMapping("/")
+    public ResponseEntity<ApiResponse<PageResponse<ObjectMasterDto>>> getAllUriObject(
+            HttpServletRequest httpServletRequest,
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue =  AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
+    {
+        requestLogService.logRequest(httpServletRequest);
+        PageResponse<ObjectMasterDto> objectMasterDto=omService.getAllUriObjects(pageNumber,pageSize,sortBy,sortDir);
+        return ResponseEntity.ok(ResponseUtil.success(objectMasterDto,"***** Object uri fetched successfully ****"));
     }
 
 }
