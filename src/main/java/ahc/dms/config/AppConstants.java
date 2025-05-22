@@ -52,6 +52,7 @@ public class AppConstants {
             "/dms/auth/verify-login-otp",
             "/dms/auth/change-password/forgot",
             "/dms/auth/change-password/reset",
+            "/dms/object/**",
             "/actuator/**"
     );
 
