@@ -97,7 +97,7 @@ public class ObjectController {
             HttpServletRequest httpServletRequest,
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue =  AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_USER_BY, required = false) String sortBy,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_OBJECT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
     {
         requestLogService.logRequest(httpServletRequest);

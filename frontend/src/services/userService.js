@@ -78,7 +78,7 @@ export const fetchUsers = async (pageNumber, pageSize, setUsers, setPageData, to
 
 export const saveUser = async (userData, token) => {
   try {
-    const response = await axios.post(
+    const response = await axiosInstance.post(
      API_PATHS.CREATE_USER,
       userData,
       {
@@ -259,6 +259,35 @@ export const deassignRolesFromUri = async (payload, token) => {
   });
   showAlert(res.message)
 
+};
+
+// GET /dms/object/ - Fetch all objects
+// export const fetchObjects = async (setObjects,token) => {
+//   try {
+//     const response = await axiosInstance.get('/object/', {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     console.log(response.data.data.content)
+//     setObjects(response.data.data.content);
+//     return response; // Assuming the data is a list of ObjectMaster DTOs
+//   } catch (error) {
+//     console.error('Error fetching objects:', error);
+//     throw error; // So the caller can handle it (toast, fallback UI, etc.)
+//   }
+// };
+
+export const fetchPaginatedObjects = async (pageNumber, pageSize, token) => {
+  const response = await axiosInstance.get(
+    `/object/?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data; // access the actual paginated content
 };
 
 

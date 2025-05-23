@@ -163,8 +163,10 @@ const AdminDashboard = () => {
             </TabPane>
             <TabPane tabId="3">
               <Card>
-                <UriManagement setActiveTab={setActiveTab} />
-                {/* Pass tab control */}
+                <CardBody>              
+                    <UriManagement setActiveTab={setActiveTab} />
+                </CardBody>
+
               </Card>
             </TabPane>
           </TabContent>

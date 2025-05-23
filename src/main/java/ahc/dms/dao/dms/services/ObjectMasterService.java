@@ -93,15 +93,15 @@ public class ObjectMasterService {
     @Transactional(transactionManager = "dmsTransactionManager")
     public PageResponse<ObjectMasterDto> getAllUriObjects(int pageNumber, int pageSize, String sortBy, String sortDir){
 
-        //Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Sort sort = sortDir.equalsIgnoreCase(sortDir)
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize,sort);
         Page<ObjectMaster> userPage = omRepository.findAll(pageable);
         List<ObjectMasterDto> objectMasterDto = userPage.getContent().stream()
                 .map(ObjectMaster -> modelMapper.map(ObjectMaster, ObjectMasterDto.class))
                 .collect(Collectors.toList());
-
-
-
 
         PageResponse<ObjectMasterDto> response = new PageResponse<>();
         response.setContent(objectMasterDto);
