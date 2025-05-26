@@ -12,11 +12,14 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Modal,
 } from "reactstrap";
 import { FaLink } from "react-icons/fa";
 import Select from "react-select";
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
+import { toast } from "react-toastify";
+
 import { fetchRoles } from "../../services/roleServices";
 import {
   registerUriWithRoles,
@@ -26,30 +29,25 @@ import {
   enableObjectUri,
   disableObjectUri,
 } from "../../services/userService";
-
-import { Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Switch } from "@mui/material";
 
 const UriManagement = () => {
   const { token } = useAuth();
 
   const [roles, setRoles] = useState([]);
   const [objects, setObjects] = useState([]);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(0); // 0-based index
+  const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingToggleObject, setPendingToggleObject] = useState(null);
 
   const [formState, setFormState] = useState({
     create: { uri: "", method: "GET", selectedRoles: [] },
     assign: { uri: "", method: "GET", selectedRoles: [] },
     deassign: { uri: "", method: "GET", selectedRoles: [] },
   });
-
-  // Confirmation modal state
-  const [selectedObject, setSelectedObject] = useState(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [intendedAction, setIntendedAction] = useState(null);
 
   useEffect(() => {
     fetchRoles(setRoles, token);
@@ -104,62 +102,34 @@ const UriManagement = () => {
         ...prev,
         [section]: { uri: "", method: "GET", selectedRoles: [] },
       }));
-      loadObjects(currentPage);
+      await loadObjects(currentPage);
     } catch (error) {
       console.error(error);
       showAlert(error.message || `Failed to ${section} URI`, "danger");
     }
   };
 
-  // When user clicks the switch, open confirm modal
-  const handleToggleSwitch = (object) => {
-    setSelectedObject(object);
-    setIntendedAction(object.enabled ? "disable" : "enable");
-    setConfirmOpen(true);
-  };
-
-  // Confirm enable/disable toggle
-  const handleConfirmToggle = async () => {
-    if (!selectedObject) {
-      setConfirmOpen(false);
-      return;
-    }
+  const toggleUriStatus = async (object) => {
     try {
-      if (intendedAction === "enable") {
-       var res= await enableObjectUri(selectedObject.om_id, token);
-        showAlert(res.message, "success");
-      } else if(intendedAction==="disable") {
-       var res1= await disableObjectUri(selectedObject.om_id, token);
-        showAlert(res1.message, "warning");
+      if (object.enabled) {
+        await disableObjectUri(object.om_id, token);
+        toast.info(`${object.request_uri} disabled successfully`);
+      } else {
+        await enableObjectUri(object.om_id, token);
+        toast.success(`${object.request_uri} enabled successfully`);
       }
 
-      setConfirmOpen(false);
-
-      // Optimistic UI update locally without waiting for reload
       setObjects((prevObjects) =>
-        prevObjects.map((obj) =>
-          obj.om_id === selectedObject.om_id
-            ? { ...obj, enabled: intendedAction === "enable" }
-            : obj
+        prevObjects.map((o) =>
+          o.om_id === object.om_id ? { ...o, enabled: !object.enabled } : o
         )
       );
-
-      setSelectedObject(null);
-      setIntendedAction(null);
-
-      // Optionally, reload from backend later to sync exact data
-      // loadObjects(currentPage);
     } catch (error) {
-      showAlert("Error updating object status", "danger");
-      console.error(error);
+      console.error("Toggle status error:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to toggle URI status"
+      );
     }
-  };
-
-  // Cancel confirmation without changing state
-  const handleCancelToggle = () => {
-    setConfirmOpen(false);
-    setSelectedObject(null);
-    setIntendedAction(null);
   };
 
   const roleOptions = roles.map((role) => ({
@@ -179,7 +149,9 @@ const UriManagement = () => {
             <Label>URI</Label>
             <Input
               value={formState[section].uri}
-              onChange={(e) => handleInputChange(section, "uri", e.target.value)}
+              onChange={(e) =>
+                handleInputChange(section, "uri", e.target.value)
+              }
               placeholder="/dms/example"
             />
           </FormGroup>
@@ -188,7 +160,9 @@ const UriManagement = () => {
             <Input
               type="select"
               value={formState[section].method}
-              onChange={(e) => handleInputChange(section, "method", e.target.value)}
+              onChange={(e) =>
+                handleInputChange(section, "method", e.target.value)
+              }
             >
               <option>GET</option>
               <option>POST</option>
@@ -221,11 +195,16 @@ const UriManagement = () => {
         <PaginationLink first onClick={() => setCurrentPage(0)} />
       </PaginationItem>
       <PaginationItem disabled={currentPage === 0}>
-        <PaginationLink previous onClick={() => setCurrentPage(currentPage - 1)} />
+        <PaginationLink
+          previous
+          onClick={() => setCurrentPage(currentPage - 1)}
+        />
       </PaginationItem>
       {[...Array(totalPages)].map((_, index) => (
         <PaginationItem key={index} active={index === currentPage}>
-          <PaginationLink onClick={() => setCurrentPage(index)}>{index + 1}</PaginationLink>
+          <PaginationLink onClick={() => setCurrentPage(index)}>
+            {index + 1}
+          </PaginationLink>
         </PaginationItem>
       ))}
       <PaginationItem disabled={currentPage === totalPages - 1}>
@@ -304,15 +283,21 @@ const UriManagement = () => {
                       <tbody>
                         {objects.map((obj, idx) => (
                           <tr key={obj.om_id}>
-                            <td className="text-center">{currentPage * pageSize + idx + 1}</td>
+                            <td className="text-center">
+                              {currentPage * pageSize + idx + 1}
+                            </td>
                             <td>{obj.request_uri}</td>
-                            <td className="text-center">{obj.request_method}</td>
+                            <td className="text-center">
+                              {obj.request_method}
+                            </td>
                             <td className="text-center">
                               <Switch
                                 checked={obj.enabled}
-                                onChange={() => handleToggleSwitch(obj)}
-                                color="primary"
-                                disabled={confirmOpen}
+                                onChange={() => {
+                                  setPendingToggleObject(obj);
+                                  setShowConfirmModal(true);
+                                }}
+                                size="small"
                               />
                             </td>
                           </tr>
@@ -330,26 +315,42 @@ const UriManagement = () => {
         </Col>
       </Row>
 
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={handleCancelToggle}>
-        <DialogTitle>Confirm Action</DialogTitle>
-        <DialogContent>
+      {/* Modal for Activation/Deactivation Confirmation */}
+      <Modal
+        isOpen={showConfirmModal}
+        toggle={() => setShowConfirmModal(false)}
+      >
+        <div className="modal-header">
+          <h5 className="modal-title">
+            {pendingToggleObject?.enabled ? "Disable URI" : "Enable URI"}
+          </h5>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setShowConfirmModal(false)}
+          ></button>
+        </div>
+        <div className="modal-body">
           Are you sure you want to{" "}
-          {intendedAction === "enable" ? "enable" : "disable"} the URI:{" "}
-          <strong>{selectedObject?.request_uri}</strong>?
-        </DialogContent>
-        <DialogActions>
-          <Button color="secondary" onClick={handleCancelToggle}>
+          {pendingToggleObject?.enabled ? "disable" : "enable"} URI:{" "}
+          <strong>{pendingToggleObject?.request_uri}</strong>?
+        </div>
+        <div className="modal-footer">
+          <Button color="secondary" onClick={() => setShowConfirmModal(false)}>
             Cancel
           </Button>
           <Button
-            color={intendedAction === "enable" ? "success" : "danger"}
-            onClick={handleConfirmToggle}
+            color={pendingToggleObject?.enabled ? "danger" : "success"}
+            onClick={() => {
+              toggleUriStatus(pendingToggleObject);
+              setShowConfirmModal(false);
+              setPendingToggleObject(null);
+            }}
           >
-            Confirm
+            Yes, {pendingToggleObject?.enabled ? "Disable" : "Enable"}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </Modal>
     </div>
   );
 };
