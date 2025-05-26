@@ -278,6 +278,8 @@ export const deassignRolesFromUri = async (payload, token) => {
 //   }
 // };
 
+
+//   FETCH ALL OBJECT-URI 
 export const fetchPaginatedObjects = async (pageNumber, pageSize, token) => {
   const response = await axiosInstance.get(
     `/object/?pageNumber=${pageNumber}&pageSize=${pageSize}`,
@@ -289,6 +291,46 @@ export const fetchPaginatedObjects = async (pageNumber, pageSize, token) => {
   );
   return response.data.data; // access the actual paginated content
 };
+
+
+// ENABLE OBJECT-URI
+export const enableObjectUri = async (id, token) => {
+  try {
+    const response = await axiosInstance.get(
+      `/object/enable/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // e.g., "Object with ID 5 has been enabled."
+  } catch (error) {
+    console.error(`Failed to enable object with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// DISABLE OBJECT-URI
+export const disableObjectUri = async (id, token) => {
+  console.log(id+token)
+  try {
+    const response = await axiosInstance.get(
+      `/object/disable/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // e.g., "Object with ID 5 has been disabled."
+  } catch (error) {
+    console.error(`Failed to disable object with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+
 
 
 

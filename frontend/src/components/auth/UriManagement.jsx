@@ -12,29 +12,36 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Modal,
 } from "reactstrap";
 import { FaLink } from "react-icons/fa";
 import Select from "react-select";
 import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
+import { toast } from "react-toastify";
+
 import { fetchRoles } from "../../services/roleServices";
 import {
   registerUriWithRoles,
   assignRolesToUri,
   deassignRolesFromUri,
   fetchPaginatedObjects,
-} from "../../services/userService"; // Ensure this is paginated version
+  enableObjectUri,
+  disableObjectUri,
+} from "../../services/userService";
+import { Switch } from "@mui/material";
 
 const UriManagement = () => {
   const { token } = useAuth();
 
   const [roles, setRoles] = useState([]);
   const [objects, setObjects] = useState([]);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(0); // 0-based index
+  const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingToggleObject, setPendingToggleObject] = useState(null);
 
   const [formState, setFormState] = useState({
     create: { uri: "", method: "GET", selectedRoles: [] },
@@ -50,7 +57,11 @@ const UriManagement = () => {
   const loadObjects = async (page) => {
     try {
       const response = await fetchPaginatedObjects(page, pageSize, token);
-      setObjects(response.content);
+      const objs = response.content.map((obj) => ({
+        ...obj,
+        enabled: typeof obj.enabled === "boolean" ? obj.enabled : true,
+      }));
+      setObjects(objs);
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error("Error fetching objects:", error);
@@ -91,10 +102,33 @@ const UriManagement = () => {
         ...prev,
         [section]: { uri: "", method: "GET", selectedRoles: [] },
       }));
-      loadObjects(currentPage);
+      await loadObjects(currentPage);
     } catch (error) {
       console.error(error);
       showAlert(error.message || `Failed to ${section} URI`, "danger");
+    }
+  };
+
+  const toggleUriStatus = async (object) => {
+    try {
+      if (object.enabled) {
+        await disableObjectUri(object.om_id, token);
+        toast.info(`${object.request_uri} disabled successfully`);
+      } else {
+        await enableObjectUri(object.om_id, token);
+        toast.success(`${object.request_uri} enabled successfully`);
+      }
+
+      setObjects((prevObjects) =>
+        prevObjects.map((o) =>
+          o.om_id === object.om_id ? { ...o, enabled: !object.enabled } : o
+        )
+      );
+    } catch (error) {
+      console.error("Toggle status error:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to toggle URI status"
+      );
     }
   };
 
@@ -174,16 +208,10 @@ const UriManagement = () => {
         </PaginationItem>
       ))}
       <PaginationItem disabled={currentPage === totalPages - 1}>
-        <PaginationLink
-          next
-          onClick={() => setCurrentPage(currentPage + 1)}
-        />
+        <PaginationLink next onClick={() => setCurrentPage(currentPage + 1)} />
       </PaginationItem>
       <PaginationItem disabled={currentPage === totalPages - 1}>
-        <PaginationLink
-          last
-          onClick={() => setCurrentPage(totalPages - 1)}
-        />
+        <PaginationLink last onClick={() => setCurrentPage(totalPages - 1)} />
       </PaginationItem>
     </Pagination>
   );
@@ -243,20 +271,35 @@ const UriManagement = () => {
               {objects.length > 0 ? (
                 <>
                   <div className="table-responsive">
-                    <table className="table table-bordered table-hover">
-                      <thead className="table-dark">
+                    <table className="table table-bordered table-hover align-middle">
+                      <thead className="table-light text-center">
                         <tr>
                           <th>#</th>
-                          <th>Method</th>
                           <th>URI</th>
+                          <th>Method</th>
+                          <th>Enabled</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {objects.map((obj, index) => (
-                          <tr key={obj.omId || index}>
-                            <td>{currentPage * pageSize + index + 1}</td>
-                            <td>{obj.request_method}</td>
+                        {objects.map((obj, idx) => (
+                          <tr key={obj.om_id}>
+                            <td className="text-center">
+                              {currentPage * pageSize + idx + 1}
+                            </td>
                             <td>{obj.request_uri}</td>
+                            <td className="text-center">
+                              {obj.request_method}
+                            </td>
+                            <td className="text-center">
+                              <Switch
+                                checked={obj.enabled}
+                                onChange={() => {
+                                  setPendingToggleObject(obj);
+                                  setShowConfirmModal(true);
+                                }}
+                                size="small"
+                              />
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -265,12 +308,49 @@ const UriManagement = () => {
                   {renderPagination()}
                 </>
               ) : (
-                <p className="text-muted">No objects found.</p>
+                <p>No URIs found.</p>
               )}
             </CardBody>
           </Card>
         </Col>
       </Row>
+
+      {/* Modal for Activation/Deactivation Confirmation */}
+      <Modal
+        isOpen={showConfirmModal}
+        toggle={() => setShowConfirmModal(false)}
+      >
+        <div className="modal-header">
+          <h5 className="modal-title">
+            {pendingToggleObject?.enabled ? "Disable URI" : "Enable URI"}
+          </h5>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setShowConfirmModal(false)}
+          ></button>
+        </div>
+        <div className="modal-body">
+          Are you sure you want to{" "}
+          {pendingToggleObject?.enabled ? "disable" : "enable"} URI:{" "}
+          <strong>{pendingToggleObject?.request_uri}</strong>?
+        </div>
+        <div className="modal-footer">
+          <Button color="secondary" onClick={() => setShowConfirmModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            color={pendingToggleObject?.enabled ? "danger" : "success"}
+            onClick={() => {
+              toggleUriStatus(pendingToggleObject);
+              setShowConfirmModal(false);
+              setPendingToggleObject(null);
+            }}
+          >
+            Yes, {pendingToggleObject?.enabled ? "Disable" : "Enable"}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
