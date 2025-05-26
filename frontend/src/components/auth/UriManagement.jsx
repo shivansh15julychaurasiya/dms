@@ -23,7 +23,11 @@ import {
   assignRolesToUri,
   deassignRolesFromUri,
   fetchPaginatedObjects,
-} from "../../services/userService"; // Ensure this is paginated version
+  enableObjectUri,
+  disableObjectUri,
+} from "../../services/userService";
+
+import { Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 
 const UriManagement = () => {
   const { token } = useAuth();
@@ -42,6 +46,11 @@ const UriManagement = () => {
     deassign: { uri: "", method: "GET", selectedRoles: [] },
   });
 
+  // Confirmation modal state
+  const [selectedObject, setSelectedObject] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [intendedAction, setIntendedAction] = useState(null);
+
   useEffect(() => {
     fetchRoles(setRoles, token);
     loadObjects(currentPage);
@@ -50,7 +59,11 @@ const UriManagement = () => {
   const loadObjects = async (page) => {
     try {
       const response = await fetchPaginatedObjects(page, pageSize, token);
-      setObjects(response.content);
+      const objs = response.content.map((obj) => ({
+        ...obj,
+        enabled: typeof obj.enabled === "boolean" ? obj.enabled : true,
+      }));
+      setObjects(objs);
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error("Error fetching objects:", error);
@@ -98,6 +111,57 @@ const UriManagement = () => {
     }
   };
 
+  // When user clicks the switch, open confirm modal
+  const handleToggleSwitch = (object) => {
+    setSelectedObject(object);
+    setIntendedAction(object.enabled ? "disable" : "enable");
+    setConfirmOpen(true);
+  };
+
+  // Confirm enable/disable toggle
+  const handleConfirmToggle = async () => {
+    if (!selectedObject) {
+      setConfirmOpen(false);
+      return;
+    }
+    try {
+      if (intendedAction === "enable") {
+       var res= await enableObjectUri(selectedObject.om_id, token);
+        showAlert(res.message, "success");
+      } else if(intendedAction==="disable") {
+       var res1= await disableObjectUri(selectedObject.om_id, token);
+        showAlert(res1.message, "warning");
+      }
+
+      setConfirmOpen(false);
+
+      // Optimistic UI update locally without waiting for reload
+      setObjects((prevObjects) =>
+        prevObjects.map((obj) =>
+          obj.om_id === selectedObject.om_id
+            ? { ...obj, enabled: intendedAction === "enable" }
+            : obj
+        )
+      );
+
+      setSelectedObject(null);
+      setIntendedAction(null);
+
+      // Optionally, reload from backend later to sync exact data
+      // loadObjects(currentPage);
+    } catch (error) {
+      showAlert("Error updating object status", "danger");
+      console.error(error);
+    }
+  };
+
+  // Cancel confirmation without changing state
+  const handleCancelToggle = () => {
+    setConfirmOpen(false);
+    setSelectedObject(null);
+    setIntendedAction(null);
+  };
+
   const roleOptions = roles.map((role) => ({
     value: role.role_id,
     label: role.role_name,
@@ -115,9 +179,7 @@ const UriManagement = () => {
             <Label>URI</Label>
             <Input
               value={formState[section].uri}
-              onChange={(e) =>
-                handleInputChange(section, "uri", e.target.value)
-              }
+              onChange={(e) => handleInputChange(section, "uri", e.target.value)}
               placeholder="/dms/example"
             />
           </FormGroup>
@@ -126,9 +188,7 @@ const UriManagement = () => {
             <Input
               type="select"
               value={formState[section].method}
-              onChange={(e) =>
-                handleInputChange(section, "method", e.target.value)
-              }
+              onChange={(e) => handleInputChange(section, "method", e.target.value)}
             >
               <option>GET</option>
               <option>POST</option>
@@ -161,29 +221,18 @@ const UriManagement = () => {
         <PaginationLink first onClick={() => setCurrentPage(0)} />
       </PaginationItem>
       <PaginationItem disabled={currentPage === 0}>
-        <PaginationLink
-          previous
-          onClick={() => setCurrentPage(currentPage - 1)}
-        />
+        <PaginationLink previous onClick={() => setCurrentPage(currentPage - 1)} />
       </PaginationItem>
       {[...Array(totalPages)].map((_, index) => (
         <PaginationItem key={index} active={index === currentPage}>
-          <PaginationLink onClick={() => setCurrentPage(index)}>
-            {index + 1}
-          </PaginationLink>
+          <PaginationLink onClick={() => setCurrentPage(index)}>{index + 1}</PaginationLink>
         </PaginationItem>
       ))}
       <PaginationItem disabled={currentPage === totalPages - 1}>
-        <PaginationLink
-          next
-          onClick={() => setCurrentPage(currentPage + 1)}
-        />
+        <PaginationLink next onClick={() => setCurrentPage(currentPage + 1)} />
       </PaginationItem>
       <PaginationItem disabled={currentPage === totalPages - 1}>
-        <PaginationLink
-          last
-          onClick={() => setCurrentPage(totalPages - 1)}
-        />
+        <PaginationLink last onClick={() => setCurrentPage(totalPages - 1)} />
       </PaginationItem>
     </Pagination>
   );
@@ -243,20 +292,29 @@ const UriManagement = () => {
               {objects.length > 0 ? (
                 <>
                   <div className="table-responsive">
-                    <table className="table table-bordered table-hover">
-                      <thead className="table-dark">
+                    <table className="table table-bordered table-hover align-middle">
+                      <thead className="table-light text-center">
                         <tr>
                           <th>#</th>
-                          <th>Method</th>
                           <th>URI</th>
+                          <th>Method</th>
+                          <th>Enabled</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {objects.map((obj, index) => (
-                          <tr key={obj.omId || index}>
-                            <td>{currentPage * pageSize + index + 1}</td>
-                            <td>{obj.request_method}</td>
+                        {objects.map((obj, idx) => (
+                          <tr key={obj.om_id}>
+                            <td className="text-center">{currentPage * pageSize + idx + 1}</td>
                             <td>{obj.request_uri}</td>
+                            <td className="text-center">{obj.request_method}</td>
+                            <td className="text-center">
+                              <Switch
+                                checked={obj.enabled}
+                                onChange={() => handleToggleSwitch(obj)}
+                                color="primary"
+                                disabled={confirmOpen}
+                              />
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -265,12 +323,33 @@ const UriManagement = () => {
                   {renderPagination()}
                 </>
               ) : (
-                <p className="text-muted">No objects found.</p>
+                <p>No URIs found.</p>
               )}
             </CardBody>
           </Card>
         </Col>
       </Row>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmOpen} onClose={handleCancelToggle}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          Are you sure you want to{" "}
+          {intendedAction === "enable" ? "enable" : "disable"} the URI:{" "}
+          <strong>{selectedObject?.request_uri}</strong>?
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" onClick={handleCancelToggle}>
+            Cancel
+          </Button>
+          <Button
+            color={intendedAction === "enable" ? "success" : "danger"}
+            onClick={handleConfirmToggle}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

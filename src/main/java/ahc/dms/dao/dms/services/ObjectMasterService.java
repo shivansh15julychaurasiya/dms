@@ -55,7 +55,6 @@ public class ObjectMasterService {
                 });
 
         return modelMapper.map(om, ObjectMasterDto.class);
-
     }
 
     @Transactional(transactionManager = "dmsTransactionManager")
