@@ -313,7 +313,6 @@ export const enableObjectUri = async (id, token) => {
 
 // DISABLE OBJECT-URI
 export const disableObjectUri = async (id, token) => {
-  console.log(id+token)
   try {
     const response = await axiosInstance.get(
       `/object/disable/${id}`,
@@ -329,9 +328,5 @@ export const disableObjectUri = async (id, token) => {
     throw error;
   }
 };
-
-
-
-
 
 export { axiosInstance }; // Named export

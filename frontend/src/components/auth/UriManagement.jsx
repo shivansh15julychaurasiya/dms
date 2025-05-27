@@ -111,7 +111,9 @@ const UriManagement = () => {
 
   const toggleUriStatus = async (object) => {
     try {
-      if (object.enabled) {
+      const isActive=object.status
+      console.log(object.status)
+      if (isActive) {
         await disableObjectUri(object.om_id, token);
         toast.info(`${object.request_uri} disabled successfully`);
       } else {
@@ -121,7 +123,7 @@ const UriManagement = () => {
 
       setObjects((prevObjects) =>
         prevObjects.map((o) =>
-          o.om_id === object.om_id ? { ...o, enabled: !object.enabled } : o
+          o.om_id === object.om_id ? { ...o, status: !isActive } : o
         )
       );
     } catch (error) {
@@ -277,7 +279,7 @@ const UriManagement = () => {
                           <th>#</th>
                           <th>URI</th>
                           <th>Method</th>
-                          <th>Enabled</th>
+                          <th>Enable/Disable</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -292,7 +294,7 @@ const UriManagement = () => {
                             </td>
                             <td className="text-center">
                               <Switch
-                                checked={obj.enabled}
+                                checked={obj.status}
                                 onChange={() => {
                                   setPendingToggleObject(obj);
                                   setShowConfirmModal(true);

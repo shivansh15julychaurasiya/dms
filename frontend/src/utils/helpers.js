@@ -1,6 +1,7 @@
 import { ROLE_PATHS } from "./constants";
 import { toast } from "react-toastify";
-
+import axios from "axios";
+// import { axiosInstance } from "../services/userService";
 // export const getRoleRedirectPath = (role) => {
 //   return ROLE_PATHS[role] || "/home/unauthorize";
 // };
@@ -28,6 +29,32 @@ export const isTokenExpired = (token) => {
     return true;
   }
 };
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:8080/dms", // adjust as needed
+});
+
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token is expired/invalid → logout user
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/dms/"; // or navigate to login page
+    }
+    return Promise.reject(error);
+  }
+);
 
 
 

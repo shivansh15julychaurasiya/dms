@@ -114,7 +114,7 @@ const UserManagement = () => {
                 <th>Phone</th>
                 <th>About</th>
                 <th>Role</th>
-                <th>Actions</th>
+                <th>Enable/Disable</th>
               </tr>
             </thead>
             <tbody>

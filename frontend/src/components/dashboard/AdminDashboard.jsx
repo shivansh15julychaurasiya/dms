@@ -95,7 +95,7 @@ const AdminDashboard = () => {
                     delaySpeed={1500}
                   />
                 </span>{" "}
-                🎯
+         
               </h3> */}
             </Col>
           </Row>
