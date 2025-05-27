@@ -38,10 +38,10 @@
     -webkit-text-fill-color: transparent;
   }
   
-  .cardStyle:hover {
+  /* .cardStyle:hover {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
-  }
+  } */
   
   .shimmer-text {
     animation: shimmer 2s infinite;

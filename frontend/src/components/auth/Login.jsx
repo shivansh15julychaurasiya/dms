@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { loginUser } from "../../services/userService";
 import { getRoleRedirectPath, showAlert } from "../../utils/helpers";
 import { AuthContext } from "../../context/AuthContext";
+import gov1 from "../../assets/gov1.png";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -43,18 +44,36 @@ const Login = () => {
   });
 
   return (
-    <Container fluid className="min-vh-100 d-flex justify-content-center align-items-center register-background">
+    <Container
+      fluid
+      className="min-vh-100 d-flex justify-content-center align-items-center register-background"
+    >
       <Row className="w-100 justify-content-center">
         <Col md={6} lg={4}>
           <Card className="shadow-lg border-1 rounded-4 cardStyle">
             <CardBody>
               <h2 className="text-center text-primary fw-bold mb-4">
-                <i className="bi bi-person-circle me-2"></i>Login
+                <img
+                  className="rounded "
+                  src={gov1}
+                  alt="Government Logo"
+                  style={{ width: "50px", height: "50px" }}
+                />
+                High Court{" "}
+                <img
+                  className="rounded"
+                  src={gov1}
+                  alt="Government Logo"
+                  style={{ width: "50px", height: "50px" }}
+                />
+                {/* <i className="bi bi-person-circle me-2"></i>  */}
               </h2>
-            
+
               <Form onSubmit={formik.handleSubmit}>
                 <FormGroup>
-                  <Label for="loginId" className="fw-bold text-primary">User ID:</Label>
+                  <Label for="loginId" className="fw-bold text-primary">
+                    User ID:
+                  </Label>
                   <Input
                     type="number"
                     id="loginId"
@@ -68,7 +87,9 @@ const Login = () => {
                   />
                 </FormGroup>
                 <FormGroup>
-                  <Label for="password" className="fw-bold text-primary">Password:</Label>
+                  <Label for="password" className="fw-bold text-primary">
+                    Password:
+                  </Label>
                   <Input
                     type="password"
                     id="password"
@@ -78,16 +99,25 @@ const Login = () => {
                     onBlur={formik.handleBlur}
                     className="rounded-3 border-2"
                     placeholder="Enter your password"
-                    invalid={formik.touched.password && !!formik.errors.password}
+                    invalid={
+                      formik.touched.password && !!formik.errors.password
+                    }
                   />
                 </FormGroup>
                 <div className="d-grid">
-                  <Button color="primary" type="submit" className="py-2 fs-5 rounded-pill hover-shadow">
+                  <Button
+                    color="primary"
+                    type="submit"
+                    className="py-2 fs-5 rounded-pill hover-shadow"
+                  >
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Button>
                 </div>
                 <div className="text-center mt-3">
-                  <Link to="/home/forgot" className="text-danger fw-bold text-decoration-none">
+                  <Link
+                    to="/home/forgot"
+                    className="text-danger fw-bold text-decoration-none"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
