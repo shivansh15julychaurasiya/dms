@@ -98,8 +98,9 @@ export const saveUser = async (userData, token) => {
 
 // Update user
 export const updateUser = async (userId, data, token) => {
+    console.log(data)
+
   try {
-    console.log(data+token)
     const res = await axiosInstance.put(API_PATHS.UPDATE_USER(userId), data, {
       headers: {
         Authorization: `Bearer ${token}`,

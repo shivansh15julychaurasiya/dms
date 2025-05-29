@@ -30,6 +30,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
+    console.log(user)
     if (token) {
       fetchRoles(setRoles, token);
     }
@@ -54,7 +55,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
       about: user?.about || "",
       password: "",
       phone: user?.phone || "",
-      login_id: user?.login_id || "",
+      login_id: user?.username || "",
       role: user?.roles?.[0]?.role_id || "",
     },
     validationSchema,
@@ -68,6 +69,7 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
         username: values.login_id, // backend expects 'username'
         roles: [{ role_id: values.role }],
       };
+      console.log(userData)
 
       try {
         if (isEditMode) {

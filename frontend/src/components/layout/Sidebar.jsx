@@ -87,7 +87,7 @@ const Sidebar = () => {
         }}
       >
         <div className="text-center text-dark py-3 border-bottom">
-          {isOpen && <h5 className="text-primary m-0"></h5>}
+          {isOpen && <h5 className="text-primary m-1"></h5>}
         </div>
 
         <ul className="nav flex-column mt-4">
