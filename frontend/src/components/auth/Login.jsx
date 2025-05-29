@@ -1,6 +1,18 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, Button, Alert } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Alert,
+} from "reactstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { loginUser } from "../../services/userService";
@@ -31,10 +43,13 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const { token, user } = await loginUser(values.loginId, values.password);
+        const { token, user } = await loginUser(
+          values.loginId,
+          values.password
+        );
         login({ token, user });
 
-        const roleNames = user.roles.map(role => role.role_name);
+        const roleNames = user.roles.map((role) => role.role_name);
         showAlert("Login successful", "success");
         navigate(getRoleRedirectPath(roleNames));
       } catch {
@@ -50,25 +65,27 @@ const Login = () => {
     >
       <Row className="w-100 justify-content-center">
         <Col md={6} lg={4}>
-          <Card className="shadow-lg border-1 rounded-4 cardStyle">
+          <Card className="shadow-lg border-1 rounded-4 cardStyle ">
+            <img
+              className="rounded mt-2"
+              src={gov1}
+              alt="Government Logo"
+              style={{
+                width: "75px",
+                height: "75px",
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginBottom: "2px", // Set 3px space below image
+              }}
+            />
+            <h2
+              className="text-center text-primary fw-bold mb-0"
+              style={{ marginTop: "0px" }}
+            >
+              High Court
+            </h2>
             <CardBody>
-              <h2 className="text-center text-primary fw-bold mb-4">
-                <img
-                  className="rounded "
-                  src={gov1}
-                  alt="Government Logo"
-                  style={{ width: "50px", height: "50px" }}
-                />
-                High Court{" "}
-                <img
-                  className="rounded"
-                  src={gov1}
-                  alt="Government Logo"
-                  style={{ width: "50px", height: "50px" }}
-                />
-                {/* <i className="bi bi-person-circle me-2"></i>  */}
-              </h2>
-
               <Form onSubmit={formik.handleSubmit}>
                 <FormGroup>
                   <Label for="loginId" className="fw-bold text-primary">

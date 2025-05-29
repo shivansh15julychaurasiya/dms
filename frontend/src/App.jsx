@@ -22,6 +22,8 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UpdateUser from "./components/auth/UpdateUser";
 import ReservedCases from "./pages/ReservedCases";
 import ChangePassword from "./components/auth/ChangePassword";
+import CaseFileView from "./pages/casefile/Manage";
+import UploadMedia from "./pages/casefile/UploadMedia";
 
 export default function App() {
   useEffect(() => {
@@ -121,6 +123,23 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+           {/* Nested route for /casefile */}
+        <Route path="casefile" >
+
+          <Route path="casefileview" element={
+            <ProtectedRoute>
+              <CaseFileView/>
+            </ProtectedRoute>
+          }/>
+           <Route path="uploadmedia" element={
+            <ProtectedRoute>
+              <UploadMedia/>
+            </ProtectedRoute>
+           }
+          />
+        </Route>
+
+          
 
           <Route
             path="/pdf"

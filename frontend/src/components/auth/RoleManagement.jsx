@@ -38,7 +38,7 @@ const RoleManagement = ({ onRolesUpdate }) => {
       // Call fetchRoles without pagination
       await fetchRoles(setRoles, token);
     } catch (error) {
-      showAlert("Error fetching roles.", error);
+      showAlert(error.response.data.message, error);
     } finally {
       setLoading(false);
     }
@@ -61,18 +61,18 @@ const handleCreateRole = async () => {
     try {
       const response = await createRole(newRole, token);
       console.log(response)
-      if (response) {
-        showAlert("Role created successfully.", "success");
+      
+        showAlert(response.message, "success");
         setNewRole("");
-        // await loadRoles(); // reload roles after creation
-      } else {
-        showAlert(response.data.message || "Failed to create role.", "error");
+        await loadRoles(); // reload roles after creation
+      
       }
-    } catch (error) {
-      showAlert("Server error while creating role.", "error");
+    catch(error) {
+console.log(error)
+console.log(error)
+        showAlert(error.response.data.message || "Failed to create role.", "error");
+
     }
-  } else {
-    showAlert("Role name cannot be empty.", "warning");
   }
 };
 
@@ -103,13 +103,13 @@ const handleCreateRole = async () => {
   const handleAssignRole = async () => {
     if (assignUserId && assignRoleId) {
       try {
-        await assignRoleToUser(assignUserId, assignRoleId, token); // <- pass token here
-        showAlert("Role assigned successfully.","success");
+       var res= await assignRoleToUser(assignUserId, assignRoleId, token); // <- pass token here
+        showAlert(res.message,"success");
         setAssignUserId("");
         setAssignRoleId("");
       } catch (error) {
         console.error("Assign Role Error:", error);
-        showAlert("Failed to assign role.");
+        showAlert(error.response.data.message);
       }
     } else {
       showAlert("Please fill all fields.");

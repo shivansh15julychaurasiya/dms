@@ -26,8 +26,8 @@ const Sidebar = () => {
       location.pathname.startsWith("/cases_mgmt")
     ) {
       setActiveDropdown("Home");
-    } else if (location.pathname.startsWith("/scheduling")) {
-      setActiveDropdown("Scheduling");
+    } else if (location.pathname.startsWith("/casefile")) {
+      setActiveDropdown("Transaction");
     }
   }, [location.pathname]);
 
@@ -163,19 +163,59 @@ const Sidebar = () => {
             )}
           </li>
 
-          {/* Analytics */}
-          <li className="nav-item">
-            <Link
-              to="/analytics"
-              className={`nav-link text-dark fw-bold d-flex align-items-center sidebar-hover ${
-                isActive("/analytics") ? "bg-primary rounded text-white" : ""
-              }`}
-            >
-              <FaChartBar className="me-2" />
-              {isOpen && "Analytics"}
-            </Link>
+          
+
+          
+
+          {/* Transaction Dropdown */}
+
+
+     <li className="nav-item">
+            <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
+              <div
+                onClick={() => toggleDropdown("Transaction")}
+                style={{ cursor: "pointer", flex: 1 }}
+                className="d-flex justify-content-between align-items-center w-100"
+              >
+                <span>
+                  <FaFileAlt className="me-2" />
+                  {isOpen && "Transaction"}
+                </span>
+                {isOpen && (
+                  <span>{activeDropdown === "Transaction" ? "▲" : "▼"}</span>
+                )}
+              </div>
+            </div>
+            {activeDropdown === "Transaction" && isOpen && (
+              <ul className="nav flex-column ms-3">
+                <li className="nav-item">
+                  <Link
+                    to="/casefile/casefileview"
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/casefile/casefileview") ? "custom-active-link  rounded text-white" : ""
+                    }`}
+                  >
+                    Upload Document
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    to="/casefile/uploadmedia"
+                    className={`nav-link px-2 text-dark ${
+                      isActive("/casefile/uploadmedia") ? "custom-active-link - rounded text-white" : ""
+                    }`}
+                  >
+                    Upload Media File
+                  </Link>
+                </li>
+               
+               
+              </ul>
+            )}
           </li>
 
+
+         
           {/* Scheduling Dropdown */}
           <li className="nav-item">
             <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
@@ -225,6 +265,8 @@ const Sidebar = () => {
                     Set Appointment
                   </Link>
                 </li>
+
+                
               </ul>
             )}
           </li>

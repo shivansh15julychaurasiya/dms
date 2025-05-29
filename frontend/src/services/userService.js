@@ -248,8 +248,9 @@ export const assignRolesToUri = async (payload, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  showAlert(res.message)
+  return res.data;
 };
+
 
 export const deassignRolesFromUri = async (payload, token) => {
   const res= await axiosInstance.post("/object/de-assign-role", payload, {
@@ -257,7 +258,8 @@ export const deassignRolesFromUri = async (payload, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  showAlert(res.message)
+  console.log(res.data)
+  return res.data;
 
 };
 

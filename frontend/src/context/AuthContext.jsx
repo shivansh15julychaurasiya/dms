@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  
   const logout = () => {
     setToken("");
     setUser(null);
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.clear();
     localStorage.setItem("logout", Date.now()); // Trigger cross-tab logout
   };
+
 
   return (
     <AuthContext.Provider value={{ token, user, role, login, logout }}>

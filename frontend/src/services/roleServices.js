@@ -105,7 +105,6 @@ export const createRole = async (newRole, token) => {
     return response.data; // return the API response
   } catch (error) {
     // Rethrow for the calling function to handle the error
-    throw error.response?.data || { message: "Unknown error occurred." };
   }
 };
 

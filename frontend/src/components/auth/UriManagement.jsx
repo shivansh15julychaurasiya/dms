@@ -95,9 +95,11 @@ const UriManagement = () => {
   const handleSubmit = async (e, section, serviceMethod, successMsg) => {
     e.preventDefault();
     try {
+      var res=null;
       const payload = buildPayload(section);
-      await serviceMethod(payload, token);
-      showAlert(successMsg, "success");
+     res= await serviceMethod(payload, token);
+     console.log(res)
+      showAlert(res.message, "success");
       setFormState((prev) => ({
         ...prev,
         [section]: { uri: "", method: "GET", selectedRoles: [] },
@@ -105,7 +107,8 @@ const UriManagement = () => {
       await loadObjects(currentPage);
     } catch (error) {
       console.error(error);
-      showAlert(error.message || `Failed to ${section} URI`, "danger");
+      console.log(error.response.data.message)
+      showAlert(error.response.data.message,"error");
     }
   };
 
