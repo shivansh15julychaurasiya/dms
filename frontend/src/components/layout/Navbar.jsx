@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { Navbar, NavbarBrand, Container, Button, Modal } from "reactstrap";
+import { Navbar, NavbarBrand, Button } from "reactstrap";
 import ProfileCard from "../profile/ProfileCard";
-import "../../assets/styles.css"; // Ensure your shimmer and modal classes are here
+import "../../assets/styles.css"; // Make sure your custom styles are here
 
 const CustomNavbar = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [modalOpen, setModalOpen] = useState(false);
+  const [profileVisible, setProfileVisible] = useState(false);
+  const profileRef = useRef();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -15,7 +16,25 @@ const CustomNavbar = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const toggleModal = () => setModalOpen(!modalOpen);
+  // Hide profile if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
+      ) {
+        setProfileVisible(false);
+      }
+    };
+
+    if (profileVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [profileVisible]);
 
   const formattedDateTime = currentDateTime.toLocaleString("en-US", {
     weekday: "long",
@@ -37,49 +56,37 @@ const CustomNavbar = () => {
         className="bg-light shadow-sm border-bottom"
         style={{ height: "50px", zIndex: 1040 }}
       >
-        {/* <Container- className="d-flex justify-content-between align-items-center px-5"> */}
-          <NavbarBrand className="fw-bold text-primary px-5"> Allahabad High Court</NavbarBrand>
+        <NavbarBrand className="fw-bold text-primary px-5">
+          Allahabad High Court
+        </NavbarBrand>
 
-          <div className="d-flex align-items-center gap-3">
-            <div className="d-none d-md-inline text-dark small">
-              {formattedDateTime}
-            </div>
-
-            <Button
-              color="link"
-              className="p-0 px-4"
-              onClick={toggleModal}
-              title="View Profile"
-            >
-              <FaUserCircle size={30} className="text-primary" />
-            </Button>
-
-            {/* <span className="fw-semibold d-none d-md-inline text-dark">
-              E-High Court
-            </span> */}
+        <div className="d-flex align-items-center gap-3 position-relative">
+          <div className="d-none d-md-inline text-dark small">
+            {formattedDateTime}
           </div>
-        {/* </Container-> */}
+
+          <Button
+            color="link"
+            className="p-0 px-4"
+            onClick={() => setProfileVisible(!profileVisible)}
+            title="View Profile"
+          >
+            <FaUserCircle size={30} className="text-primary" />
+          </Button>
+
+          {/* ProfileCard as Dropdown/Popover */}
+          {profileVisible && (
+            <div
+              ref={profileRef}
+              className="profile-dropdown-container"
+            >
+              <ProfileCard toggleModal={() => setProfileVisible(false)} />
+            </div>
+          )}
+        </div>
       </Navbar>
 
       <div className="mb-1" style={{ height: "40px" }}></div>
-
-      {/* Right Corner Profile Modal */}
-      <Modal
-        isOpen={modalOpen}
-        toggle={toggleModal}
-        backdrop={false} // Remove background overlay
-        className="custom-right-modal"
-        modalClassName="custom-modal-content"
-        style={{
-          borderRadius: "15px", // Add rounded corners to modal
-          maxHeight:"200px",
-          maxWidth:"200px",
-          padding: 0, // Ensure no extra padding around the modal
-        }}
-      >
-        {/* Pass the toggleModal function as a prop to ProfileCard */}
-        <ProfileCard toggleModal={toggleModal} />
-      </Modal>
     </>
   );
 };

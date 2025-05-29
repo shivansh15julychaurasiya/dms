@@ -243,26 +243,24 @@ button.py-2.fs-5.rounded-pill:active {
 
 /* Profile card model css */
 
-/* Shrink and align modal to top-right */
-.custom-right-modal {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  margin: 0;
-  max-width: 290px !important;
-  width: 90%;
-  z-index: 1050;
+
+.profile-dropdown-container {
+  position: absolute;
+  top: 55px; /* slightly below navbar */
+  right: 10px;
+  z-index: 2000;
+  /* background-color: white; */
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  max-width: 280px;
+  max-height: 50px;
 }
 
-.custom-modal-content {
-  border-radius: 1rem;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
 
-.modal-backdrop {
-  display: none !important; /* Remove backdrop for small corner modals */
-}
+
+
+
 
 
 

@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  FaFileAlt,
-  FaCalendarAlt,
-  FaChartBar,
-  FaBars,
-} from "react-icons/fa";
+import { FaFileAlt, FaCalendarAlt, FaChartBar, FaBars } from "react-icons/fa";
 import "../../assets/styles.css";
 import { useAuth } from "../../context/AuthContext";
 
@@ -31,33 +26,51 @@ const Sidebar = () => {
     }
   }, [location.pathname]);
 
- const sidebarHoverStyle = (
-  <style>
-    {`
-      .sidebar-hover:hover {
-        background-color: rgb(126, 61, 231) !important; /* Bootstrap blue */
-        color: #fff !important;
-        border-radius: 5px;
-      }
+  const sidebarHoverStyle = (
+    <style>
+      {`
+        .sidebar-hover {
+          position: relative;
+          transition: background-color 0.3s ease;
+        }
 
-      .sidebar-hover:hover svg,
-      .sidebar-hover:hover span {
-        color: #fff !important;
-      }
+        .sidebar-hover:hover {
+          background-color: rgb(126, 61, 21) !important;
+          color: #fff !important;
+          border-radius: 5px;
+        }
 
-      .sidebar-hover {
-        transition: background-color: rgb(69, 236, 236);
-      }
-         .custom-active-link {
-        background-color: rgb(96, 22, 194) !important;
-        color: #fff !important;
-        border-radius: 5px;
-      }
-    `}
-  </style>
-);
+        .sidebar-hover:hover svg,
+        .sidebar-hover:hover span {
+          color: #fff !important;
+        }
 
+        .custom-active-link {
+          background-color: rgb(96, 22, 194) !important;
+          color: #fff !important;
+          border-radius: 5px;
+          position: relative;
+        }
 
+        .custom-active-link::before,
+        .sidebar-hover:hover::before {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 10%;
+          bottom: 10%;
+          width: 4px;
+          background-color: orange;
+          border-radius: 3px;
+          transition: all 0.3s ease-in-out;
+        }
+
+        .custom-active-link.sidebar-hover:hover::before {
+          background-color: #fff;
+        }
+      `}
+    </style>
+  );
 
   return (
     <>
@@ -100,8 +113,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/dashboard"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/home/dashboard") ? "custom-active-link  rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/home/dashboard")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Dashboard
@@ -110,8 +125,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/search"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/home/search") ? "custom-active-link - rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/home/search")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Search
@@ -121,8 +138,10 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link
                       to="/home/admindashboard"
-                      className={`nav-link px-2 text-dark ${
-                        isActive("/home/admindashboard") ? "custom-active-link  rounded text-white" : ""
+                      className={`nav-link px-2 text-dark sidebar-hover ${
+                        isActive("/home/admindashboard")
+                          ? "custom-active-link"
+                          : ""
                       }`}
                     >
                       Manage Users
@@ -132,8 +151,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/managecauselist"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/home/managecauselist") ? "custom-active-link  rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/home/managecauselist")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Manage CauseList
@@ -142,8 +163,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/home/reservedcases"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/home/reservedcases") ? "custom-active-link  rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/home/reservedcases")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Reserved Cases
@@ -152,8 +175,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/cases_mgmt/status"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/cases_mgmt/status") ? "custom-active-link  rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/cases_mgmt/status")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Status
@@ -163,14 +188,8 @@ const Sidebar = () => {
             )}
           </li>
 
-          
-
-          
-
           {/* Transaction Dropdown */}
-
-
-     <li className="nav-item">
+          <li className="nav-item">
             <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
               <div
                 onClick={() => toggleDropdown("Transaction")}
@@ -191,8 +210,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/casefile/casefileview"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/casefile/casefileview") ? "custom-active-link  rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/casefile/casefileview")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Upload Document
@@ -201,21 +222,19 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/casefile/uploadmedia"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/casefile/uploadmedia") ? "custom-active-link - rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/casefile/uploadmedia")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Upload Media File
                   </Link>
                 </li>
-               
-               
               </ul>
             )}
           </li>
 
-
-         
           {/* Scheduling Dropdown */}
           <li className="nav-item">
             <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-dark sidebar-hover">
@@ -238,8 +257,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/court-calendar"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/scheduling/court-calendar") ? "bg-primary rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/scheduling/court-calendar")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Court Calendar
@@ -248,8 +269,10 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/hearing-schedule"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/scheduling/hearing-schedule") ? "bg-primary rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/scheduling/hearing-schedule")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Hearing Schedule
@@ -258,15 +281,15 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link
                     to="/scheduling/set-appointment"
-                    className={`nav-link px-2 text-dark ${
-                      isActive("/scheduling/set-appointment") ? "bg-primary rounded text-white" : ""
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/scheduling/set-appointment")
+                        ? "custom-active-link"
+                        : ""
                     }`}
                   >
                     Set Appointment
                   </Link>
                 </li>
-
-                
               </ul>
             )}
           </li>

@@ -14,7 +14,7 @@ import AdminDashboard from "./components/dashboard/AdminDashboard";
 import UserDashboard from "./components/dashboard/UserDashboard";
 import Search from "./pages/Search";
 import EditProfile from "./components/profile/EditProfile";
-import ManageCauseList from "./pages/ManageCauseList";
+import ManageCauseList from "./pages/causelist/ManageCauseList";
 import PDFViewer from "./components/pdf/PDFViewer";
 import UnAuthorize from "./pages/UnAuthorize";
 import { AuthProvider } from "./context/AuthContext";

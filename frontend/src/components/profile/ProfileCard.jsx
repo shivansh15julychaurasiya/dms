@@ -32,12 +32,12 @@ const ProfileCard = ({ toggleModal }) => {
 
   return (
     <div className="container d-flex justify-content-center p-0">
-      <div className="card shadow rounded-4 p-4 position-relative" style={{ maxWidth: "330px", width: "100%" }}>
+      <div className="card shadow rounded-4 p-4 position-relative" style={{ maxWidth: "330px", width: "90%",height:"50%" }}>
         {/* Close Button */}
         <Button
           color="link"
           onClick={toggleModal}
-          className="position-absolute top-0 end-0 mt-2 me-2 p-1"
+          className="position-absolute top-0 end-0 mt-1 me-2 p-1"
           style={{ borderRadius: "50%" }}
           title="Close"
         >
@@ -48,9 +48,9 @@ const ProfileCard = ({ toggleModal }) => {
           <img
             src="https://cdn.pixabay.com/photo/2022/09/08/15/16/cute-7441224_1280.jpg"
             alt="Profile"
-            className="rounded-circle mb-3 border"
-            width="75"
-            height="75"
+            className="rounded-circle mb-1 border"
+            width="65"
+            height="65"
           />
           <h6 className="fw-bold mb-1">{user ? user.name : "Guest"}</h6>
           <p className="text-muted mb-1 small">{user ? user.email : "Login to view details"}</p>
@@ -64,10 +64,10 @@ const ProfileCard = ({ toggleModal }) => {
                   <i className="bi bi-pencil me-1"></i>Edit
                 </button>
                 */}
-                <button className="btn btn-warning btn-sm rounded-pill px-1 mt-2 py-1" onClick={handleChangePassword}>
+                <button className="btn btn-warning btn-sm rounded-pill px-1 mt-1 py-1" onClick={handleChangePassword}>
                   <i className="bi bi-key me-1"></i>Reset-password
                 </button>
-                <button className="btn btn-danger btn-sm rounded-pill px-2 py-1" onClick={handleLogout}>
+                <button className="btn btn-danger btn-sm rounded-pill px-2 py-1 mt-2" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right me-1"></i>Logout
                 </button>
               </>

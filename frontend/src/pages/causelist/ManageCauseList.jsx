@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button, Input, Card, CardHeader, CardBody, Table, FormGroup, Label } from "reactstrap";
-import Navbar from "../components/layout/Navbar";
-import Sidebar from "../components/layout/Sidebar";
+import Navbar from "../../components/layout/Navbar";
+import Sidebar from "../../components/layout/Sidebar";
 
 const ManageCauseList = () => {
   return (
