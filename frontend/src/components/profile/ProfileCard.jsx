@@ -3,6 +3,8 @@ import { FaTimes } from "react-icons/fa";
 import { Button } from "reactstrap";
 import { useAuth } from "../../context/AuthContext";
 import { isTokenExpired, showAlert } from "../../utils/helpers";
+import gov1 from "../../assets/gov1.png";
+
 
 const ProfileCard = ({ toggleModal }) => {
   const { user, token, logout } = useAuth();
@@ -46,12 +48,26 @@ const ProfileCard = ({ toggleModal }) => {
 
         <div className="d-flex flex-column align-items-center text-center">
           <img
+                       className="rounded mt-2"
+                       src={gov1}
+                       alt="Government Logo"
+                       style={{
+                         width: "70px",
+                         height: "70px",
+                         display: "block",
+                         marginLeft: "auto",
+                         marginRight: "auto",
+                         marginBottom: "2px", // Set 3px space below image
+                       }}
+                     />
+
+          {/* <img
             src="https://cdn.pixabay.com/photo/2022/09/08/15/16/cute-7441224_1280.jpg"
             alt="Profile"
             className="rounded-circle mb-1 border"
             width="65"
             height="65"
-          />
+          /> */}
           <h6 className="fw-bold mb-1">{user ? user.name : "Guest"}</h6>
           <p className="text-muted mb-1 small">{user ? user.email : "Login to view details"}</p>
           <p className="text-muted small mb-2">{user ? user.about : "You are viewing the profile as a guest."}</p>
