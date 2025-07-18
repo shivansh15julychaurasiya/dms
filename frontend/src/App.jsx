@@ -22,8 +22,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UpdateUser from "./components/auth/UpdateUser";
 import ReservedCases from "./pages/ReservedCases";
 import ChangePassword from "./components/auth/ChangePassword";
-import CaseFileView from "./pages/casefile/Manage";
+import CaseFileView from "./pages/casefile/CaseFileView";
 import UploadMedia from "./pages/casefile/UploadMedia";
+import PdfViewer from "./components/pdf/PDFViewer";
 
 export default function App() {
   useEffect(() => {
@@ -141,14 +142,8 @@ export default function App() {
 
           
 
-          <Route
-            path="/pdf"
-            element={
-              <ProtectedRoute>
-                <PDFViewer />
-              </ProtectedRoute>
-            }
-          />
+         <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+
           {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>
       </BrowserRouter>

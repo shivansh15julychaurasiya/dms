@@ -1,110 +1,165 @@
 package ahc.dms.dao.dms.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Data;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "case_file_details")
-@ToString
-@Getter
-@Setter
-@EntityListeners(AuditingEntityListener.class)
+@Data
 public class CaseFileDetails {
-
-    @Version  // ← Optimistic lock column
-    private Long version = 0L;
-
     @Id
-    @SequenceGenerator(
-            name = "cfd_seq_gen",            // Logical name for the generator
-            sequenceName = "cfd_sequence",   // Actual DB sequence name
-            allocationSize = 1               // Optional: defaults to 50; 1 = increment by 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "cfd_seq_gen"
-    )
     @Column(name = "fd_id")
-    private Long cfdId;
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "fd_case_type")
+    private CaseType caseType;
 
-    @Column(name="case_type")
-    private Long caseType;
+    @Column(name = "fd_case_no")
+    private String fdCaseNo;
 
-    @Column(name="case_no")
-    private String caseNo;
+    @Column(name = "fd_case_year")
+    private Integer fdCaseYear;
 
-    @Column(name="case_year")
-    private Integer caseYear;
+    @Column(name = "fd_document_name")
+    private String fdDocumentName;
 
-    @Column(name="document_name")
-    private String documentName;
+    @Column(name = "fd_file_source")
+    private String fdFileSource;
 
-    @Column(name="file_source")
-    private String fileSource;
+    @Column(name = "fd_rec_status")
+    private Integer fdRecStatus;
 
-    @Column(name="rec_status")
-    private int recStatus;
+    @Column(name = "fd_stage_lid")
+    private Long fdStageLid;
 
-    @Column(name="stage_lid")
-    private Long stageLid;
+    @Column(name = "fd_cr_by")
+    private Long fdCrBy;
 
-    @Column(name="cr_by")
-    private Long crBy;
+    @Column(name = "fd_cr_date")
+    private LocalDateTime fdCrDate;
 
-    @Column(name="mod_by")
-    private Long modBy;
+    @Column(name = "fd_mod_by")
+    private Long fdModBy;
 
-    @Column(name="disposal_date")
-    private Date disposalDate;
+    @Column(name = "fd_mod_date")
+    private LocalDateTime fdModDate;
 
-    @Column(name="category_code")
-    private Long categoryCode;
+    @Column(name = "fd_category_code")
+    private Long fdCategoryCode;
 
-    @Column(name="district")
-    private Long district;
+    @Column(name = "fd_district")
+    private Long fdDistrict;
 
-    @Column(name="bench_type")
-    private Long benchType;
+    @Column(name = "fd_disposal_date")
+    private LocalDateTime fdDisposalDate;
 
-    @Column(name="act_section")
+    @Column(name = "fd_act_section")
+    private String fdActSection;
+
+    @Column(name = "fd_keywords")
+    private String fdKeywords;
+
+    @Column(name = "fd_bench_type")
+    private Long fdBenchType;
+
+    @Column(name = "fd_bench_code")
+    private Integer fdBenchCode;
+
+    @Column(name = "fd_assign_to")
+    private Long fdAssignTo;
+
+    @Column(name = "fd_rc_flag")
+    private Boolean fdRcFlag = false;
+
+    @Column(name = "fd_first_petitioner")
+    private String fdFirstPetitioner;
+
+    @Column(name = "fd_first_respondent")
+    private String fdFirstRespondent;
+
+    @Column(name = "fd_rd_status")
+    private String fdRdStatus;
+
+    @Column(name = "act_section")
     private String actSection;
 
-    @Column(name="keywords")
-    private String keywords;
-
-    @Column(name="bench_code")
-    private Long benchCode;
-
-    @Column(name="assign_to")
+    @Column(name = "assign_to")
     private Long assignTo;
 
-    @Column(name="rc_flag")
+    @Column(name = "bench_code")
+    private Long benchCode;
+
+    @Column(name = "bench_type")
+    private Long benchType;
+
+    @Column(name = "case_no")
+    private String caseNo;
+
+    @Column(name = "case_type")
+    private Long caseTypeId;
+
+    @Column(name = "case_year")
+    private Integer caseYear;
+
+    @Column(name = "category_code")
+    private Long categoryCode;
+
+    @Column(name = "cr_by")
+    private Long crBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "disposal_date")
+    private LocalDateTime disposalDate;
+
+    @Column(name = "district")
+    private Long district;
+
+    @Column(name = "document_name")
+    private String documentName;
+
+    @Column(name = "file_source")
+    private String fileSource;
+
+    @Column(name = "keywords")
+    private String keywords;
+
+    @Column(name = "mod_by")
+    private Long modBy;
+
+    @Column(name = "rc_flag")
     private Boolean rcFlag;
 
+    @Column(name = "rec_status")
+    private Integer recStatus;
 
-    // Audit Fields
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
+    @Column(name = "stage_lid")
+    private Long stageLid;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private String createdBy;
-    @LastModifiedBy
+
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @Column(name = "version")
+    private Long version;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name = "sd_fd_mid")
+    @Where(clause="sd_rec_status=1")
+    private List<SubDocument> subDocument;
+
+
+//    @OneToMany(mappedBy = "caseFile")
+//    private List<SubApplication> subApplications;
 }

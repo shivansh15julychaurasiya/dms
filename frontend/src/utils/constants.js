@@ -36,6 +36,10 @@ export const ROLE_API_PATHS = {
   REMOVE_ROLE: (userId, roleId) => `/role/${roleId}/remove/${userId}`, // Remove role from a user
 };
 
+//  Case type api paths
+export const CASE_TYPE_API_PATHS = {
+  CASE_TYPES: "/api/casetypes",
+};
 
 
 
