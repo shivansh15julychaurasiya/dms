@@ -131,6 +131,8 @@ public class SecurityConfig {
         corsConfig.setAllowCredentials(true);
         corsConfig.addAllowedOriginPattern("*");
         //corsConfig.setAllowedOrigins(Collections.singletonList("*"));
+//        corsConfig.setAllowedOriginPatterns(List.of("http://localhost", "http://localhost:8080"));
+
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         corsConfig.setMaxAge(3600L);

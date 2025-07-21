@@ -1,6 +1,4 @@
-// src/pages/CaseFile/UploadMedia.js
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -20,24 +18,72 @@ import {
 import Sidebar from "../../components/layout/Sidebar";
 import Navbar from "../../components/layout/Navbar";
 
+
 const UploadMedia = () => {
+
+
+
   const [modal, setModal] = useState(false);
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const [search, setSearch] = useState({
     caseType: "",
     caseNo: "",
     caseYear: "",
   });
 
-  const toggleModal = () => setModal(!modal);
+  const sampleCaseFiles = [
+    { id: 1, caseType: "Civil", caseNo: "12345", caseYear: "2023" },
+    { id: 2, caseType: "Criminal", caseNo: "98765", caseYear: "2022" },
+  ];
+
+  const toggleModal = () => {
+    setModal(!modal);
+    setFile(null); // Clear file input on modal close
+  };
 
   const handleChange = (e) => {
     setSearch({ ...search, [e.target.name]: e.target.value });
   };
 
-  const sampleCaseFiles = [
-    { id: 1, caseType: "Civil", caseNo: "12345", caseYear: "2023" },
-    { id: 2, caseType: "Criminal", caseNo: "98765", caseYear: "2022" },
-  ];
+
+
+  // const handleUpload = async () => {
+  //   if (!file) return alert("Please select a file.");
+  //   if (!search.caseType || !search.caseNo || !search.caseYear) {
+  //     return alert("Please fill in all case details.");
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("caseType", search.caseType);
+  //   formData.append("caseNo", search.caseNo);
+  //   formData.append("caseYear", search.caseYear);
+
+  //   try {
+  //     setUploading(true);
+  //     const token = localStorage.getItem("token");
+  //     const response = await axiosInstance.post(
+  //       "/api/documents/upload",
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+  //     alert("File uploaded successfully!");
+  //     toggleModal();
+  //     setSearch({ caseType: "", caseNo: "", caseYear: "" });
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //     alert("Upload failed. Please try again.");
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // };
 
   return (
     <div className="d-flex">
@@ -48,7 +94,7 @@ const UploadMedia = () => {
         <Container fluid className="mt-3">
           <Row>
             <Col xs="12">
-              <Card  inverse>
+              <Card inverse>
                 <CardHeader className="d-flex justify-content-between align-items-center">
                   <h5 className="mb-0 text-dark">View Case File Details</h5>
                   <Button color="light" size="sm">
@@ -57,7 +103,6 @@ const UploadMedia = () => {
                 </CardHeader>
 
                 <CardBody>
-                  {/* Filter/Search Table */}
                   <Table bordered responsive>
                     <thead>
                       <tr>
@@ -83,8 +128,11 @@ const UploadMedia = () => {
                             onChange={handleChange}
                           >
                             <option value="">Select Case Type</option>
-                            <option value="Civil">Civil</option>
-                            <option value="Criminal">Criminal</option>
+                            {caseTypes.map((type) => (
+                              <option key={type.id} value={type.label}>
+                                {type.label}
+                              </option>
+                            ))}
                           </Input>
                         </td>
                         <td>
@@ -114,7 +162,6 @@ const UploadMedia = () => {
                     </thead>
                   </Table>
 
-                  {/* Case File Results Table */}
                   <Table bordered striped>
                     <thead>
                       <tr>
@@ -158,18 +205,23 @@ const UploadMedia = () => {
             </Col>
           </Row>
 
-          {/* Modal for Upload Media */}
+          {/* Upload Modal */}
           <Modal isOpen={modal} toggle={toggleModal} size="lg">
             <ModalHeader toggle={toggleModal}>
               <strong>Upload Media</strong>
             </ModalHeader>
             <ModalBody>
-              {/* You can import an actual form component here */}
               <FormGroup>
                 <Label for="mediaFile">Select Media File</Label>
-                <Input type="file" id="mediaFile" />
+                <Input
+                  type="file"
+                  id="mediaFile"
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
               </FormGroup>
-              <Button color="primary">Upload</Button>
+              <Button color="primary" onClick={handleUpload} disabled={uploading}>
+                {uploading ? "Uploading..." : "Upload"}
+              </Button>
             </ModalBody>
           </Modal>
         </Container>

@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -24,14 +26,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class, // Prevents default single DataSource auto-configuration
-        HibernateJpaAutoConfiguration.class, // Stops Hibernate from autoconfiguring based on a single DataSource
-        JpaRepositoriesAutoConfiguration.class, // Disables automatic JPA repository scanning
-        DataSourceTransactionManagerAutoConfiguration.class // Avoids auto-creation of a default transaction manager
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        JpaRepositoriesAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class
 })
 @EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
-//public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
-public class DmsApplication implements CommandLineRunner {
+public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,27 +51,26 @@ public class DmsApplication implements CommandLineRunner {
         SpringApplication.run(DmsApplication.class, args);
     }
 
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(DmsApplication.class);
+    }
+
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        // Configure global settings
         modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STANDARD) // Use STRICT for exact matching
-                .setAmbiguityIgnored(true) // ignore ambiguous matches
+                .setMatchingStrategy(MatchingStrategies.STANDARD)
+                .setAmbiguityIgnored(true)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
 
-        // Explicit UserRole to UserRoleDto mapping
         modelMapper.typeMap(UserRole.class, UserRoleDto.class)
                 .addMappings(mapper -> {
-                    // Explicitly define all mappings
-                    //mapper.map(src -> src.getUrId(), UserRoleDto::setUrId);
                     mapper.map(src -> src.getUser().getUserId(), UserRoleDto::setUserId);
                     mapper.map(src -> src.getRole().getRoleId(), UserRoleDto::setRoleId);
-                    //mapper.map(src -> src.isStatus(), UserRoleDto::setStatus);
                 });
 
-        // Validate the configuration
         modelMapper.validate();
         return modelMapper;
     }
@@ -78,9 +78,7 @@ public class DmsApplication implements CommandLineRunner {
     @Override
     @Transactional(transactionManager = "dmsTransactionManager", isolation = Isolation.SERIALIZABLE)
     public void run(String... args) {
-
         try {
-            // Create and save roles once
             Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN")
                     .orElseGet(() -> {
                         Role newRole = new Role();
@@ -117,7 +115,6 @@ public class DmsApplication implements CommandLineRunner {
                         return userRepository.saveAndFlush(newUser);
                     });
 
-            // For each role, check if it exists first
             if (!userRoleRepository.existsByUserAndRole(firstUser, adminRole)) {
                 userRoleRepository.save(new UserRole(firstUser, adminRole, true));
             }
@@ -142,5 +139,4 @@ public class DmsApplication implements CommandLineRunner {
             System.out.println("===== END FILTER CHAIN =====");
         };
     }
-
 }

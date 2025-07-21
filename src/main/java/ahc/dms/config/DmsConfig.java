@@ -55,8 +55,10 @@ public class DmsConfig {
         HashMap<String, Object> jpaProperties = new HashMap<>();
         jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.dms.properties.hibernate.hbm2ddl.auto"));
         jpaProperties.put("hibernate.dialect", env.getProperty("spring.jpa.dms.properties.hibernate.dialect"));
-        jpaProperties.put("hibernate.show_sql", "spring.jpa.dms.properties.show-sql");
-        jpaProperties.put("hibernate.format_sql", "spring.jpa.dms.properties.format-sql");
+        jpaProperties.put("hibernate.show_sql", env.getProperty("spring.jpa.dms.properties.show-sql"));
+        jpaProperties.put("hibernate.format_sql", env.getProperty("spring.jpa.dms.properties.format-sql"));
+        System.out.println(">>> Hibernate Properties: " + jpaProperties);
+
 
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dmsDataSource());
