@@ -37,15 +37,11 @@ const CaseFileView = () => {
   const [showStatus, setShowStatus] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      console.log("No token")
-      return;
-    };
+
+    if (!token) return;
     const loadCaseTypes = async () => {
       try {
-        console.log(token)
         const data = await fetchCaseTypes(token);
-        console.log(data)
         setCaseTypes(data || []);
       } catch (err) {
         console.error("Failed to load case types", err);
@@ -107,7 +103,9 @@ const CaseFileView = () => {
                               value={search.caseType}
                               onChange={handleChange}
                             >
-                              <option value="">Select Case Typedsdf</option>
+
+                              <option value="">Select Case Type</option>
+
                               {caseTypes.map((type) => (
                                 <option key={type.id} value={type.id}>
                                   {type.name}
