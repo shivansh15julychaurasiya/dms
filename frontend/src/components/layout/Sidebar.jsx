@@ -219,6 +219,18 @@ const Sidebar = () => {
                     Upload Document
                   </Link>
                 </li>
+                 <li className="nav-item">
+                  <Link
+                    to="/casefile/causelistfile"
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/casefile/causelistfile")
+                        ? "custom-active-link"
+                        : ""
+                    }`}
+                  >
+                    Download Cause List File
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <Link
                     to="/casefile/uploadmedia"

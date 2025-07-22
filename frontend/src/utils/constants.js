@@ -41,6 +41,12 @@ export const CASE_TYPE_API_PATHS = {
   CASE_TYPES: "/api/casetypes",
 };
 
+// cause list api paths
+export const CAUSE_LIST_API_PATHS = {
+  CAUSE_LIST_TYPES: "/causelisttypes",
+   COURT_MASTER_TYPE: "/court-master-type",
+};
+
 
 
 export const ROLE_PATHS = {

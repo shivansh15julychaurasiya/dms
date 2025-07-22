@@ -25,6 +25,7 @@ import ChangePassword from "./components/auth/ChangePassword";
 import CaseFileView from "./pages/casefile/CaseFileView";
 import UploadMedia from "./pages/casefile/UploadMedia";
 import PdfViewer from "./components/pdf/PDFViewer";
+import CauseListFile from "./pages/casefile/CauseListFile";
 
 export default function App() {
   useEffect(() => {
@@ -130,6 +131,11 @@ export default function App() {
           <Route path="casefileview" element={
             <ProtectedRoute>
               <CaseFileView/>
+            </ProtectedRoute>
+          }/>
+           <Route path="causelistfile" element={
+            <ProtectedRoute>
+              <CauseListFile/>
             </ProtectedRoute>
           }/>
            <Route path="uploadmedia" element={

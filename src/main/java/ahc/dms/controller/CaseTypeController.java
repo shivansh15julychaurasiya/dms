@@ -1,7 +1,9 @@
 package ahc.dms.controller;
 
 import ahc.dms.dao.dms.entities.CaseType;
+import ahc.dms.dao.dms.entities.CauseListType;
 import ahc.dms.dao.dms.services.CaseTypeService;
+import ahc.dms.dao.dms.services.CauseListTypeService;
 import ahc.dms.payload.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,4 +73,20 @@ public class CaseTypeController {
 //                        Instant.now().toEpochMilli()
 //                )));
 //    }
+
+    @RestController
+    @RequestMapping("/dms/causelisttype")
+    public static class CauseListTypeController {
+
+        @Autowired
+        private CauseListTypeService service;
+
+        @GetMapping
+        public ResponseEntity<ApiResponse<List<CauseListType>>> getAll() {
+            List<CauseListType> list = service.getAll();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Fetched successfully", null, list, System.currentTimeMillis()));
+        }
+
+
+    }
 }
