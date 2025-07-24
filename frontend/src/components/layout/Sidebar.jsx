@@ -219,6 +219,20 @@ const Sidebar = () => {
                     Upload Document
                   </Link>
                 </li>
+
+                 <li className="nav-item">
+                  <Link
+                    to="/casefile/managecourt"
+                    className={`nav-link px-2 text-dark sidebar-hover ${
+                      isActive("/casefile/managecourt")
+                        ? "custom-active-link"
+                        : ""
+                    }`}
+                  >
+                    Manage Benches
+                  </Link>
+                </li>
+
                  <li className="nav-item">
                   <Link
                     to="/casefile/causelistfile"

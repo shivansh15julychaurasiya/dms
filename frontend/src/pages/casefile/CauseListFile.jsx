@@ -53,7 +53,7 @@ const CauseListFile = () => {
               <Row className="g-3 align-items-center mb-3">
                 <Col md="3">
                   <FormGroup>
-                    <Label for="listType">Select List Type</Label>
+                    <Label for="listType">Select Cause List Type</Label>
                     <Input
                       id="listType"
                       type="select"

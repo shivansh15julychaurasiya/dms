@@ -1,58 +1,58 @@
+// utils/constants.js
+
 export const API_BASE_URL = "http://localhost:8081/dms";
 
-
+// Auth/User API paths
 export const API_PATHS = {
   LOGIN: "/auth/login-password",
   USERS: "/users/",
-  CREATE_USER: "/users/create", // New path for user creation
+  CREATE_USER: "/users/create",
   DELETE_USER: (id) => `/users/${id}`,
   UPDATE_USER: (id) => `/users/${id}`,
   GET_USER: (id) => `/users/${id}`,
 
   REQUEST_OTP: "/auth/request-otp",
   VERIFY_OTP: "/auth/verify-forgot-otp",
-  RESET_PASSWORD: "/auth/change-password/forgot", // for frontend navigation
+  RESET_PASSWORD: "/auth/change-password/forgot",
+  CHANGE_PASSWORD: "/auth/change-password/reset",
 
-  CHANGE_PASSWORD:"/auth/change-password/reset",
-
-  ACTIVATE_USER:(id)=>`/users/activate/${id}`,
-  DEACTIVATE_USER:(id)=>`/users/deactivate/${id}`
-
-
+  ACTIVATE_USER: (id) => `/users/activate/${id}`,
+  DEACTIVATE_USER: (id) => `/users/deactivate/${id}`,
 };
 
 // Role-related API paths
 export const ROLE_API_PATHS = {
-  
-  // Role management
-  ROLES: "/role/",// Get all roles
-  GET_ROLE: (roleId) => `/role/${roleId}`,  // Get specific role by ID
-  CREATE_ROLE: "/role/", // Create a new role
-  UPDATE_ROLE: (roleId) => `/role/${roleId}/update`, // Update specific role by ID
-  DELETE_ROLE: (roleId) => `/role/${roleId}/delete`, // Delete specific role by ID
-
-  // User-Role management
-  ASSIGN_ROLE: "/role/assign", // Assign a role to a user
-  REMOVE_ROLE: (userId, roleId) => `/role/${roleId}/remove/${userId}`, // Remove role from a user
+  ROLES: "/role/",
+  GET_ROLE: (roleId) => `/role/${roleId}`,
+  CREATE_ROLE: "/role/",
+  UPDATE_ROLE: (roleId) => `/role/${roleId}/update`,
+  DELETE_ROLE: (roleId) => `/role/${roleId}/delete`,
+  ASSIGN_ROLE: "/role/assign",
+  REMOVE_ROLE: (userId, roleId) => `/role/${roleId}/remove/${userId}`,
 };
 
-//  Case type api paths
+// Case type-related API paths
 export const CASE_TYPE_API_PATHS = {
   CASE_TYPES: "/api/casetypes",
 };
 
-// cause list api paths
+// Cause list API paths
 export const CAUSE_LIST_API_PATHS = {
   CAUSE_LIST_TYPES: "/causelisttypes",
-   COURT_MASTER_TYPE: "/court-master-type",
+   // Used in courtService.js
 };
 
+export const COURT_MASTER = {
+
+  COURT_MASTER_TYPE: "/court-master-type",
+  CREATE_NEW_COURT: "/court-master-type/newcourt"
+
+}
 
 
+// Role-based routing paths
 export const ROLE_PATHS = {
   ROLE_ADMIN: "/home/admindashboard",
   ROLE_USER: "/home/userdashboard",
   ROLE_ECOURT: "/home/ecourtdashboard",
 };
-
-

@@ -11,8 +11,7 @@ import lombok.Data;
 public class CourtMaster {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "court_master_seq")
-    @SequenceGenerator(name = "court_master_seq", sequenceName = "court_master_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cm_id")
     private Integer cm_id;
 

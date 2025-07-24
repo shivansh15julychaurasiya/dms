@@ -26,6 +26,7 @@ import CaseFileView from "./pages/casefile/CaseFileView";
 import UploadMedia from "./pages/casefile/UploadMedia";
 import PdfViewer from "./components/pdf/PDFViewer";
 import CauseListFile from "./pages/casefile/CauseListFile";
+import ManageBenches from "./pages/court/ManageBenches";
 
 export default function App() {
   useEffect(() => {
@@ -138,12 +139,18 @@ export default function App() {
               <CauseListFile/>
             </ProtectedRoute>
           }/>
+
            <Route path="uploadmedia" element={
             <ProtectedRoute>
               <UploadMedia/>
             </ProtectedRoute>
            }
           />
+           <Route path="managecourt" element={
+            <ProtectedRoute>
+              <ManageBenches/>
+            </ProtectedRoute>
+          }/>
         </Route>
 
           

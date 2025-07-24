@@ -1,5 +1,5 @@
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
-import {CASE_TYPE_API_PATHS} from "../utils/constants"
+import {CASE_TYPE_API_PATHS, COURT_MASTER} from "../utils/constants"
 import { CAUSE_LIST_API_PATHS } from '../utils/constants';
 // case types services
 
@@ -61,22 +61,56 @@ export const fetchCauseListTypes = async (token) => {
 };
 
 
+
+
 //  Get all Court Master Types
 export const fetchCourtMasterTypes = async (token) => {
   try {
-    const response = await axiosInstance.get(CAUSE_LIST_API_PATHS.COURT_MASTER_TYPE, {
+    const response = await axiosInstance.get(COURT_MASTER.COURT_MASTER_TYPE, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    // Assuming response structure: { status: true, message: "...", data: [...] }
-    return response.data.data;
+    const result = response.data;
+
+    if (result.status && Array.isArray(result.data)) {
+      return result.data;
+    } else {
+      console.warn("Unexpected court master response format:", result);
+      return []; // fallback to empty array
+    }
   } catch (error) {
     console.error("Failed to fetch court master types:", error);
     throw new Error("Unable to load court master types.");
   }
 };
+
+
+
+// Create new Court Master Type
+export const createCourtMasterType = async (data, token) => {
+  try {
+    const response = await axiosInstance.post(COURT_MASTER.CREATE_NEW_COURT, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Assuming response format: { status: true, message: "...", data: {...} }
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to create court master type:", error);
+    throw new Error("Unable to create court master type.");
+  }
+};
+
+
+
+
+
+
 
 
 

@@ -12,13 +12,13 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dms/court-master-types")
+@RequestMapping("/dms/court-master-type")
 public class CourtMasterController {
 
     @Autowired
     private CourtMasterService service;
 
-    @PostMapping
+    @PostMapping("/newcourt")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CourtMaster>> create(@RequestBody CourtMaster courtMaster) {
         courtMaster.setCm_cr_date(new Date());
