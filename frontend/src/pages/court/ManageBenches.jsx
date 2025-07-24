@@ -18,9 +18,12 @@ import {
 import Sidebar from "../../components/layout/Sidebar";
 import Navbar from "../../components/layout/Navbar";
 import { useAuth } from "../../context/AuthContext";
-import { fetchCourtMasterTypes ,createCourtMasterType} from "../../services/caseTypeService";
-import {showAlert} from "../../utils/helpers"
-
+import {
+  fetchCourtMasterTypes,
+  createCourtMasterType,
+  updateCourtBenchId,
+} from "../../services/caseTypeService";
+import { showAlert } from "../../utils/helpers";
 
 const ManageBenches = () => {
   const { token } = useAuth();
@@ -31,13 +34,16 @@ const ManageBenches = () => {
   const [courtName, setCourtName] = useState("");
   const [status, setStatus] = useState("1");
 
+  const [editIndex, setEditIndex] = useState(null);
+  const [editedBenchId, setEditedBenchId] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedBenchIndex, setSelectedBenchIndex] = useState(null);
+
   useEffect(() => {
     if (token) {
       fetchCourtMasterTypes(token)
         .then((data) => setCourtMasterTypes(data))
-        .catch((err) =>
-          console.error("Error fetching court master types:", err)
-        );
+        .catch((err) => console.error("Error fetching court master types:", err));
     }
   }, [token]);
 
@@ -47,35 +53,39 @@ const ManageBenches = () => {
     setStatus("1");
   };
 
-const handleCreateNewCourt = async () => {
-  try {
-    // Extract numeric value from the court name (e.g., Court_16 → 16)
-    const cmValue = courtName.split("_")[1];
+  const handleCreateNewCourt = async () => {
+    try {
+      const cmValue = courtName.split("_")[1];
+      const newCourtData = {
+        cm_name: courtName,
+        cm_rec_status: status,
+        cm_value: cmValue,
+      };
 
-    const newCourtData = {
-      cm_name: courtName,
-      cm_rec_status: status,
-      cm_value: cmValue,
-    };
+      await createCourtMasterType(newCourtData, token);
+      showAlert("New Court Has Been Created", "success");
 
-    console.log("Submitted court data:", newCourtData);
+      const updated = await fetchCourtMasterTypes(token);
+      setCourtMasterTypes(updated);
+      toggleModal();
+    } catch (error) {
+      alert("Error creating court master: " + error.message);
+    }
+  };
 
-    // Await API call to create court
-    const created = await createCourtMasterType(newCourtData, token);
-    showAlert("New Court Has Been Created ","success")
-    console.log("Court created:", created);
-
-    // Refresh court list
-    const updated = await fetchCourtMasterTypes(token);
-    setCourtMasterTypes(updated);
-
-    // Close the modal after success
-    toggleModal();
-  } catch (error) {
-    alert("Error creating court master: " + error.message);
-  }
-};
-
+  const handleSaveBenchId = async (court) => {
+    try {
+      await updateCourtBenchId(court.cm_id, editedBenchId, token);
+      const updated = await fetchCourtMasterTypes(token);
+      setCourtMasterTypes(updated);
+      setEditIndex(null);
+      setEditedBenchId("");
+      showAlert("Bench ID updated successfully", "success");
+    } catch (error) {
+      const backendMessage = error?.response?.data?.message || "Update failed!";
+      showAlert(backendMessage);
+    }
+  };
 
   return (
     <div className="d-flex">
@@ -96,7 +106,7 @@ const handleCreateNewCourt = async () => {
                 <thead className="thead-dark">
                   <tr>
                     <th>Court Name</th>
-                    <th>Bench Id</th>
+                    <th>Bench ID</th>
                     <th>Action</th>
                     <th>Service</th>
                   </tr>
@@ -110,23 +120,64 @@ const handleCreateNewCourt = async () => {
                     </tr>
                   ) : (
                     courtMasterTypes.map((court, index) => (
-                      <tr key={index}>
+                      <tr key={court.cm_id}>
                         <td>{court.cm_name}</td>
-                        <td>{court.cm_bench_id || "-"}</td>
                         <td>
-                          <Button color="info" size="sm">
-                            Edit Bench
-                          </Button>
+                          {editIndex === index ? (
+                            <Input
+                              type="number"
+                              size="sm"
+                              value={editedBenchId}
+                              onChange={(e) => setEditedBenchId(e.target.value)}
+                            />
+                          ) : (
+                            court.cm_bench_id || "-"
+                          )}
+                        </td>
+                        <td>
+                          {editIndex === index ? (
+                            <>
+                              <Button
+                                color="success"
+                                size="sm"
+                                className="me-2"
+                                onClick={() => handleSaveBenchId(court)}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                color="secondary"
+                                size="sm"
+                                onClick={() => {
+                                  setEditIndex(null);
+                                  setEditedBenchId("");
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              color="info"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedBenchIndex(index);
+                                setShowConfirmModal(true);
+                              }}
+                            >
+                              Edit Bench
+                            </Button>
+                          )}
                         </td>
                         <td className="d-flex gap-1 flex-wrap">
                           <Button color="success" size="sm">
-                            Supplimentry
+                            Supplementary
                           </Button>
                           <Button color="warning" size="sm">
                             Transfer
                           </Button>
                           <Button color="secondary" size="sm">
-                            Correction&Mention
+                            Correction & Mention
                           </Button>
                         </td>
                       </tr>
@@ -165,21 +216,17 @@ const handleCreateNewCourt = async () => {
                       checked={status === "1"}
                       onChange={(e) => setStatus(e.target.value)}
                     />
-                    <Label check className="ms-1">
-                      E-Court
-                    </Label>
+                    <Label check className="ms-1">E-Court</Label>
                   </FormGroup>
                   <FormGroup check className="d-inline-block">
                     <Input
                       type="radio"
                       name="status"
                       value="3"
-                      checked={status === "3"} // fixed value from "3" to "2"
+                      checked={status === "3"}
                       onChange={(e) => setStatus(e.target.value)}
                     />
-                    <Label check className="ms-1">
-                      In-Chamber
-                    </Label>
+                    <Label check className="ms-1">In-Chamber</Label>
                   </FormGroup>
                 </div>
               </FormGroup>
@@ -190,6 +237,36 @@ const handleCreateNewCourt = async () => {
               Add
             </Button>
             <Button color="secondary" onClick={toggleModal}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Confirm Edit Modal */}
+        <Modal
+          isOpen={showConfirmModal}
+          toggle={() => setShowConfirmModal(false)}
+        >
+          <ModalHeader toggle={() => setShowConfirmModal(false)}>
+            Confirm Edit
+          </ModalHeader>
+          <ModalBody>
+            Are you sure you want to edit the Bench ID for:{" "}
+            <strong>{courtMasterTypes[selectedBenchIndex]?.cm_name}</strong>?
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              onClick={() => {
+                const court = courtMasterTypes[selectedBenchIndex];
+                setEditIndex(selectedBenchIndex);
+                setEditedBenchId(court.cm_bench_id || "");
+                setShowConfirmModal(false);
+              }}
+            >
+              Yes
+            </Button>
+            <Button color="secondary" onClick={() => setShowConfirmModal(false)}>
               Cancel
             </Button>
           </ModalFooter>

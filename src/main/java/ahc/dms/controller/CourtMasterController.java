@@ -2,6 +2,7 @@ package ahc.dms.controller;
 
 import ahc.dms.dao.dms.entities.CourtMaster;
 import ahc.dms.dao.dms.services.CourtMasterService;
+import ahc.dms.payload.request.BenchUpdateRequest;
 import ahc.dms.payload.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,11 @@ public class CourtMasterController {
     @PostMapping("/newcourt")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CourtMaster>> create(@RequestBody CourtMaster courtMaster) {
+
         courtMaster.setCm_cr_date(new Date());
         CourtMaster saved = service.saveCourtMaster(courtMaster);
         return ResponseEntity.ok(new ApiResponse<>(true, "Court master created", null, saved, System.currentTimeMillis()));
+
     }
 
     @GetMapping
@@ -33,12 +36,17 @@ public class CourtMasterController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Court master list fetched", null, list, System.currentTimeMillis()));
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<CourtMaster>> getById(@PathVariable Integer id) {
-        CourtMaster cm = service.getCourtMasterById(id);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Court master fetched", null, cm, System.currentTimeMillis()));
+
+    @PutMapping("/update-bench")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CourtMaster>> updateCourtBench(@RequestBody BenchUpdateRequest request) {
+        CourtMaster updated = service.updateBenchId(request.getId(), request.getBenchId());
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Bench ID updated", null, updated, System.currentTimeMillis())
+        );
     }
+
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

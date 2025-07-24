@@ -1,6 +1,8 @@
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
 import {CASE_TYPE_API_PATHS, COURT_MASTER} from "../utils/constants"
 import { CAUSE_LIST_API_PATHS } from '../utils/constants';
+import { showAlert } from "../utils/helpers";
+
 // case types services
 
 //  GET ALL CASE TYPES
@@ -105,6 +107,25 @@ export const createCourtMasterType = async (data, token) => {
     throw new Error("Unable to create court master type.");
   }
 };
+
+// 📁 services/courtService.js
+export const updateCourtBenchId = async (id, benchId, token) => {
+  const response = await axiosInstance.put(
+    `/court-master-type/update-bench`,
+    { id, benchId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    }
+  );
+  return response.data;
+};
+
+
+
+
 
 
 

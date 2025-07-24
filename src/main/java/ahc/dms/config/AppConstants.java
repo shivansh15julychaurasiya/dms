@@ -39,6 +39,7 @@ public class AppConstants {
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
             "/dms/api/casesfiles/documents/view/**",
+
             "/actuator/**"
     );
 

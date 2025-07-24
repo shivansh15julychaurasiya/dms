@@ -2,6 +2,7 @@ package ahc.dms.exceptions;
 
 import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.utils.ResponseUtil;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -53,6 +54,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<?>> apiExceptionHandler(ApiException ex) {
         return new ResponseEntity<>(ResponseUtil.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "Bench ID must be unique!";
+        return ResponseEntity.badRequest().body(
+                new ApiResponse<>(false, message, null, null, System.currentTimeMillis())
+        );
     }
 
 }
