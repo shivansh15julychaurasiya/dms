@@ -19,6 +19,8 @@ public interface CourtMasterRepository extends JpaRepository<CourtMaster, Intege
     // No @Query or @Modifying
     Optional<CourtMaster> findById(Integer id);
 
+    Optional<CourtMaster> findByCmBenchId(Integer benchId); // Find by benchId
+
 
 
 }

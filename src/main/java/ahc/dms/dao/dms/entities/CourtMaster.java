@@ -24,8 +24,8 @@ public class CourtMaster {
     @Column(name = "cm_rec_status")
     private Integer cm_rec_status;
 
-    @Column(name = "cm_bench_id",unique = true)
-    private Integer cm_bench_id;
+    @Column(name = "cm_bench_id",unique = false)
+    private Integer cmBenchId ;
 
     @Column(name = "cm_cr_by")
     private Long cm_cr_by;

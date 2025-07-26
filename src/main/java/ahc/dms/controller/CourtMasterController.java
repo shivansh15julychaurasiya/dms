@@ -23,7 +23,14 @@ public class CourtMasterController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CourtMaster>> create(@RequestBody CourtMaster courtMaster) {
 
+
+        int totalRecordsInCourtMaster=(int)service.getCourtMasterCount();
+        System.out.println("***************************"+totalRecordsInCourtMaster);
+
+        courtMaster.setCm_value(totalRecordsInCourtMaster-2);
         courtMaster.setCm_cr_date(new Date());
+
+
         CourtMaster saved = service.saveCourtMaster(courtMaster);
         return ResponseEntity.ok(new ApiResponse<>(true, "Court master created", null, saved, System.currentTimeMillis()));
 

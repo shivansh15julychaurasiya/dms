@@ -131,7 +131,7 @@ const ManageBenches = () => {
                               onChange={(e) => setEditedBenchId(e.target.value)}
                             />
                           ) : (
-                            court.cm_bench_id || "-"
+                            court.cmBenchId || "-"
                           )}
                         </td>
                         <td>
@@ -260,7 +260,7 @@ const ManageBenches = () => {
               onClick={() => {
                 const court = courtMasterTypes[selectedBenchIndex];
                 setEditIndex(selectedBenchIndex);
-                setEditedBenchId(court.cm_bench_id || "");
+                setEditedBenchId(court.cmBenchId || "");
                 setShowConfirmModal(false);
               }}
             >

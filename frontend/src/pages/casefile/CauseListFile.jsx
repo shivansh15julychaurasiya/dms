@@ -81,7 +81,17 @@ const CauseListFile = () => {
                     >
                       <option value="">Select Court</option>
                       {courtMasterTypes.map((court) => (
-                        <option key={court.cm_id} value={court.cm_id}>
+                        <option key={court.cm_id
+
+
+
+
+
+
+
+
+                            
+                        } value={court.cm_id}>
                           {court.cm_name}
                         </option>
                       ))}
