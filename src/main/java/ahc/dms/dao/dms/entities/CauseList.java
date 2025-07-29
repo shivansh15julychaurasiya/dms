@@ -1,11 +1,14 @@
 package ahc.dms.dao.dms.entities;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "cause_list")
@@ -68,7 +71,10 @@ public class CauseList {
     private Integer cl_stage;
 
     @Column(name = "cl_dol")
-    private Date cl_dol;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate cl_dol;
+
+
 
     @Transient
     private Date cl_dol1;

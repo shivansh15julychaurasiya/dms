@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from "../../components/layout/Sidebar";
-import { fetchCauseListTypes, fetchCourtMasterTypes } from "../../services/caseTypeService";
+import { fetchCauseListTypes, fetchCourtMasterTypes,searchCauseLists} from "../../services/caseTypeService";
 import { useAuth } from "../../context/AuthContext";
 
 const CauseListFile = () => {
@@ -18,6 +18,8 @@ const CauseListFile = () => {
   const [selectedListType, setSelectedListType] = useState("");
   const [selectedCourtType, setSelectedCourtType] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const [causeListData ,setCauseListData]=useState([]);
 
   useEffect(() => {
     if (token) {
@@ -31,12 +33,34 @@ const CauseListFile = () => {
     }
   }, [token]);
 
-  const handleSearch = () => {
+  // const handleSearch = () => {
+  //   console.log("List Type ID:", selectedListType);
+  //   console.log("Court Type ID:", selectedCourtType);
+  //   console.log("Date:", selectedDate.toISOString().split("T")[0]);
+
+
+  //   // Add your API call here
+  // };
+  const handleSearch = async () => {
+
+  const formattedDate = selectedDate.toISOString().split("T")[0];
+
+  try {
+      // console.log(token)
+
+    const data = await searchCauseLists( selectedCourtType, selectedListType ,  formattedDate ,token );
+
     console.log("List Type ID:", selectedListType);
     console.log("Court Type ID:", selectedCourtType);
     console.log("Date:", selectedDate.toISOString().split("T")[0]);
-    // Add your API call here
-  };
+
+    setCauseListData(data);
+    console.log(causeListTypes)
+  } catch (error) {
+   console.log("error"+error)
+  }
+};
+
 
   return (
     <div className="d-flex">
@@ -82,15 +106,6 @@ const CauseListFile = () => {
                       <option value="">Select Court</option>
                       {courtMasterTypes.map((court) => (
                         <option key={court.cm_id
-
-
-
-
-
-
-
-
-                            
                         } value={court.cm_id}>
                           {court.cm_name}
                         </option>
@@ -122,7 +137,7 @@ const CauseListFile = () => {
               </Row>
 
               {/* Action Buttons */}
-              <Row className="mb-3">
+              {/* <Row className="mb-3">
                 <Col className="d-flex gap-2 flex-wrap">
                   <Button color="info" size="sm" className="text-white">Upload CauseList</Button>
                   <Button color="info" size="sm" className="text-white">Add CaseToCauseList</Button>
@@ -130,33 +145,50 @@ const CauseListFile = () => {
                   <Button color="info" size="sm" className="text-white">Update Court</Button>
                   <Button color="danger" size="sm">Delete All</Button>
                 </Col>
-              </Row>
+              </Row> */}
 
               {/* Table */}
               <div className="table-responsive">
-                <Table bordered responsive size="sm" className="text-center align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Sl No.</th>
-                      <th>Case No</th>
-                      <th>Petitioner vs Respondent</th>
-                      <th>Petitioner Council</th>
-                      <th>Respondent Council</th>
-                      <th>Court No.</th>
-                      <th>
-                        Select All <Input type="checkbox" />
-                      </th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colSpan="8" className="text-muted">
-                        No records found.
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <div className="table-responsive">
+  <Table bordered responsive size="sm" className="text-center align-middle">
+    <thead className="table-light">
+      <tr>
+        <th>Sl No.</th>
+        <th>Cause List Type</th>
+        <th>Case Detail</th>
+        <th>Party Name</th>
+        <th>Petitioner's Counsel</th>
+        <th>Respondent Counsel</th>
+        <th>Court Name</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+   <tbody>
+  {causeListData.map((causeList, index) => (
+    <tr key={causeList.cl_id}>
+      <td>{index + 1}</td>
+      <td>{causeList.clType.clt_description}</td>
+      <td>
+       <a>{causeList.caseType.label}<br/>
+        {causeList.cl_case_no}/
+        {causeList.cl_case_year}<br/></a>
+      </td>
+      <td>{causeList.cl_first_petitioner} Vs {causeList.cl_first_respondent}</td>
+      <td>{causeList.cl_petitioner_council}</td>
+      <td>{causeList.cl_respondent_council}</td>
+      <td>{causeList.courtMaster.cm_name}</td>
+      <td>Active</td> {/* If you have status info, replace "Active" dynamically */}
+      <td>
+        <Button color="primary" size="sm">View</Button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+  </Table>
+</div>
+
               </div>
             </CardBody>
           </Card>

@@ -1,5 +1,5 @@
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
-import {CASE_TYPE_API_PATHS, COURT_MASTER} from "../utils/constants"
+import {CASE_TYPE_API_PATHS, COURT_MASTER,} from "../utils/constants"
 import { CAUSE_LIST_API_PATHS } from '../utils/constants';
 import { showAlert } from "../utils/helpers";
 
@@ -121,6 +121,32 @@ export const updateCourtBenchId = async (id, benchId, token) => {
     }
   );
   return response.data;
+};
+
+
+// CAUSELIST SEARCH METHOD
+
+export const searchCauseLists = async ( courtNo, listTypeId, dol, token ) => {
+  console.log(token+dol)
+  try {
+    const response = await axiosInstance.get(CAUSE_LIST_API_PATHS.CAUSE_LIST_SEARCH, {
+      params: {
+        courtNo,
+        listTypeId,
+        dol,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log(response.data.data);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching cause lists:", error);
+    throw error;
+  }
 };
 
 

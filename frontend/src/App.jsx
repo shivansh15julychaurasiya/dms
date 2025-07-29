@@ -27,6 +27,8 @@ import UploadMedia from "./pages/casefile/UploadMedia";
 import PdfViewer from "./components/pdf/PDFViewer";
 import CauseListFile from "./pages/casefile/CauseListFile";
 import ManageBenches from "./pages/court/ManageBenches";
+import EcoutDashboard from "./components/dashboard/EcourtDashboard";
+import EcourtDashboard from "./components/dashboard/EcourtDashboard";
 
 export default function App() {
   useEffect(() => {
@@ -65,7 +67,7 @@ export default function App() {
             path="/home/dashboard"
             element={
               <ProtectedRoute>
-                <AdminDashboard/>
+                <AdminDashboard />
                 {/* <Dashboard /> */}
               </ProtectedRoute>
             }
@@ -86,6 +88,16 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/home/ecourtdashboard"
+            element={
+              <ProtectedRoute>
+                <EcourtDashboard />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/home/search"
             element={
@@ -110,11 +122,11 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           <Route
+          <Route
             path="/home/reservedcases"
             element={
               <ProtectedRoute>
-                <ReservedCases/>
+                <ReservedCases />
               </ProtectedRoute>
             }
           />
@@ -126,36 +138,44 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           {/* Nested route for /casefile */}
-        <Route path="casefile" >
+          {/* Nested route for /casefile */}
+          <Route path="casefile">
+            <Route
+              path="casefileview"
+              element={
+                <ProtectedRoute>
+                  <CaseFileView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="causelistfile"
+              element={
+                <ProtectedRoute>
+                  <CauseListFile />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="casefileview" element={
-            <ProtectedRoute>
-              <CaseFileView/>
-            </ProtectedRoute>
-          }/>
-           <Route path="causelistfile" element={
-            <ProtectedRoute>
-              <CauseListFile/>
-            </ProtectedRoute>
-          }/>
+            <Route
+              path="uploadmedia"
+              element={
+                <ProtectedRoute>
+                  <UploadMedia />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="managecourt"
+              element={
+                <ProtectedRoute>
+                  <ManageBenches />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
-           <Route path="uploadmedia" element={
-            <ProtectedRoute>
-              <UploadMedia/>
-            </ProtectedRoute>
-           }
-          />
-           <Route path="managecourt" element={
-            <ProtectedRoute>
-              <ManageBenches/>
-            </ProtectedRoute>
-          }/>
-        </Route>
-
-          
-
-         <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+          <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
 
           {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>

@@ -39,6 +39,7 @@ export const CASE_TYPE_API_PATHS = {
 // Cause list API paths
 export const CAUSE_LIST_API_PATHS = {
   CAUSE_LIST_TYPES: "/causelisttypes",
+  CAUSE_LIST_SEARCH:"/cause-lists/search"
    // Used in courtService.js
 };
 
