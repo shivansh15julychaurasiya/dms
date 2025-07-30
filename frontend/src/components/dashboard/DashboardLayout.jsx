@@ -5,7 +5,7 @@ import Navbar from "../layout/Navbar";
 // import MyDocument
 import FancyAccordion from "../../pages/FancyAccordion";
 // import PDFHighlighter from "./pdf/PDFHighlighter";
-import PDFViewer from "../pdf/PDFViewer";
+import PDFViewer from "../pdf/PDFViewerHightLight";
 
 const DashboardLayout = () => {
   return (

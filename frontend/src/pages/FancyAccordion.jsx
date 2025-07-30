@@ -4,8 +4,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const FancyAccordion = () => {
   return (
-    <div className="container my-4">
-      <div className="accordion shadow-sm rounded" id="customAccordion">
+    <div className="container-fluid">
+      <div className="accordion shadow rounded" id="customAccordion">
 
         {/* Accordion Item 1 */}
         <div className="accordion-item border-0 mb-3 rounded shadow-sm">
@@ -18,7 +18,7 @@ const FancyAccordion = () => {
               aria-expanded="true"
               aria-controls="collapseOne"
             >
-              👤 Profile Information
+              Office report
             </button>
           </h2>
           <div
@@ -46,7 +46,7 @@ const FancyAccordion = () => {
               aria-expanded="false"
               aria-controls="collapseTwo"
             >
-              📅 Schedule Management
+              Pettion
             </button>
           </h2>
           <div
@@ -65,7 +65,7 @@ const FancyAccordion = () => {
 
         {/* Accordion Item 3 */}
         <div className="accordion-item border-0 mb-3 rounded shadow-sm">
-          <h2 className="accordion-header" id="headingThree">
+          <h2 className="accordion-header bg-dark" id="headingThree">
             <button
               className="accordion-button collapsed fw-bold text-danger"
               type="button"
@@ -74,7 +74,7 @@ const FancyAccordion = () => {
               aria-expanded="false"
               aria-controls="collapseThree"
             >
-              📊 Reports & Analytics
+              Pettioners
             </button>
           </h2>
           <div

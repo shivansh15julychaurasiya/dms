@@ -15,7 +15,7 @@ import UserDashboard from "./components/dashboard/UserDashboard";
 import Search from "./pages/Search";
 import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./pages/causelist/ManageCauseList";
-import PDFViewer from "./components/pdf/PDFViewer";
+import PDFViewer from "./components/pdf/PDFViewerHightLight";
 import UnAuthorize from "./pages/UnAuthorize";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -24,11 +24,13 @@ import ReservedCases from "./pages/ReservedCases";
 import ChangePassword from "./components/auth/ChangePassword";
 import CaseFileView from "./pages/casefile/CaseFileView";
 import UploadMedia from "./pages/casefile/UploadMedia";
-import PdfViewer from "./components/pdf/PDFViewer";
+import PdfViewer from "./components/pdf/PDFViewerHightLight";
 import CauseListFile from "./pages/casefile/CauseListFile";
 import ManageBenches from "./pages/court/ManageBenches";
 import EcoutDashboard from "./components/dashboard/EcourtDashboard";
 import EcourtDashboard from "./components/dashboard/EcourtDashboard";
+
+import CaseFileViewer from "./components/pdf/CaseFileViewer";
 
 export default function App() {
   useEffect(() => {
@@ -58,6 +60,10 @@ export default function App() {
 
       <BrowserRouter basename="/dms">
         <Routes>
+
+          <Route path="/viewer" element={<CaseFileViewer/>}/>
+
+
           <Route path="" element={<Login />} />
           <Route path="/home/register" element={<Register />} />
 
