@@ -1,40 +1,16 @@
-// PDFViewer.js
-import React from "react";
+import React from 'react';
+import PDFViewer from './PDFViewerHightLight';
+import PDFViewerHightLight from './PDFViewerHightLight';
 
-// Core viewer
-import { Viewer } from "@react-pdf-viewer/core";
-import { pdfjs } from 'react-pdf'; // or '@react-pdf/renderer' or similar, depending on your lib
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+const App = () => {
+    const fileUrl = 'http://localhost:8081/dms/api/casesfiles/documents/view/CLRE362018_PETN_1';
+    const fileName = 'CLRE362018_PETN_1'; // Used as key for localStorage
 
-// Plugins
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { highlightPlugin } from "@react-pdf-viewer/highlight";
-import { searchPlugin } from "@react-pdf-viewer/search";
-
-// Import styles
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import "@react-pdf-viewer/search/lib/styles/index.css";
-import "@react-pdf-viewer/highlight/lib/styles/index.css";
-
-const PDFViewer = () => {
-  // Plugin instances
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
-  const highlightPluginInstance = highlightPlugin();
-  const searchPluginInstance = searchPlugin();
-
-  return (
-    <div style={{ height: "100vh", width: "100%" }}>
-      <Viewer
-        fileUrl="/Sample.pdf" // Make sure the file is in public/ folder
-        plugins={[
-          defaultLayoutPluginInstance,
-          highlightPluginInstance,
-          searchPluginInstance,
-        ]}
-      />
-    </div>
-  );
+    return (
+        <div>
+            <PDFViewerHightLight fileUrl={fileUrl} fileName={fileName} />
+        </div>
+    );
 };
 
-export default PDFViewer;
+export default App;

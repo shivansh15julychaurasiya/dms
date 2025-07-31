@@ -11,6 +11,7 @@ public class AppConstants {
             "/dms/auth/register",
             "/dms/auth/request-otp",
             "/dms/auth/verify-forgot-otp",
+            "/dms/api/casesfiles/documents/view/**",
             "/dms/auth/verify-login-otp",
             "/actuator/**"
     };
@@ -37,6 +38,7 @@ public class AppConstants {
             "/dms/auth/request-otp",
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
+            "/dms/api/casesfiles/documents/view/**",
             "/actuator/**"
     );
 
@@ -50,6 +52,7 @@ public class AppConstants {
             "/dms/auth/verify-reset-otp",
             "/dms/auth/verify-forgot-otp",
             "/dms/auth/verify-login-otp",
+            "/dms/api/casesfiles/documents/view/**",
             "/dms/auth/change-password/forgot",
             "/dms/auth/change-password/reset",
             "/dms/object/**",

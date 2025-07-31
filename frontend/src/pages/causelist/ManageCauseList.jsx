@@ -1,9 +1,26 @@
-import React from "react";
+import {useState,useEffect} from "react";
 import { Container, Row, Col, Button, Input, Card, CardHeader, CardBody, Table, FormGroup, Label } from "reactstrap";
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from "../../components/layout/Sidebar";
+import { fetchCourtMaster } from '../../services/courtManage';
+import { useAuth } from '../../context/AuthContext';
 
 const ManageCauseList = () => {
+ const { token } = useAuth();
+
+ const [courtNo, setCourtNo] = useState([]);
+
+ useEffect(() => {
+     if (token) {
+       fetchCourtMaster(token)
+         .then((res) => setCourtNo(res.data))
+         .catch((error) => console.log(error))
+     }
+   }, [])
+    useEffect(() => {
+     console.log(courtNo)
+   }, [])
+
   return (
     <div className="d-flex">
       <Sidebar />
@@ -29,7 +46,12 @@ const ManageCauseList = () => {
                 <Col md="3">
                   <FormGroup>
                     <Input type="select">
-                      <option>Select Court</option>
+                      <option value="">Select Court</option>
+                      {courtNo.map((courtno) => (
+                                <option key={courtno.cm_id} value={courtno.cm_id}>
+                                  {courtno.cmName}
+                                </option>
+                              ))}
                     </Input>
                   </FormGroup>
                 </Col>

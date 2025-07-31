@@ -36,6 +36,15 @@ export const ROLE_API_PATHS = {
   REMOVE_ROLE: (userId, roleId) => `/role/${roleId}/remove/${userId}`, // Remove role from a user
 };
 
+//Manage Bench 
+export const API_MANAGE_BENCH = {
+COURT:"/courtMaster/",
+};
+
+//Case Types
+export const API_CASE_TYPES = {
+  CASE_TYPES:"/caseTypes",
+}
 
 
 

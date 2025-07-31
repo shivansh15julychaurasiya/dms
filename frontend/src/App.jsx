@@ -12,6 +12,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 import Dashboard from "./components/dashboard/DashboardLayout";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import UserDashboard from "./components/dashboard/UserDashboard";
+import EcourtDashboard from "./components/dashboard/EcourtDashboard";
 import Search from "./pages/Search";
 import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./pages/causelist/ManageCauseList";
@@ -24,6 +25,8 @@ import ReservedCases from "./pages/ReservedCases";
 import ChangePassword from "./components/auth/ChangePassword";
 import CaseFileView from "./pages/casefile/Manage";
 import UploadMedia from "./pages/casefile/UploadMedia";
+import ManageBench from "./pages/casefile/ManageBench";
+import CaseFileViewer from "./components/pdf/CaseFileViewer";
 
 export default function App() {
   useEffect(() => {
@@ -83,6 +86,15 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+           <Route
+            path="/home/ecourtdashboard"
+            element={
+              <ProtectedRoute>
+                <EcourtDashboard/>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/home/search"
             element={
@@ -131,6 +143,11 @@ export default function App() {
               <CaseFileView/>
             </ProtectedRoute>
           }/>
+            <Route path="managebench" element={
+            <ProtectedRoute>
+              <ManageBench/>
+            </ProtectedRoute>
+          }/>
            <Route path="uploadmedia" element={
             <ProtectedRoute>
               <UploadMedia/>
@@ -149,7 +166,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
+          <Route path="/viewer" element={<CaseFileViewer />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
