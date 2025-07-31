@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CaseFileDetailService {
+public class CaseFileDetailServiceWrongFile {
     @Autowired
     private CaseFileDetailsRepository repository;
 
-    public List<CaseFileDetails> searchCases(String caseType, Long caseNo, Integer caseYear) {
-        return repository.findByCaseTypeAndCaseNoAndCaseYear(caseType, caseNo, caseYear);
-    }
+//    public List<CaseFileDetails> searchCases(String caseType, Long caseNo, Integer caseYear) {
+//        return repository.findByCaseTypeAndCaseNoAndCaseYear(caseType, caseNo, caseYear);
+//    }
 }
