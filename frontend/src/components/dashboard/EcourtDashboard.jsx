@@ -1,153 +1,83 @@
-import React from 'react'
-import Sidebar from '../layout/Sidebar'
-import CustomNavbar from '../layout/Navbar'
-import WidgetsDropdown from '../../widget/WidgetsDropdown'
-
+import React from "react";
 import {
-    Container,
-    Row,
-    Col,
-    Card,
-    CardHeader,
-    CardBody,
-    Table,
-    Button,
-    Input,
-    FormGroup,
+  Card,
+  CardBody,
+  CardTitle,
+  CardText,
+  Button,
+  Row,
+  Col,
+  Container,
+} from "reactstrap";
+import Sidebar from "../layout/Sidebar";
+import CustomNavbar from "../layout/Navbar";
 
-} from 'reactstrap';
+const caseTypes = [
+  { title: "Fresh Cases (Sl.No. upto 1000)", total: 0 },
+  { title: "Daily Cause List", total: 0 },
+  { title: "Daily IA (SL. No. 8001 onwards)", total: 0 },
+  { title: "Correction Application", total: 0 },
+  { title: "'As-Fresh' List (Sl.No. 1001 to 3000)", total: 0 },
+  { title: "Backlog", total: 0 },
+  { title: "Fresh Supplementry", total: 0 },
+  { title: "Additional/Unlisted (Sl. No. 3001 To 8000)", total: 0 },
+];
 
-import { CRow, CWidgetStatsA, CCol, } from '@coreui/react';
-import { CIcon } from '@coreui/icons-react';
-// import { cilUser } from '@coreui/icons'; // Optional: an icon
+const EcourtDashboard = () => {
+  return (
+    <div className="d-flex">
+      <Sidebar />
+      <div className="flex-grow-1">
+        <CustomNavbar />
 
+        <Container className="py-4">
+          <Row className="g-4">
+            {caseTypes.map((item, index) => (
+              <Col
+                key={index}
+                xs="12"
+                sm="6"
+                md="4"
+                lg="3"
+                className="d-flex align-items-stretch"
+              >
+                <Card
+                  className="shadow-sm w-100 border-0"
+                  style={{
+                    background: "linear-gradient(135deg, #0d6efd, #00bcd4)",
+                    color: "#fff",
+                    borderRadius: "1rem",
+                  }}
+                >
+                  <CardBody className="d-flex flex-column justify-content-between">
+                    <div>
+                      <CardTitle tag="h5" className="fw-bold">
+                        {item.title}
+                      </CardTitle>
+                      <CardText className="mt-2">
+                        Total Case Listed: <strong>{item.total}</strong>
+                      </CardText>
+                    </div>
+                    <Button color="light" outline className="mt-3 w-100">
+                      View Detail
+                    </Button>
+                  </CardBody>
+                </Card>
+              </Col>
+            ))}
+          </Row>
 
-function EcourtDashboard() {
-    return (
-        <div className="d-flex">
-            <Sidebar/>
-            <div className="flex-grow-1">
-                <CustomNavbar />
+          <div
+            className="mt-5 text-center text-danger fw-semibold"
+            style={{ fontSize: "0.95rem" }}
+          >
+            {/* IS data. Any changes/ modification in case listing data in CIS, the
+            same will be reflected in e-Court also. */}
+          </div>
+        </Container>
+      </div>
+    </div>
+  );
+};
 
-                <Container fluid className="mt-5">
-                    <CRow className="g-4">
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                 className="h-100 text-white"
-                                //   color="primary"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Users"
-                                title="Digital Notice Board"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                 className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Role"
-                                title="Display Board"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Cause List"
-                                title="Live Update"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Court Room"
-                                title="Status"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                    </CRow>
-
-                    <CRow className="g-4 mt-2">
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                 className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Users"
-                                title="Digital Notice Board"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Role"
-                                title="Display Board"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                 className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Cause List"
-                                title="Live Update"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                        <CCol xs={12} sm={6} lg={3}>
-                            <CWidgetStatsA
-                                className="h-100 text-white"
-                                style={{
-                                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                                    borderRadius: '12px',
-                                    padding: '20px',
-                                }}
-                                value="Court Room"
-                                title="Status"
-                                action={<CIcon height={110} className="text-white" />}
-                            />
-                        </CCol>
-                    </CRow>
-                </Container>
-
-
-
-            </div>
-        </div>
-
-    )
-}
-
-export default EcourtDashboard
+export default EcourtDashboard;

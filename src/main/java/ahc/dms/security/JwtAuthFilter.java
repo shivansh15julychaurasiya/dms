@@ -47,7 +47,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         logger.info("Checking JWT_IGNORED_URLS for : {}", request.getRequestURI());
         return AppConstants.JWT_IGNORED_URLS.stream()
                 .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
+
+
+
     }
+
 
     @Override
     protected void doFilterInternal(

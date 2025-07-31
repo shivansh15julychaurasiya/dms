@@ -12,20 +12,24 @@ import ResetPassword from "./components/auth/ResetPassword";
 import Dashboard from "./components/dashboard/DashboardLayout";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import UserDashboard from "./components/dashboard/UserDashboard";
-import EcourtDashboard from "./components/dashboard/EcourtDashboard";
 import Search from "./pages/Search";
 import EditProfile from "./components/profile/EditProfile";
 import ManageCauseList from "./pages/causelist/ManageCauseList";
-import PDFViewer from "./components/pdf/PDFViewer";
+import PDFViewer from "./components/pdf/PDFViewerHightLight";
 import UnAuthorize from "./pages/UnAuthorize";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UpdateUser from "./components/auth/UpdateUser";
 import ReservedCases from "./pages/ReservedCases";
 import ChangePassword from "./components/auth/ChangePassword";
-import CaseFileView from "./pages/casefile/Manage";
+import CaseFileView from "./pages/casefile/CaseFileView";
 import UploadMedia from "./pages/casefile/UploadMedia";
-import ManageBench from "./pages/casefile/ManageBench";
+import PdfViewer from "./components/pdf/PDFViewerHightLight";
+import CauseListFile from "./pages/casefile/CauseListFile";
+import ManageBenches from "./pages/court/ManageBenches";
+import EcoutDashboard from "./components/dashboard/EcourtDashboard";
+import EcourtDashboard from "./components/dashboard/EcourtDashboard";
+
 import CaseFileViewer from "./components/pdf/CaseFileViewer";
 
 export default function App() {
@@ -56,6 +60,10 @@ export default function App() {
 
       <BrowserRouter basename="/dms">
         <Routes>
+
+          <Route path="/viewer" element={<CaseFileViewer/>}/>
+
+
           <Route path="" element={<Login />} />
           <Route path="/home/register" element={<Register />} />
 
@@ -65,7 +73,7 @@ export default function App() {
             path="/home/dashboard"
             element={
               <ProtectedRoute>
-                <AdminDashboard/>
+                <AdminDashboard />
                 {/* <Dashboard /> */}
               </ProtectedRoute>
             }
@@ -86,11 +94,12 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           <Route
+
+          <Route
             path="/home/ecourtdashboard"
             element={
               <ProtectedRoute>
-                <EcourtDashboard/>
+                <EcourtDashboard />
               </ProtectedRoute>
             }
           />
@@ -119,11 +128,11 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           <Route
+          <Route
             path="/home/reservedcases"
             element={
               <ProtectedRoute>
-                <ReservedCases/>
+                <ReservedCases />
               </ProtectedRoute>
             }
           />
@@ -135,38 +144,46 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           {/* Nested route for /casefile */}
-        <Route path="casefile" >
+          {/* Nested route for /casefile */}
+          <Route path="casefile">
+            <Route
+              path="casefileview"
+              element={
+                <ProtectedRoute>
+                  <CaseFileView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="causelistfile"
+              element={
+                <ProtectedRoute>
+                  <CauseListFile />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="casefileview" element={
-            <ProtectedRoute>
-              <CaseFileView/>
-            </ProtectedRoute>
-          }/>
-            <Route path="managebench" element={
-            <ProtectedRoute>
-              <ManageBench/>
-            </ProtectedRoute>
-          }/>
-           <Route path="uploadmedia" element={
-            <ProtectedRoute>
-              <UploadMedia/>
-            </ProtectedRoute>
-           }
-          />
-        </Route>
+            <Route
+              path="uploadmedia"
+              element={
+                <ProtectedRoute>
+                  <UploadMedia />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="managecourt"
+              element={
+                <ProtectedRoute>
+                  <ManageBenches />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
-          
+          <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
 
-          <Route
-            path="/pdf"
-            element={
-              <ProtectedRoute>
-                <PDFViewer />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/viewer" element={<CaseFileViewer />} />
+          {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>

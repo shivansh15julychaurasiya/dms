@@ -257,6 +257,24 @@ button.py-2.fs-5.rounded-pill:active {
   max-height: 50px;
 }
 
+/* CAUSELISTFILE TABLE CSS */
+.cause-list-table tbody tr:hover {
+  background-color: #f3f7fa;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.cause-list-table th {
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.cause-list-table td {
+  vertical-align: middle;
+  font-size: 0.88rem;
+  padding: 0.5rem;
+}
 
 
 
