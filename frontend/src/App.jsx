@@ -29,8 +29,10 @@ import CauseListFile from "./pages/casefile/CauseListFile";
 import ManageBenches from "./pages/court/ManageBenches";
 import EcoutDashboard from "./components/dashboard/EcourtDashboard";
 import EcourtDashboard from "./components/dashboard/EcourtDashboard";
+import { CaseFileDetailsSearchContextProvider } from './context/CaseFileDetailsSearchContextProvider';
 
-import CaseFileViewer from "./components/pdf/CaseFileViewer";
+import CaseFileViewer from "./components/pdf/CaseFileViewer"
+
 
 export default function App() {
   useEffect(() => {
@@ -45,6 +47,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <CaseFileDetailsSearchContextProvider>
       <ToastContainer
         position="top-center" // Position on screen
         autoClose={500} // Auto close after 3 seconds
@@ -61,6 +64,7 @@ export default function App() {
       <BrowserRouter basename="/dms">
         <Routes>
 
+  
           <Route path="/viewer" element={<CaseFileViewer/>}/>
 
 
@@ -181,11 +185,12 @@ export default function App() {
             />
           </Route>
 
-          <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+          {/* <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} /> */}
 
           {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>
       </BrowserRouter>
+      </CaseFileDetailsSearchContextProvider>
     </AuthProvider>
   );
 }

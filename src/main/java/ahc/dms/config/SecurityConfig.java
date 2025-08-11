@@ -7,6 +7,7 @@ import ahc.dms.security.RequestAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -61,6 +62,8 @@ public class SecurityConfig {
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(AppConstants.PUBLIC_URLS).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/dms/api/casesfiles/documents/view/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/dms/api/casesfiles/view/**").authenticated()
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthEntryPoint))

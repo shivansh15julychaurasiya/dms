@@ -275,10 +275,52 @@ button.py-2.fs-5.rounded-pill:active {
   font-size: 0.88rem;
   padding: 0.5rem;
 }
+/* CaseFileViewer accordion css */
+/* Accordion Header */
+.custom-accordion .accordion-button {
+  background-color: #060707d7; /* dark header */
+  color: white; /* white text */
+  box-shadow: none; /* remove Bootstrap shadow */
+}
 
+/* Expanded State */
+.custom-accordion .accordion-button:not(.collapsed) {
+  background-color: #0d0e0fff; /* darker when open */
+  color: white;
+}
 
+/* Accordion Body */
+.custom-accordion .accordion-body {
+  background-color: #f1f5f9; /* light body */
+  color: black;
+}
 
+/* Replace default arrow with white + and – */
+.custom-accordion .accordion-button::after {
+  content: '+'; /* plus sign by default */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white !important; /* keep plus white */
+  background-image: none !important; /* remove Bootstrap arrow */
+  transform: none !important; /* stop arrow rotation */
+}
 
+.custom-accordion .accordion-button:not(.collapsed)::after {
+  content: '–'; /* minus sign */
+  color: white !important; /* keep minus white */
+}
+/* pdf viewer bookmark indexing css */
+/* Make all bookmark text light */
+.bookmark-wrapper .rpv-bookmark__title {
+    color: #f8f9fa !important; /* Bootstrap light text */
+}
 
+/* Optional: change hover color */
+.bookmark-wrapper .rpv-bookmark__title:hover {
+    color: #ffc107 !important; /* Bootstrap warning color on hover */
+}
 
-
+/* Change caret color for expand/collapse icons */
+.bookmark-wrapper .rpv-bookmark__toggle {
+    filter: invert(1); /* Makes dark caret light */
+}

@@ -160,6 +160,30 @@ public class CaseFileDetails {
     private List<SubDocument> subDocument;
 
 
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name = "pt_fd_mid")
+    @Where(clause="pt_rec_status=1")
+    @OrderBy("pt_sequence ASC")
+    private List<Petitioner> petitioners;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name = "rt_fd_mid")
+    @Where(clause="rt_rec_status=1")
+    @OrderBy("rt_sequence ASC")
+    private List<Respondent> respondents;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name = "pc_fd_mid")
+    @Where(clause="pc_rec_status=1")
+    private List<PetitionerCounsel> pCounsels;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name = "rc_fd_mid")
+    @Where(clause="rc_rec_status=1")
+    private List<RespondentCounsel> rCounsels;
+
+
+
 //    @OneToMany(mappedBy = "caseFile")
 //    private List<SubApplication> subApplications;
 }

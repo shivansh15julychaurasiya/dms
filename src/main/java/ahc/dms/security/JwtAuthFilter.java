@@ -1,6 +1,5 @@
 package ahc.dms.security;
 
-
 import ahc.dms.config.AppConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -29,29 +28,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
     @Autowired
     private JwtHelper jwtHelper;
+
     private final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
-
-        logger.info("DispatcherType: {}", request.getDispatcherType());
-        // Skip if already authenticated (prevents double filtering)
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            logger.info("Preventing filter run from internal forwards/redirects");
-            return true;
-        }
-
-        logger.info("Checking JWT_IGNORED_URLS for : {}", request.getRequestURI());
+        String uri = request.getRequestURI();
+        logger.info("Checking JWT_IGNORED_URLS for : {}", uri);
         return AppConstants.JWT_IGNORED_URLS.stream()
-                .anyMatch(pattern -> PATH_MATCHER.match(pattern, request.getRequestURI()));
-
-
-
+                .anyMatch(pattern -> PATH_MATCHER.match(pattern, uri));
     }
-
 
     @Override
     protected void doFilterInternal(
@@ -59,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        logger.info("Running doFilterInternal (JwtAuthFilter)");
+        logger.info("Requested URI: {}, Method: {}", request.getRequestURI(), request.getMethod());
 
         String authHeader = request.getHeader("Authorization");
         logger.info("Auth Header : {}", authHeader);
@@ -68,46 +58,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = null;
         String tokenType = null;
 
-        //getting username from token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            logger.info("Extracting Token");
             token = authHeader.substring(7);
-            tokenType = this.jwtHelper.getTokenTypeFromToken(token);
-            logger.info("Token type : {}", tokenType);
+            tokenType = jwtHelper.getTokenTypeFromToken(token);
             try {
-                username = this.jwtHelper.getUsernameFromToken(token);
+                username = jwtHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
-                logger.info("Unable to get user");
+                logger.warn("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
-                logger.info("JWT expired");
+                logger.warn("JWT Token has expired");
             } catch (MalformedJwtException e) {
-                logger.info("Malformed JWT");
+                logger.warn("JWT Token is malformed");
             }
         } else {
-            logger.info("JWT doesn't start with Bearer");
+            logger.warn("JWT Token does not begin with Bearer");
         }
+
         logger.info("Username = {}", username);
 
-        //validating token
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.jwtHelper.validateToken(token, tokenType, userDetails)) {
-                //now set the authentication
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwtHelper.validateToken(token, tokenType, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                logger.info("Authentication Object : {}", SecurityContextHolder.getContext().getAuthentication());
+                logger.info("User authenticated: {}", username);
             } else {
-                logger.info("Invalid JWT");
+                logger.warn("Invalid JWT token");
             }
         } else {
-            logger.info("User/Context is null");
+            logger.info("Username is null or already authenticated");
         }
+
         filterChain.doFilter(request, response);
     }
 }
