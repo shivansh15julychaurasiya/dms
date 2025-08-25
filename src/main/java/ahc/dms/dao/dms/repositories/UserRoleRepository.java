@@ -4,6 +4,8 @@ import ahc.dms.dao.dms.entities.Role;
 import ahc.dms.dao.dms.entities.User;
 import ahc.dms.dao.dms.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +25,9 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     Set<UserRole> findByUser(User user);
     // if user-role mapping exists
     boolean existsByUserAndRole(User user, Role role);
+
+
+
+    @Query(value = "SELECT * FROM user_role WHERE user_id = :userId", nativeQuery = true)
+    UserRole findByUserId(@Param("userId") Long userId);
 }

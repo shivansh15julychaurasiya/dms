@@ -39,9 +39,14 @@ export const CASE_TYPE_API_PATHS = {
 // Cause list API paths
 export const CAUSE_LIST_API_PATHS = {
   CAUSE_LIST_TYPES: "/causelisttypes",
-  CAUSE_LIST_SEARCH:"/cause-lists/search"
+  CAUSE_LIST_SEARCH:"/cause-lists/search",
+  CAUSE_LIST_DATA_SHOW: "/cause-lists/getCauseList",
+  CAUSE_LIST_DATA:(listTypeId) => `/cause-lists/getCauseList/${listTypeId}`,
+  CAUSE_LIST_TOTAL: "/ecourt/getReport"
    // Used in courtService.js
 };
+
+// export const getCauseListDataUrl = (listTypeId) => `/cause-lists/getCauseList/${listTypeId}`;
 
 export const COURT_MASTER = {
 
@@ -49,6 +54,11 @@ export const COURT_MASTER = {
   CREATE_NEW_COURT: "/court-master-type/newcourt"
 
 }
+
+export const API_MANAGE_BENCH ={
+  
+}
+
 
 
 // Role-based routing paths

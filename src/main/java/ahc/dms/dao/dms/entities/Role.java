@@ -72,6 +72,19 @@ public class Role {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                '}';
+    }
+
     public Role(String roleName, Boolean status) {
         this.roleName = roleName;
         this.status = status;

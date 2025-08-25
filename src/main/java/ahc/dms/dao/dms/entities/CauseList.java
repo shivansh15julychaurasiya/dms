@@ -107,6 +107,9 @@ public class CauseList {
     private Integer count;
 
     @Transient
+    private String clTypeData;
+
+    @Transient
     private Integer cl_new_court_no;
 
     @Transient

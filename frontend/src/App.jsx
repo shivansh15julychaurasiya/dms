@@ -29,8 +29,10 @@ import CauseListFile from "./pages/casefile/CauseListFile";
 import ManageBenches from "./pages/court/ManageBenches";
 import EcoutDashboard from "./components/dashboard/EcourtDashboard";
 import EcourtDashboard from "./components/dashboard/EcourtDashboard";
+import SearchByCaseDetail from "./pages/search/SearchByCaseDetail";
 
 import CaseFileViewer from "./components/pdf/CaseFileViewer";
+import CauseList from "./pages/causelist/CauseList";
 
 export default function App() {
   useEffect(() => {
@@ -163,6 +165,9 @@ export default function App() {
               }
             />
 
+           
+
+
             <Route
               path="uploadmedia"
               element={
@@ -180,8 +185,22 @@ export default function App() {
               }
             />
           </Route>
+          
+           <Route
+              path="/search/searhbycasedetail"
+              element={
+                <ProtectedRoute>
+                  <SearchByCaseDetail />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route path="/causelist" element={<CauseList/>} /> */}
+            
+            <Route path="/cause-lists/getCauseList/:listTypeId" element={<CauseList/>} />
 
           <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+
+          
 
           {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>

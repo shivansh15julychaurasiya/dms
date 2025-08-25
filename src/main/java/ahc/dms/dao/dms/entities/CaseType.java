@@ -11,7 +11,7 @@ import java.util.List;
 public class CaseType {
     @Id
     @Column(name = "ct_id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "ct_label")
     private String label;

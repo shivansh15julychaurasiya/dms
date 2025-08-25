@@ -27,8 +27,8 @@ public class CourtMasterController {
         int totalRecordsInCourtMaster=(int)service.getCourtMasterCount();
         System.out.println("***************************"+totalRecordsInCourtMaster);
 
-        courtMaster.setCm_value(totalRecordsInCourtMaster-2);
-        courtMaster.setCm_cr_date(new Date());
+        courtMaster.setCmValue(totalRecordsInCourtMaster-2);
+        courtMaster.setCmCrDate(new Date());
 
 
         CourtMaster saved = service.saveCourtMaster(courtMaster);

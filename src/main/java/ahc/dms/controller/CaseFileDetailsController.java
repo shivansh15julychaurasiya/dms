@@ -49,7 +49,7 @@ public class CaseFileDetailsController {
     @GetMapping("/documents/view/{docName}")
     public ResponseEntity<Resource> viewPDF(@PathVariable String docName) throws IOException {
 
-        Path filePath = Paths.get("D:/pdf-storage/" + docName + ".pdf");
+        Path filePath = Paths.get("A:/pdf-storage/" + docName + ".pdf");
 
         System.out.println("Looking for: " + filePath.toString());
         System.out.println("Exists: " + Files.exists(filePath));

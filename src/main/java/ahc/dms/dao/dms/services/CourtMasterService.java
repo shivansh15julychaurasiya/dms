@@ -6,6 +6,7 @@ import ahc.dms.dao.dms.services.CourtMasterService;
 import ahc.dms.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,13 +21,13 @@ public class  CourtMasterService {
 
 
     public CourtMaster saveCourtMaster(CourtMaster courtMaster) {
-        courtMaster.setCm_cr_date(new Date());
+        courtMaster.setCmCrDate(new Date());
         return courtMasterRepository.save(courtMaster);
     }
 
 
     public List<CourtMaster> getAllCourtMasters() {
-        return courtMasterRepository.findAll();
+        return courtMasterRepository.findAll(Sort.by("cmId"));
     }
 
     public long getCourtMasterCount() {
@@ -57,7 +58,7 @@ public class  CourtMasterService {
         if (existing.isPresent()) {
             CourtMaster existingCourt = existing.get();
             // Make sure it's not the same record being updated
-            if (!existingCourt.getCm_id().equals(id)) {
+            if (!existingCourt.getCmId().equals(id)) {
                 existingCourt.setCmBenchId(null);
                 courtMasterRepository.save(existingCourt); // Save the null update
             }

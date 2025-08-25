@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -123,5 +124,12 @@ public class UserRoleService {
                         .orElseThrow(() -> new ResourceNotFoundException("Role", "Role Id", id)))
                 .orElseThrow(() -> new ApiException("Role Id cannot be null"));
     }
+
+    public UserRole getRoleByUserId(Long userId) {
+      //  Optional<UserRole> userRole = userRoleRepository.findByUserId(userId);
+        UserRole userRole = userRoleRepository.findByUserId(userId);
+        return modelMapper.map(userRole, UserRole.class);
+    }
+
 
 }

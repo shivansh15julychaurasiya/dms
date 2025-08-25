@@ -108,6 +108,25 @@ public class User implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "version=" + version +
+                ", userId=" + userId +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                ", about='" + about + '\'' +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", userRoles=" + userRoles +
+                '}';
+    }
 
     /*
     public void assignNewActiveRole (Role role) {

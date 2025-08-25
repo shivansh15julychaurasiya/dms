@@ -23,7 +23,7 @@ import PDFViewer from "./PDFViewer";
 
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 // import { highlightPlugin } from '@react-pdf-viewer/highlight';
-import { bookmarkPlugin } from "@react-pdf-viewer/bookmark";
+import { bookmarkPlugin } from '@react-pdf-viewer/bookmark';
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -113,23 +113,24 @@ const CaseFileViewer = () => {
     setOpenId(openId === id ? "" : id);
   };
 
-  const [highlightAreas, setHighlightAreas] = useState([]);
+  // const [highlightAreas, setHighlightAreas] = useState([]);
 
-  const highlightPluginInstance = highlightPlugin({
-    highlightAreas,
-    onHighlightSelection: (highlight) => {
-      const newAreas = [...highlightAreas, highlight];
-      setHighlightAreas(newAreas);
-      localStorage.setItem(
-        `pdf-highlights-${fileName}`,
-        JSON.stringify(newAreas)
-      );
-    },
-  });
-
+  // const highlightPluginInstance = highlightPlugin({
+  //   highlightAreas,
+  //   onHighlightSelection: (highlight) => {
+  //     const newAreas = [...highlightAreas, highlight];
+  //     setHighlightAreas(newAreas);
+  //     localStorage.setItem(
+  //       `pdf-highlights-${fileName}`,
+  //       JSON.stringify(newAreas)
+        
+  //     );
+  //   },
+  // });
+  const highlightPluginInstance = highlightPlugin();
   const bookmarkPluginInstance = bookmarkPlugin();
   const Bookmarks = bookmarkPluginInstance.Bookmarks;
-
+  
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {

@@ -85,8 +85,8 @@ public class CaseFileDetails {
     @Column(name = "fd_rd_status")
     private String fdRdStatus;
 
-    @Column(name = "act_section")
-    private String actSection;
+//    @Column(name = "act_section")
+//    private String actSection;
 
     @Column(name = "assign_to")
     private Long assignTo;
@@ -162,4 +162,5 @@ public class CaseFileDetails {
 
 //    @OneToMany(mappedBy = "caseFile")
 //    private List<SubApplication> subApplications;
+
 }

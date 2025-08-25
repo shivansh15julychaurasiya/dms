@@ -1,6 +1,6 @@
 import axios from "axios";
 import { showAlert } from "../utils/helpers";
-import { API_BASE_URL, API_MANAGE_BENCH,API_CASE_TYPES } from "../utils/constants";
+import { API_BASE_URL, API_MANAGE_BENCH } from "../utils/constants";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,

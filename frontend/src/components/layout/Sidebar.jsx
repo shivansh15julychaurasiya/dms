@@ -278,9 +278,9 @@ const Sidebar = () => {
               <ul className="nav flex-column ms-3">
                 <li className="nav-item">
                   <Link
-                    to="/casefile/casefileview"
+                    to="/causelist"
                     className={`nav-link px-2 text-dark sidebar-hover ${
-                      isActive("/casefile/casefileview")
+                      isActive("/causelist")
                         ? "custom-active-link"
                         : ""
                     }`}
@@ -387,6 +387,7 @@ const Sidebar = () => {
             </div>
             {activeDropdown === "Search" && isOpen && (
               <ul className="nav flex-column ms-3">
+
                 {/* <li className="nav-item">
                   <Link
                     to="/casefile/casefileview"
@@ -396,14 +397,15 @@ const Sidebar = () => {
                         : ""
                     }`}
                   >
-                    Upload Document
+                    By Case Detali !
                   </Link>
                 </li> */}
+
                   <li className="nav-item">
                     <Link
-                      to="/home/admindashboard"
+                      to="/search/searhbycasedetail"
                       className={`nav-link px-2 text-dark sidebar-hover ${
-                        isActive("/home/admindashboard")
+                        isActive("/search/searhbycasedetail")
                           ? "custom-active-link"
                           : ""
                       }`}
