@@ -7,7 +7,9 @@ import { AiFillHome } from "react-icons/ai";
 import { FaExchangeAlt } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
 
-const Sidebar = () => {
+const Sidebar = ({styles}) => {
+
+  console.log(styles)
   
   const [isOpen, setIsOpen] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState("");
@@ -76,6 +78,12 @@ const Sidebar = () => {
   </style>
 );
 
+
+  //  Base width logic
+  const baseWidth = isOpen ? "240px" : "70px";
+
+  //  If styles.width is provided, override baseWidth
+  const finalWidth = styles?.width ? styles.width : baseWidth;
   
 
   return (
@@ -87,10 +95,12 @@ const Sidebar = () => {
           isOpen ? "px-3" : "px-2"
         }`}
         style={{
-          width: isOpen ? "250px" : "70px",
+          width: finalWidth,
           transition: "all 0.3s ease",
           zIndex: 1000,
+          ...styles, // merge any other passed styles
         }}
+        
       >
         <div className="text-center text-light py-3 border-bottom">
           {isOpen && <h5 className="text-primary m-1"></h5>}

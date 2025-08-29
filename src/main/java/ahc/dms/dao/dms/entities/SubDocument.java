@@ -3,7 +3,7 @@ package ahc.dms.dao.dms.entities;
 
 import java.util.Date;
 import java.util.List;
-
+import java.util.Optional;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -108,6 +108,11 @@ public class SubDocument {
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "sd_document_id",insertable = false, updatable = false)
     private ApplicationType documentType;
+    
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, orphanRemoval=true)
+	@JoinColumn(name = "sb_ap_sd_mid",referencedColumnName="sd_id",insertable = false, updatable = false)	
+	@Where(clause="sb_ap_rec_status=1")
+	private List<SubApplication> subApplications;
 
 
     @Transient

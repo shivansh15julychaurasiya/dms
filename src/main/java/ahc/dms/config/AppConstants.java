@@ -61,8 +61,10 @@ public class AppConstants {
             "/dms/api/casesfiles/document/**",
             "/dms/api/casesfiles/view/**",
             "/dms/orderreport/view/**",
-          
-
+            "/dms/api/casesfiles/getOrdersFromElegalix/**",
+            "/dms/api/casesfiles/showfile/**",
+            "/dms/api/casesfiles/getOrderFromElegalix/**",
+            "/dms/api/casesfiles/getPdf/**",
             "/dms/object/**",
             "/actuator/**"
     );

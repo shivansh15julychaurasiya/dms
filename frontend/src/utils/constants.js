@@ -50,6 +50,14 @@ export const COURT_MASTER = {
 
 }
 
+// Base API path for case files
+export const CASE_FILE_API_PATHS = {
+  GET_ORDERS_FROM_ELEGALIX: "/api/casesfiles/getOrdersFromElegalix",
+   SHOW_FILE: (id) => `/api/casesfiles/showfile/${id}`,
+    GET_ORDER_FROM_ELEGALIX: (id) => `/api/casesfiles/getOrderFromElegalix/${id}`,
+};
+
+
 
 // Role-based routing paths
 export const ROLE_PATHS = {

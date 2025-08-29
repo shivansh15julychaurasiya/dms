@@ -1,6 +1,6 @@
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
 import {CASE_TYPE_API_PATHS, COURT_MASTER,} from "../utils/constants"
-import { CAUSE_LIST_API_PATHS } from '../utils/constants';
+import { CAUSE_LIST_API_PATHS, CASE_FILE_API_PATHS } from '../utils/constants';
 import { showAlert } from "../utils/helpers";
 
 // case types services
@@ -108,7 +108,7 @@ export const createCourtMasterType = async (data, token) => {
   }
 };
 
-// 📁 services/courtService.js
+//  services/courtService.js
 export const updateCourtBenchId = async (id, benchId, token) => {
   const response = await axiosInstance.put(
     `/court-master-type/update-bench`,
@@ -148,6 +148,47 @@ export const searchCauseLists = async ( courtNo, listTypeId, dol, token ) => {
     throw error;
   }
 };
+
+
+//  Get Order From Elegalix
+export const getOrdersFromElegalix = async (id, token) => {
+  try {
+    const response = await axiosInstance.get(
+      `${CASE_FILE_API_PATHS.GET_ORDERS_FROM_ELEGALIX}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Orders from Elegalix:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching orders from Elegalix:", error);
+    throw error;
+  }
+};
+
+
+// Get Order from elegalix by Id
+export const getOrderFromElegalix = async (id, token) => {
+  console.log("judgment id*******"+id)
+  try {
+    const response = await axiosInstance.get(CASE_FILE_API_PATHS.GET_ORDER_FROM_ELEGALIX(id), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      // responseType: "blob", // if API returns a file/PDF
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching order from Elegalix:", error);
+    throw error;
+  }
+};
+
 
 
 
