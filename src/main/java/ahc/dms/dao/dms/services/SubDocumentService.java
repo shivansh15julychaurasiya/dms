@@ -59,7 +59,7 @@ public class SubDocumentService {
         List<SubDocument> subDocuments = new ArrayList<>();
 
         // Step 1: fetch case details
-        var cfd = caseFileDetailsService.getCaseFileDetail(fdId).orElse(null);
+        var cfd = caseFileDetailsService.getCaseFileDetail(fdId);
         if (cfd == null) return subDocuments;
 
         // Step 2: Example date cutoff

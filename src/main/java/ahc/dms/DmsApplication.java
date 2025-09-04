@@ -34,7 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
 //public class DmsApplication implements CommandLineRunner {
 
-    
+//    Fullstack Java Developer Vijay Chaurasiya
+	
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired

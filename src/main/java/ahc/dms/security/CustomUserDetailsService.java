@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
+
+	
     @Autowired
     private UserRepository userRepository;
 

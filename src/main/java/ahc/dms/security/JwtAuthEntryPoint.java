@@ -11,6 +11,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
+//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
+
 
     @Override
     public void commence(HttpServletRequest request,

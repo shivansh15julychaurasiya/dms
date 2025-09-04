@@ -324,3 +324,11 @@ button.py-2.fs-5.rounded-pill:active {
 .bookmark-wrapper .rpv-bookmark__toggle {
     filter: invert(1); /* Makes dark caret light */
 }
+/* Allow text selection in PDF viewer */
+.rpv-core__viewer {
+    user-select: text !important;
+}
+.textLayer {
+    pointer-events: auto !important;
+}
+

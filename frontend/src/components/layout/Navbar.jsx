@@ -5,6 +5,9 @@ import ProfileCard from "../profile/ProfileCard";
 import "../../assets/styles.css"; // Make sure your custom styles are here
 
 const CustomNavbar = () => {
+
+//    Fullstack Java Developer Vijay Chaurasiya
+
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [profileVisible, setProfileVisible] = useState(false);
   const profileRef = useRef();

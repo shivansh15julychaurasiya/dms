@@ -14,14 +14,19 @@ import {
   fetchOrderReportByFdId,
   showStampReportPdfFile,
 } from "../../services/PdfFileService";
-import { getOrdersFromElegalix,getOrderFromElegalix } from "../../services/caseTypeService";
+import {
+  getOrdersFromElegalix,
+  getOrderFromElegalix,
+  downloadCaseFile,
+} from "../../services/caseTypeService";
 import { API_BASE_URL, CASE_FILE_API_PATHS } from "../../utils/constants";
-import {fetchPdfFileByName} from "../../services/PdfFileService"
+import { fetchPdfFileByName } from "../../services/PdfFileService";
 
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { PDFDocument } from "pdf-lib";
 
-const TreeView =({ setPdfUrl }) => {
+const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
   const [searchParams] = useSearchParams();
   const fdId = searchParams.get("id");
 
@@ -86,19 +91,89 @@ const TreeView =({ setPdfUrl }) => {
       {/* Action Buttons */}
       <Row className="mb-3 align-items-center">
         <Col xs="auto">
-          <Button color="primary" size="sm">
-            View All Orders
-          </Button>
+<Button
+  color="primary"
+  size="sm"
+  onClick={async () => {
+    const mergePdfs = async (pdfBlobs) => {
+      const mergedPdf = await PDFDocument.create();
+
+      for (const blob of pdfBlobs) {
+        const pdfBytes = await blob.arrayBuffer();
+        const pdf = await PDFDocument.load(pdfBytes);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach((page) => mergedPdf.addPage(page));
+      }
+
+      const mergedPdfBytes = await mergedPdf.save();
+      return new Blob([mergedPdfBytes], { type: "application/pdf" });
+    };
+
+    try {
+      const blobs = [];
+
+      for (const order of elegalixReport) {
+        const response = await getOrderFromElegalix(order.judgmentID, token);
+        const res1 = await fetchPdfFileByName(
+          response.data.document_name,
+          token
+        );
+        blobs.push(res1); // push raw Blob, not URL
+      }
+
+      // Merge into single PDF
+      const mergedBlob = await mergePdfs(blobs);
+      const mergedUrl = URL.createObjectURL(mergedBlob);
+
+      setPdfUrl(mergedUrl);      // show merged PDF in viewer
+      setAllOrderPdf([mergedUrl]); // optional, if you want to keep track
+       setActiveDoc("allOrderPdf");
+    } catch (err) {
+      console.error("Failed to open PDF(s)", err);
+    }
+  }}
+>
+  View All Orders
+</Button>
+
+
         </Col>
         <Col xs="auto">
-          <Button color="success" size="sm">
+          <Button
+            color="success"
+            size="sm"
+            onClick={async () => {
+              try {
+                //  Pass fdId and token dynamically
+                const { data, filename } = await downloadCaseFile(fdId, token);
+                
+                console.log("filename"+ filename)
+                //  Convert Blob to file download
+                const fileUrl = window.URL.createObjectURL(
+                  new Blob([data], { type: "application/pdf" })
+                );
+                const link = document.createElement("a");
+                link.href = fileUrl;
+                link.download = filename || `casefile-${fdId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                //  Free memory after download
+                window.URL.revokeObjectURL(fileUrl);
+              } catch (err) {
+                console.error("Download failed:", err);
+                alert("Failed to download file");
+              }
+            }}
+          >
             Download File
           </Button>
         </Col>
       </Row>
 
       {/* Accordion Section */}
-        <div className="mt-4" style={{ width: "100%", maxWidth: "1000px" }}>
+      <div className="mt-4" style={{ width: "100%", maxWidth: "1000px" }}>
         <Accordion
           open={openItems}
           toggle={toggle}
@@ -149,16 +224,19 @@ const TreeView =({ setPdfUrl }) => {
                                   textDecoration: "underline",
                                   cursor: "pointer",
                                 }}
-                               onClick={async () => {
-  try {
-    const blob = await showStampReportPdfFile(item.ordSdMid, token);
-    const url = URL.createObjectURL(blob);
-    setPdfUrl(url);   // ⬅ single setter now
-  } catch (err) {
-    console.error("Failed to open PDF", err);
-  }
-}}
-
+                                onClick={async () => {
+                                  try {
+                                    const blob = await showStampReportPdfFile(
+                                      item.ordSdMid,
+                                      token
+                                    );
+                                    const url = URL.createObjectURL(blob);
+                                    setPdfUrl(url); // ⬅ single setter now
+                                     setActiveDoc("pdfUrl");
+                                  } catch (err) {
+                                    console.error("Failed to open PDF", err);
+                                  }
+                                }}
                               >
                                 {item.ord_type || "St. Rep."}{" "}
                                 {item.ord_created
@@ -179,7 +257,7 @@ const TreeView =({ setPdfUrl }) => {
                     {/* Order Report (Elegalix API) */}
                     {elegalixReport?.length > 0 &&
                       elegalixReport.map((item, index) => {
-                          console.log("Rendering row:", index, item);
+                        console.log("Rendering row:", index, item);
                         let rowClass = "table-warning"; // default
                         if (
                           item.documentType?.description
@@ -208,17 +286,23 @@ const TreeView =({ setPdfUrl }) => {
                                   textDecoration: "underline",
                                   cursor: "pointer",
                                 }}
-                               onClick={async () => {
-  try {
-    const response = await getOrderFromElegalix(item.judgmentID, token);
-    const res1 = await fetchPdfFileByName(response.data.document_name, token);
-    const fileURL = URL.createObjectURL(res1);
-    setPdfUrl(fileURL);   // ⬅ single setter now
-  } catch (err) {
-    console.error("Failed to open PDF", err);
-  }
-}}
-
+                                onClick={async () => {
+                                  try {
+                                    const response = await getOrderFromElegalix(
+                                      item.judgmentID,
+                                      token
+                                    );
+                                    const res1 = await fetchPdfFileByName(
+                                      response.data.document_name,
+                                      token
+                                    );
+                                    const fileURL = URL.createObjectURL(res1);
+                                    setPdfUrl(fileURL); // ⬅ single setter now
+                                     setActiveDoc("pdfUrl");
+                                  } catch (err) {
+                                    console.error("Failed to open PDF", err);
+                                  }
+                                }}
                               >
                                 {item.documentType?.description || "ORD"}{" "}
                                 {item.sd_submitted_date

@@ -17,14 +17,17 @@ import {
   searchDocuments,
 } from "../../services/caseTypeService";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { useSearchResult } from "../../context/CaseFileDetailsSearchContextProvider";
+// import { useNavigate } from "react-router-dom";
+// import { useSearchResult } from "../../context/CaseFileDetailsSearchContextProvider";
 // import { fetchDocumentFileById } from "../../services/PdfFileService";
 
 const CaseFileView = () => {
-  const { setSearchResult } = useSearchResult();
 
-  const navigate = useNavigate();
+//    Fullstack Java Developer Vijay Chaurasiya
+
+  // const { setSearchResult } = useSearchResult();
+
+  // const navigate = useNavigate();
 
   const { token } = useAuth();
   const userRole = "DMSAdmin";

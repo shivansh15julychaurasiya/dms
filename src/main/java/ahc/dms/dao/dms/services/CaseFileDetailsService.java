@@ -21,8 +21,8 @@ public class CaseFileDetailsService {
 
   
 
-    public Optional<CaseFileDetails> getCaseFileDetail(Long docId) {
-        return repository.findById(docId);
+    public CaseFileDetails getCaseFileDetail(Long docId) {
+        return repository.findById(docId).orElse(null);
     }
     
     public CaseFileDetails getCaseFileDetails(Long fdId) {

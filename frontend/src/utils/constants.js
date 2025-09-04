@@ -55,6 +55,7 @@ export const CASE_FILE_API_PATHS = {
   GET_ORDERS_FROM_ELEGALIX: "/api/casesfiles/getOrdersFromElegalix",
    SHOW_FILE: (id) => `/api/casesfiles/showfile/${id}`,
     GET_ORDER_FROM_ELEGALIX: (id) => `/api/casesfiles/getOrderFromElegalix/${id}`,
+     DOWNLOAD_FILE: (id) => `/api/casesfiles/downloadfile/${id}`
 };
 
 

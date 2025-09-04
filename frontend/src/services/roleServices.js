@@ -4,6 +4,9 @@ import { axiosInstance } from './userService';  // Correctly import axiosInstanc
 
 // Fetch all roles
 export const fetchRoles = async ( setRoles, token) => {
+
+//    Fullstack Java Developer Vijay Chaurasiya
+
   try {
     const res = await axiosInstance.get(ROLE_API_PATHS.ROLES, {
      
@@ -104,6 +107,7 @@ export const createRole = async (newRole, token) => {
     );
     return response.data; // return the API response
   } catch (error) {
+    console.log(error);
     // Rethrow for the calling function to handle the error
   }
 };

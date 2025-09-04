@@ -1,13 +1,16 @@
 import { axiosInstance } from './userService';  // Correctly import axiosInstance
 import {CASE_TYPE_API_PATHS, COURT_MASTER,} from "../utils/constants"
 import { CAUSE_LIST_API_PATHS, CASE_FILE_API_PATHS } from '../utils/constants';
-import { showAlert } from "../utils/helpers";
+// import { showAlert } from "../utils/helpers";
 
 // case types services
 
 //  GET ALL CASE TYPES
 
 export const fetchCaseTypes = async (token) => {
+
+//    Fullstack Java Developer Vijay Chaurasiya
+
   try {
     console.log(token)
     const response = await axiosInstance.get(CASE_TYPE_API_PATHS.CASE_TYPES, {
@@ -188,6 +191,31 @@ export const getOrderFromElegalix = async (id, token) => {
     throw error;
   }
 };
+
+// Download file Pdf 
+export const downloadCaseFile = async (id, token) => {
+  const response = await axiosInstance.get(
+    CASE_FILE_API_PATHS.DOWNLOAD_FILE(id),
+    {
+      responseType: "blob",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+  let filename = `casefile-${id}.zip`; // fallback
+  const disposition = response.headers["content-disposition"];
+  console.log("Content-Disposition:", disposition);
+  console.log("All headers:", response.headers);
+
+
+  if (disposition && disposition.includes("filename=")) {
+    filename = disposition.split("filename=")[1].trim().replace(/['"]/g, "");
+  }
+
+  console.log("Extracted filename:", filename);
+  return { data: response.data, filename };
+};
+
 
 
 
