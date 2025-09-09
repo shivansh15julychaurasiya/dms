@@ -32,6 +32,7 @@ import EcourtDashboard from "./components/dashboard/EcourtDashboard";
 import { CaseFileDetailsSearchContextProvider } from './context/CaseFileDetailsSearchContextProvider';
 
 import CaseFileViewer from "./components/pdf/CaseFileViewer"
+import ShowFileViewer from "./components/pdf/ShowFileViewer";
 
 
 export default function App() {
@@ -187,6 +188,7 @@ export default function App() {
               }
             />
           </Route>
+          <Route  path="/view" element={<ShowFileViewer/>} />
 
           {/* <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} /> */}
 

@@ -26,7 +26,12 @@ import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { PDFDocument } from "pdf-lib";
 
-const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
+const TreeView = ({
+  setPdfUrl,
+  setAllOrderPdf,
+  setActiveDoc,
+ 
+}) => {
   const [searchParams] = useSearchParams();
   const fdId = searchParams.get("id");
 
@@ -46,7 +51,7 @@ const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
       setOpenItems(id);
     }
   };
-  const urlBase = "localost:8081/dms/";
+  // const urlBase = "localost:8081/dms/";
 
   // 1 Fetch Stamp Report + Case File details
   useEffect(() => {
@@ -91,52 +96,56 @@ const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
       {/* Action Buttons */}
       <Row className="mb-3 align-items-center">
         <Col xs="auto">
-<Button
-  color="primary"
-  size="sm"
-  onClick={async () => {
-    const mergePdfs = async (pdfBlobs) => {
-      const mergedPdf = await PDFDocument.create();
+          <Button
+            color="primary"
+            size="sm"
+            onClick={async () => {
+              const mergePdfs = async (pdfBlobs) => {
+                const mergedPdf = await PDFDocument.create();
 
-      for (const blob of pdfBlobs) {
-        const pdfBytes = await blob.arrayBuffer();
-        const pdf = await PDFDocument.load(pdfBytes);
-        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        copiedPages.forEach((page) => mergedPdf.addPage(page));
-      }
+                for (const blob of pdfBlobs) {
+                  const pdfBytes = await blob.arrayBuffer();
+                  const pdf = await PDFDocument.load(pdfBytes);
+                  const copiedPages = await mergedPdf.copyPages(
+                    pdf,
+                    pdf.getPageIndices()
+                  );
+                  copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
 
-      const mergedPdfBytes = await mergedPdf.save();
-      return new Blob([mergedPdfBytes], { type: "application/pdf" });
-    };
+                const mergedPdfBytes = await mergedPdf.save();
+                return new Blob([mergedPdfBytes], { type: "application/pdf" });
+              };
 
-    try {
-      const blobs = [];
+              try {
+                const blobs = [];
 
-      for (const order of elegalixReport) {
-        const response = await getOrderFromElegalix(order.judgmentID, token);
-        const res1 = await fetchPdfFileByName(
-          response.data.document_name,
-          token
-        );
-        blobs.push(res1); // push raw Blob, not URL
-      }
+                for (const order of elegalixReport) {
+                  const response = await getOrderFromElegalix(
+                    order.judgmentID,
+                    token
+                  );
+                  const res1 = await fetchPdfFileByName(
+                    response.data.document_name,
+                    token
+                  );
+                  blobs.push(res1); // push raw Blob, not URL
+                }
 
-      // Merge into single PDF
-      const mergedBlob = await mergePdfs(blobs);
-      const mergedUrl = URL.createObjectURL(mergedBlob);
+                // Merge into single PDF
+                const mergedBlob = await mergePdfs(blobs);
+                const mergedUrl = URL.createObjectURL(mergedBlob);
 
-      setPdfUrl(mergedUrl);      // show merged PDF in viewer
-      setAllOrderPdf([mergedUrl]); // optional, if you want to keep track
-       setActiveDoc("allOrderPdf");
-    } catch (err) {
-      console.error("Failed to open PDF(s)", err);
-    }
-  }}
->
-  View All Orders
-</Button>
-
-
+                setPdfUrl(mergedUrl); // show merged PDF in viewer
+                setAllOrderPdf([mergedUrl]); // optional, if you want to keep track
+                setActiveDoc("allOrderPdf");
+              } catch (err) {
+                console.error("Failed to open PDF(s)", err);
+              }
+            }}
+          >
+            View All Orders
+          </Button>
         </Col>
         <Col xs="auto">
           <Button
@@ -146,8 +155,8 @@ const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
               try {
                 //  Pass fdId and token dynamically
                 const { data, filename } = await downloadCaseFile(fdId, token);
-                
-                console.log("filename"+ filename)
+
+                console.log("filename" + filename);
                 //  Convert Blob to file download
                 const fileUrl = window.URL.createObjectURL(
                   new Blob([data], { type: "application/pdf" })
@@ -232,7 +241,7 @@ const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
                                     );
                                     const url = URL.createObjectURL(blob);
                                     setPdfUrl(url); // ⬅ single setter now
-                                     setActiveDoc("pdfUrl");
+                                    setActiveDoc("pdfUrl");
                                   } catch (err) {
                                     console.error("Failed to open PDF", err);
                                   }
@@ -298,7 +307,7 @@ const TreeView = ({ setPdfUrl,setAllOrderPdf ,setActiveDoc}) => {
                                     );
                                     const fileURL = URL.createObjectURL(res1);
                                     setPdfUrl(fileURL); // ⬅ single setter now
-                                     setActiveDoc("pdfUrl");
+                                    setActiveDoc("pdfUrl");
                                   } catch (err) {
                                     console.error("Failed to open PDF", err);
                                   }

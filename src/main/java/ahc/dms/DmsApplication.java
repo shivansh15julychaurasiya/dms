@@ -70,7 +70,7 @@ public class DmsApplication extends SpringBootServletInitializer implements Comm
                     //mapper.map(src -> src.getUrId(), UserRoleDto::setUrId);
                     mapper.map(src -> src.getUser().getUserId(), UserRoleDto::setUserId);
                     mapper.map(src -> src.getRole().getRoleId(), UserRoleDto::setRoleId);
-                    //mapper.map(src -> src.isStatus(), UserRoleDto::setStatus);
+                    //mapper.map(src -> src.isStatus(), UserRoleDto::setSptatus);
                 });
 
         // Validate the configuration
