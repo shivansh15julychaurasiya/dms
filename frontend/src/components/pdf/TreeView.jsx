@@ -30,7 +30,6 @@ const TreeView = ({
   setPdfUrl,
   setAllOrderPdf,
   setActiveDoc,
- 
 }) => {
   const [searchParams] = useSearchParams();
   const fdId = searchParams.get("id");
@@ -182,7 +181,7 @@ const TreeView = ({
       </Row>
 
       {/* Accordion Section */}
-      <div className="mt-4" style={{ width: "100%", maxWidth: "1000px" }}>
+      <div className="mt-2" style={{ width: "100%", maxWidth: "1000px" }}>
         <Accordion
           open={openItems}
           toggle={toggle}

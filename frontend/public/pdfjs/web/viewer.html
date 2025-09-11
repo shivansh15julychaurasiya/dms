@@ -29,12 +29,29 @@ See https://github.com/adobe-type-tools/cmap-resources
 
 <!-- This snippet is used in production (included from viewer.html) -->
 <link rel="resource" type="application/l10n" href="locale/locale.json">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <script src="../build/pdf.mjs" type="module"></script>
 
     <link rel="stylesheet" href="viewer.css">
 
   <script src="viewer.mjs" type="module"></script>
+
+  <style>
+  #sidebarToggle {
+      position: absolute;
+      left: -9999px;
+  }
+</style>
+
+ <style>
+  #sidebarToggle {
+    display: none !important;
+}
+</style>
+
+
   </head>
+ 
 
   <body tabindex="0">
     <div id="outerContainer">
@@ -87,7 +104,7 @@ See https://github.com/adobe-type-tools/cmap-resources
           <div id="toolbarContainer">
             <div id="toolbarViewer" class="toolbarHorizontalGroup">
               <div id="toolbarViewerLeft" class="toolbarHorizontalGroup">
-                <button id="sidebarToggleButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-toggle-sidebar-button" aria-expanded="false" aria-haspopup="true" aria-controls="sidebarContainer">
+                <button id="sidebarToggleButton" class="toolbarButton hidden" type="button" tabindex="0" data-l10n-id="pdfjs-toggle-sidebar-button" aria-expanded="false" aria-haspopup="true" aria-controls="sidebarContainer">
                   <span data-l10n-id="pdfjs-toggle-sidebar-button-label"></span>
                 </button>
                 <div class="toolbarButtonSpacer"></div>
@@ -721,7 +738,6 @@ See https://github.com/adobe-type-tools/cmap-resources
           </div>
         </div>
       </dialog>
-
       <dialog class="dialog commentManager" id="commentManagerDialog">
         <div class="mainContainer">
           <div id="commentManagerToolbar">
@@ -783,65 +799,23 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     </div> <!-- outerContainer -->
     <div id="printContainer"></div>
-
-
-    <script>
-  (function () {
-    // Wait until PDFViewerApplication exists and then open bytes
-    function openWhenReady(bytes) {
-      function tryOpen() {
-        if (window.PDFViewerApplication && typeof window.PDFViewerApplication.open === "function") {
-          // PDFViewerApplication.open accepts Uint8Array / ArrayBuffer
-          try {
-            window.PDFViewerApplication.open(bytes);
-          } catch (e) {
-            console.error("PDFViewerApplication.open error:", e);
-          }
-        } else {
-          setTimeout(tryOpen, 100);
-        }
-      }
-      tryOpen();
-    }
-
-    // Convert base64 data URL to Uint8Array
-    function base64DataUrlToUint8Array(dataUrl) {
-      const base64 = dataUrl.split(",")[1];
-      const binary = atob(base64);
-      const len = binary.length;
-      const u8 = new Uint8Array(len);
-      for (let i = 0; i < len; i++) u8[i] = binary.charCodeAt(i);
-      return u8;
-    }
-
-    window.addEventListener("message", function (event) {
-      // security: optionally check event.origin here
-      try {
-        const msg = event.data;
-        if (!msg || !msg.type) return;
-
-        if (msg.type === "openPdfBytes") {
-          // msg.data will be either an ArrayBuffer (transferred) or a base64 data URL
-          if (msg.data instanceof ArrayBuffer || ArrayBuffer.isView(msg.data)) {
-            // ArrayBuffer or TypedArray
-            const arr = msg.data instanceof ArrayBuffer ? new Uint8Array(msg.data) : new Uint8Array(msg.data.buffer || msg.data);
-            openWhenReady(arr);
-          } else if (typeof msg.data === "string" && msg.data.startsWith("data:application/pdf;base64,")) {
-            const u8 = base64DataUrlToUint8Array(msg.data);
-            openWhenReady(u8);
-          } else {
-            console.warn("viewer: unsupported data format for openPdfBytes", msg.data);
-          }
-        }
-      } catch (err) {
-        console.error("viewer message handler error:", err);
-      }
-    }, false);
-
-    // Optional: notify parent that viewer loaded
-    window.parent && window.parent.postMessage({ type: "pdfjsViewerLoaded" }, "*");
-  })();
+    
+ <script>
+  const thumbsButton = document.getElementById("viewThumbnail");
+  if (thumbsButton) thumbsButton.style.display = "none";
 </script>
+
+<script>
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "page" && typeof event.data.pageNumber === "number") {
+    PDFViewerApplication.page = event.data.pageNumber;
+  }
+});
+
+
+
+</script>
+
 
 
   </body>

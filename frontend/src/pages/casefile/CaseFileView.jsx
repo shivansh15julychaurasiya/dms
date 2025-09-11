@@ -182,7 +182,7 @@ const CaseFileView = () => {
                                     size="sm"
                                      className="me-1"
                                     onClick={() =>
-                                      window.open(`/dms/viewer?id=1`, "_blank")
+                                      window.open(`/dms/view?id=1`, "_blank")
                                     }
                                   >
                                     View

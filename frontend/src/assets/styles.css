@@ -304,6 +304,11 @@ button.py-2.fs-5.rounded-pill:active {
   background-image: none !important; /* remove Bootstrap arrow */
   transform: none !important; /* stop arrow rotation */
 }
+.custom-accordion .accordion-body {
+  max-height: 300px; /* or vh */
+  overflow-y: auto;
+}
+
 
 .custom-accordion .accordion-button:not(.collapsed)::after {
   content: '–'; /* minus sign */
@@ -332,3 +337,18 @@ button.py-2.fs-5.rounded-pill:active {
     pointer-events: auto !important;
 }
 
+/* OUTLINE CSS / BOOKMARK */
+
+#outlineView a {
+  color: white;        /* text color */
+  display: block;      /* full width click area */
+  text-decoration: none; 
+  padding: 4px 8px;    /* spacing for better hover */
+  border-radius: 4px;  /* optional rounded effect */
+}
+
+#outlineView a:hover {
+  background-color: #495057; /* dark gray background on hover */
+  color: #f8f9fa;            /* optional lighter text on hover */
+  cursor: pointer;
+}
