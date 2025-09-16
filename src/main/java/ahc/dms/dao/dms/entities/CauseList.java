@@ -85,6 +85,88 @@ public class CauseList {
     @Column(name = "cl_sequence")
     private Integer cl_sequence;
 
+    @Column(name = "cl_bench_number")
+    private Integer cl_bench_number;
+
+    @Column(name = "cl_ecourt_status")
+    private Boolean cl_ecourt_status;
+
+    @Column(name = "cl_judge_name")
+    private String cl_judge_name;
+
+    @Column(name = "cl_notice_no")
+    private String cl_notice_no;
+
+    @Column(name = "cl_district_name")
+    private String cl_district_name;
+
+    @Column(name = "cl_injail_date")
+    private String cl_injail_date;
+
+    @Column(name = "cl_crime_no")
+    private String cl_crime_no;
+
+    @Column(name = "cl_crime_year")
+    private String cl_crime_year;
+
+
+    @Column(name = "cl_crime_dist")
+    private String cl_crime_dist;
+
+    @Column(name = "cl_crime_ps")
+    private String cl_crime_ps;
+
+    @Column(name = "cl_iscrime")
+    private String cl_iscrime;
+
+    @Column(name = "cl_short_order")
+    private String cl_short_order;
+
+
+
+    @Column(name = "cl_app_last_date")
+    private String cl_app_last_date;
+
+    @Column(name = "cl_applied_by")
+    private String cl_applied_by;
+
+    @Column(name = "cl_next_list")
+    private String cl_next_list;
+
+
+    @Column(name = "cl_lcr_no")
+    private String cl_lcr_no;
+
+    @Column(name = "cl_lcr_year")
+    private String cl_lcr_year;
+
+    @Column(name = "cl_ccms_id")
+    private Long cl_ccms_id;
+
+    @Column(name = "cl_ps_code")
+    private String cl_ps_code;
+
+    @Column(name = "cl_isapporder")
+    private String cl_isapporder;
+
+    @Column(name = "cl_file_source")
+    private String cl_file_source;
+
+    @Column(name = "cl_bunch_name")
+    private String cl_bunch_name;
+
+    @Column(name = "cl_case_stage")
+    private String cl_case_stage;
+
+    @Column(name = "cl_islcr")
+    private String cl_islcr;
+
+    @Column(name = "cl_lcase_name")
+    private String cl_lcase_name;
+
+
+
+
     @Column(name = "cl_rec_status")
     private Integer cl_rec_status;
 
@@ -102,6 +184,9 @@ public class CauseList {
 
     @Transient
     private boolean checked;
+
+    @Transient
+    private String cisCaseNo;
 
     @Transient
     private Integer count;

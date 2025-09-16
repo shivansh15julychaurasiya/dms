@@ -74,7 +74,7 @@ const CauseListFile = () => {
       console.log("Date:", selectedDate.toISOString().split("T")[0]);
 
       setCauseListData(data);
-      console.log(causeListTypes);
+      console.log(causeListData);
     } catch (error) {
       console.log("error" + error);
     }
@@ -204,6 +204,7 @@ const CauseListFile = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {console.log(causeListData)}
                       {causeListData.map((causeList, index) => (
                         <tr key={causeList.cl_id}>
                           <td>{index + 1}</td>

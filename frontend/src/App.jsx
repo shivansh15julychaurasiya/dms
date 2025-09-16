@@ -29,10 +29,11 @@ import CauseListFile from "./pages/casefile/CauseListFile";
 import ManageBenches from "./pages/court/ManageBenches";
 import EcoutDashboard from "./components/dashboard/EcourtDashboard";
 import EcourtDashboard from "./components/dashboard/EcourtDashboard";
-import SearchByCaseDetail from "./pages/search/SearchByCaseDetail";
+import { CaseFileDetailsSearchContextProvider } from './context/CaseFileDetailsSearchContextProvider';
 
-import CaseFileViewer from "./components/pdf/CaseFileViewer";
+import CaseFileViewer from "./components/pdf/CaseFileViewer"
 import CauseList from "./pages/causelist/CauseList";
+
 
 export default function App() {
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <CaseFileDetailsSearchContextProvider>
       <ToastContainer
         position="top-center" // Position on screen
         autoClose={500} // Auto close after 3 seconds
@@ -63,6 +65,7 @@ export default function App() {
       <BrowserRouter basename="/dms">
         <Routes>
 
+  
           <Route path="/viewer" element={<CaseFileViewer/>}/>
 
 
@@ -165,9 +168,6 @@ export default function App() {
               }
             />
 
-           
-
-
             <Route
               path="uploadmedia"
               element={
@@ -185,26 +185,18 @@ export default function App() {
               }
             />
           </Route>
-          
-           <Route
-              path="/search/searhbycasedetail"
-              element={
-                <ProtectedRoute>
-                  <SearchByCaseDetail />
-                </ProtectedRoute>
-              }
-            />
-            {/* <Route path="/causelist" element={<CauseList/>} /> */}
-            
-            <Route path="/cause-lists/getCauseList/:listTypeId" element={<CauseList/>} />
 
-          <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+          <Route path="/cause-lists/getCauseList/:listTypeId" element={<CauseList/>} />
 
-          
+          {/* <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} />
+
+
+          <Route path="/dms/view-pdf/:fileName" element={<PdfViewer />} /> */}
 
           {/* <Route path="/home/unauthorize" element={<UnAuthorize />} /> */}
         </Routes>
       </BrowserRouter>
+      </CaseFileDetailsSearchContextProvider>
     </AuthProvider>
   );
 }

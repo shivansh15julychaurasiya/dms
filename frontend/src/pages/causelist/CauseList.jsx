@@ -28,7 +28,7 @@ const CauseList = () => {
     //     },
     //     // Add more entries as needed
     // ];
-
+    const seenSerials = new Set();
     const { token } = useAuth();
 
     const [causeList, setCauseList] = useState([]);
@@ -40,11 +40,21 @@ const CauseList = () => {
                 .then((res) => setCauseList(res))
                 .catch((error) => console.log(error))
         }
-    }, []);
+    }, [listTypeId]);
+
     useEffect(() => {
         console.log(causeList)
-    }, [])
-
+    }, [])   
+    
+    const groupedData = causeList.reduce((acc, item) => {
+    const key = item.cl_serial_no;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {});
+  
     return (
         <div className="d-flex">
             <Sidebar />
@@ -56,9 +66,9 @@ const CauseList = () => {
                     <Card>
                         {/* <h6 className="p-2 bg-dark text-light text-uppercase">Fresh Case</h6> */}
                         <CardHeader className="d-flex justify-content-between align-items-center bg-dark text-uppercase">
-                            <h5 className="mb-0 text-light">Fresh Case</h5>
+                            <h5 className="mb-0 text-light">{causeList[0]?.clType?.clt_description}</h5>
                         </CardHeader>
-                        <Table bordered hover responsive style={{ display: 'block', textAlign: 'center' }}>
+                        <Table bordered hover responsive style={{width:'100%', textAlign: 'center' }}>
                             <thead >
                                 <tr>
                                     <th>Sr. No</th>
@@ -70,13 +80,16 @@ const CauseList = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {causeList.map((causeList, index) => (
+                                {/* {causeList.map((causeList, index) => ( */}
+                                {Object.entries(groupedData).map(([serialNo, cases]) => 
+                                cases.map((causeList, index) => ((
                                     <tr key={causeList.cl_id}>
-                                        <td>{index + 1}</td>
+                                        {/* <td>{index + 1}</td> */}
+                                        <td>{index === 0 ? serialNo : 'with'}</td>
                                         {/* <td onClick={() => handleClick(causeList)}>{causeList.caseType.label}<br/>{causeList.cl_case_no}/{causeList.cl_case_year}</td>  */}
                                         <td>
                                             <a
-                                                href={`/case/${causeList.cl_case_no}/${causeList.cl_case_year}`}
+                                                href={`/case/${causeList.cl_fd_mid}`}
                                                 style={{ textDecoration: 'none', color: 'inherit' }}
                                             >
                                                 {causeList.caseType.label}
@@ -89,9 +102,12 @@ const CauseList = () => {
                                         <td>{causeList.cl_petitioner_council}</td>
 
                                         <td>{causeList.cl_respondent_council}</td>
+                                        <td><a href={`http://192.168.0.97/status/view-case-detail/${causeList.cl_ccms_id}`}>Status</a></td>                                       
 
-                                        <td>{causeList.cl_rec_status}</td>
+                                        {/* <td>{causeList.cl_rec_status}</td> */}
                                     </tr>
+                                     ))
+
                                 ))}
                             </tbody>
                         </Table>

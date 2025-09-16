@@ -105,9 +105,9 @@ public class SubDocument {
     @JoinColumn(name = "sd_if_mid",insertable = false, updatable = false)
     private IndexField indexField;
 
-//    @OneToOne(cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "sd_document_id",insertable = false, updatable = false)
-//    private ApplicationTypes documentType;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "sd_document_id",insertable = false, updatable = false)
+    private ApplicationType documentType;
 
 
     @Transient
@@ -115,6 +115,13 @@ public class SubDocument {
 
     @Transient
     private boolean checkBoxValue;
+
+
+    
+    
+    
+    
+    
 
 
 }

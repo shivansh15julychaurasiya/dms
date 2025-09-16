@@ -131,8 +131,6 @@ public class CauseListController {
 
         causeList1= causeListService.getCauseList(causeList);
 
-
-
       //  System.out.println("userRole==="+userRoles);
         System.out.println("userdetails-----------"+username);
         System.out.println("UserName "+userDetails);

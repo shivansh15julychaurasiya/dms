@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "application_types")
-@Data
+
 public class ApplicationType {
     @Id
     @Column(name = "at_id")
@@ -37,4 +37,76 @@ public class ApplicationType {
 
     @Column(name = "at_ald_lko_mapping")
     private Integer mapping;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getParent() {
+        return parent;
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
+
+    public Integer getRecStatus() {
+        return recStatus;
+    }
+
+    public void setRecStatus(Integer recStatus) {
+        this.recStatus = recStatus;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public Integer getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(Integer mapping) {
+        this.mapping = mapping;
+    }
 }
