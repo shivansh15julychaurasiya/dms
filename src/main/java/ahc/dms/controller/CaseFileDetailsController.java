@@ -73,7 +73,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CaseFileDetailsController {
 	
-//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 
 
 	private final CaseFileDetailsService service;
@@ -137,7 +137,7 @@ public class CaseFileDetailsController {
 			User user = userRepository.findByUsername(username)
 					.orElseThrow(() -> new RuntimeException("User not found"));
 
-			Long userId = user.getUserId();
+			Long userId = user.getUmId();
 
 			// Fetch subdocument and case details
 			SubDocument subDocument = subDocumentService.getPetitionSubDocument(docId, 1).orElseThrow(
@@ -201,7 +201,7 @@ public class CaseFileDetailsController {
 				() -> new ResourceNotFoundException("SubDocument not found with id: " + docId, null, null));
 
 		CaseFileDetails caseFileDetails = caseFileDetailsService.getCaseFileDetail(docId);
-		System.out.println(caseFileDetails);
+		System.out.println("------------------------"+caseFileDetails);
 		// Get REPOSITORYPATH from lookup
 		Lookup lookupRepo = lookupService.getLookUpObject("REPOSITORYPATH");
 		if (lookupRepo == null) {
@@ -276,6 +276,7 @@ public class CaseFileDetailsController {
 
 		CaseFileDetails caseFileDetail = caseFileDetailsService.getCaseFileDetails(subDocument.getSd_fd_mid());
 		Lookup lookupRepo = lookupService.getLookUpObject("REPOSITORYPATH");
+		
 
 		String srcPath = lookupRepo.getLongname() + File.separator + caseFileDetail.getCaseType().getLabel()
 				+ File.separator + subDocument.getIndexField().getName() + File.separator
@@ -383,10 +384,14 @@ public class CaseFileDetailsController {
 
 	@GetMapping("/downloadfile/{id}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long drId) {
+		
+		System.out.println("***********Hello  Vijay entered in downloadfile method and getting id="+drId);
+		
 		try {
 			DownloadReport report = downloadService.getById(drId);
-
-			if (report.getDrRecStatus() != 1) {
+			System.out.println("----------------Download report="+report);
+			System.out.println("----------------getDRRectSTatus="+report.getDrRecStatus());
+			if (report.getDrRecStatus() != 2) {
 				return ResponseEntity.badRequest().build();
 			}
 
@@ -396,6 +401,9 @@ public class CaseFileDetailsController {
 			Lookup lookupDownload = lookupService.getLookUpObject("DOWNLOADPATH");
 			CaseFileDetails caseFileDetail = caseFileDetailsService.getCaseFileDetail(report.getDrFdMid());
 			String basePath = lookupRepo.getLongname() + File.separator + caseFileDetail.getCaseType().getLabel();
+			
+			System.out.println("-------case no="+caseFileDetail.getFdCaseNo());
+			
 			String downloadFolder = lookupDownload.getLongname() + File.separator
 					+ caseFileDetail.getFdDocumentName();
 

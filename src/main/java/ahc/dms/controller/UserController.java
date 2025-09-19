@@ -29,40 +29,41 @@ public class UserController {
     @Autowired
     private RequestLogService requestLogService;
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<UserDto>> createUser(
-            HttpServletRequest httpRequest,
-            @Valid @RequestBody UserDto userDto
-    ){
-        requestLogService.logRequest(httpRequest);
-        UserDto createdUserDto = userService.createUser(userDto);
-        return ResponseEntity.ok(ResponseUtil.success(createdUserDto, "user created"));
+//    @PostMapping("/create")
+//    public ResponseEntity<ApiResponse<UserDto>> createUser(
+//            HttpServletRequest httpRequest,
+//            @Valid @RequestBody UserDto userDto
+//    ){
+//        requestLogService.logRequest(httpRequest);
+//        UserDto createdUserDto = userService.createUser(userDto);
+//        return ResponseEntity.ok(ResponseUtil.success(createdUserDto, "user created"));
+//
+//    }
 
-    }
+//    @PutMapping("/{userId}")
+//    public ResponseEntity<ApiResponse<UserDto>> updateUser(
+//            HttpServletRequest httpRequest,
+//            @Valid @RequestBody UserDto userDto,
+//            @PathVariable("userId") Long userId)
+//    {
+//        requestLogService.logRequest(httpRequest);
+//        UserDto updatedUser = userService.updateUser(userDto, userId);
+//        return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
+//    }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> updateUser(
-            HttpServletRequest httpRequest,
-            @Valid @RequestBody UserDto userDto,
-            @PathVariable("userId") Long userId)
-    {
-        requestLogService.logRequest(httpRequest);
-        UserDto updatedUser = userService.updateUser(userDto, userId);
-        return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('DMSAdmin')")
     @GetMapping("/deactivate/{username}")
     public ResponseEntity<ApiResponse<?>> deactivateUser(
             @PathVariable("username") String username,
             HttpServletRequest httpRequest
     ){
         requestLogService.logRequest(httpRequest);
+     
         userService.deactivateUser(username);
         return ResponseEntity.ok(ResponseUtil.success(null, "user deactivated"));
     }
-
-    @PreAuthorize("hasRole('ADMIN')")
+//
+    @PreAuthorize("hasRole('DMSAdmin')")
     @GetMapping("/activate/{username}")
     public ResponseEntity<ApiResponse<?>> activateUser(
             @PathVariable("username") String username,
@@ -85,10 +86,10 @@ public ResponseEntity<ApiResponse<PageResponse<UserDto>>> getAllUsers(
     return ResponseEntity.ok(ResponseUtil.success(users, "user fetched"));
 }
 
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserDto>> getUserProfile(@PathVariable("userId") Long userId){
-        return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
-    }
+//
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<ApiResponse<UserDto>> getUserProfile(@PathVariable("userId") Long userId){
+//        return ResponseEntity.ok(ResponseUtil.success(userService.getUserById(userId), "user fetched"));
+//    }
 
 }

@@ -10,11 +10,19 @@ import lombok.Data;
 @Data
 public class CauseListType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Id
+	@SequenceGenerator(
+	    name = "cause_list_type_seq",            // internal Hibernate name
+	    sequenceName = "cause_list_type_SEQ",    // actual DB sequence name
+	    allocationSize = 1                       // must match DB sequence increment
+	)
+	@GeneratedValue(
+	    strategy = GenerationType.SEQUENCE,
+	    generator = "cause_list_type_seq"
+	)
+	@Column(name = "clt_id")
+	private Long clt_id;
 
-    @Column(name = "clt_id")
-    private Long clt_id;
 
     @Column(name = "clt_name")
     private String clt_name;

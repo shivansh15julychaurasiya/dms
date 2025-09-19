@@ -5,9 +5,7 @@ import ahc.dms.payload.response.ApiResponse;
 import java.util.Map;
 
 public class ResponseUtil {
-
-//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
-
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 	
     public static <T> ApiResponse<T> success(T data, String message) {
         ApiResponse<T> response = new ApiResponse<>();

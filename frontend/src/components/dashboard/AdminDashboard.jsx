@@ -101,13 +101,13 @@ const AdminDashboard = () => {
               </h3> */}
             </Col>
           </Row>
-          <Row className="mb-4">
+          {/* <Row className="mb-4">
             <Col xs="12">
               <div className="shadow rounded p-3 bg-white">
                 <WidgetsDropdown />
               </div>
             </Col>
-          </Row>
+          </Row> */}
 
           <Nav tabs>
             {/* <NavItem>

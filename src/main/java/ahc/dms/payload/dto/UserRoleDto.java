@@ -16,22 +16,25 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserRoleDto {
 
-    @JsonIgnore
-    private Long version;
     @JsonProperty("ur_id")
     private Long urId;
+
     @JsonProperty("user_id")
     private Long userId;
+
     @JsonProperty("role_id")
-    private Integer roleId;
+    private Long roleId; // use Long to match Lookup ID
+
     @JsonProperty("status")
-    private Boolean status;
+    private Boolean status; // maps to ur_rec_status: true = active, false = inactive
 
     // audit fields
     @JsonProperty("created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+
     @JsonProperty("updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
+
 }

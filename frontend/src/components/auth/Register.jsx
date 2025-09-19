@@ -227,8 +227,8 @@ const Register = ({ user, setEditingUser, refreshUsers }) => {
                       >
                         <option value="">Select a role</option>
                         {roles.map((role) => (
-                          <option key={role.role_id} value={role.role_id}>
-                            {role.role_name}
+                          <option key={role.lk_id} value={role.lk_id}>
+                            {role.lk_longname}
                           </option>
                         ))}
                       </Input>

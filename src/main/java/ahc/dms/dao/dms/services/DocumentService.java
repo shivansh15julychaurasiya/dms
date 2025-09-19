@@ -22,7 +22,7 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
-    // ✅ Upload Document
+    //  Upload Document
     public Documents uploadDocument(MultipartFile file,
                                     String title,
                                     String fileType,
@@ -53,7 +53,7 @@ public class DocumentService {
         return documentRepository.save(doc);
     }
 
-    // ✅ Search Documents by caseTypeLabel, caseNo, caseYear
+    //  Search Documents by caseTypeLabel, caseNo, caseYear
     public List<Documents> searchDocuments(String caseTypeLabel, String caseNo, String caseYear) {
         System.out.println("Searching for: " + caseTypeLabel + ", " + caseNo + ", " + caseYear);
         return documentRepository.searchDocuments(caseTypeLabel, caseNo, caseYear);

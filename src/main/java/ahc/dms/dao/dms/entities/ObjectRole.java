@@ -22,27 +22,22 @@ public class ObjectRole {
             allocationSize = 1 // Optional: 1 means no batch caching
     )
     private Long orId;
+
     @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
     private Boolean status;
 
     // MAPPING TO OBJECT-MASTER
-    @ManyToOne(
-            optional = false,
-            fetch = FetchType.EAGER
-    )
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "om_id")
     private ObjectMaster objectMaster;
 
-    // MAPPING TO ROLES
-    @ManyToOne(
-            optional = false,
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "role_id")
-    private Role role;
+    // MAPPING TO LOOKUP (instead of Role)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", referencedColumnName = "lk_id")
+    private Lookup role;   //  replaced Role with Lookup
 
     // CONSTRUCTORS
-    public ObjectRole(ObjectMaster objectMaster, Role role, Boolean status) {
+    public ObjectRole(ObjectMaster objectMaster, Lookup role, Boolean status) {
         this.objectMaster = objectMaster;
         this.role = role;
         this.status = status;

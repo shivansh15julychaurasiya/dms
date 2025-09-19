@@ -238,6 +238,22 @@ button.py-2.fs-5.rounded-pill:active {
   cursor: pointer;
 }
 
+/* Make tabs sticky on scroll */
+/* Assuming your Navbar height is 60px */
+.sticky-tabs-wrapper {
+  position: sticky;
+  top: 60px; /* adjust to your actual navbar height */
+  z-index: 1050;
+}
+
+.sticky-tabs {
+  margin-bottom: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+
+
+
 
 
 

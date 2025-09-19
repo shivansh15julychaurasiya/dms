@@ -28,14 +28,13 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Formik validation schema
-  const validationSchema = Yup.object({
-    loginId: Yup.number()
-      .required("User ID is required")
-      .positive("User ID must be a positive number"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(4, "Password must be at least 6 characters long"),
-  });
+// Formik validation schema
+const validationSchema = Yup.object({
+  loginId: Yup.string()
+    .required("User ID is required"),
+
+});
+
 
   // Formik form handling
   const formik = useFormik({
@@ -51,8 +50,8 @@ const Login = () => {
           values.password
         );
         login({ token, user });
-
-        const roleNames = user.roles.map((role) => role.role_name);
+console.log(user)
+        const roleNames = user.roles.map((role) => role.lk_longname);
         showAlert("Login successful", "success");
         navigate(getRoleRedirectPath(roleNames));
       } catch {
@@ -95,7 +94,7 @@ const Login = () => {
                     User ID:
                   </Label>
                   <Input
-                    type="number"
+                    type="text"
                     id="loginId"
                     name="loginId"
                     value={formik.values.loginId}

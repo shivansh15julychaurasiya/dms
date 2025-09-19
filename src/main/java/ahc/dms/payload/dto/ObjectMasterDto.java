@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ObjectMasterDto {
-
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
     @JsonIgnore
     private Long version;
 

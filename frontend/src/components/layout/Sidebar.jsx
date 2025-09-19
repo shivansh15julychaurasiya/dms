@@ -19,6 +19,8 @@ const Sidebar = ({styles}) => {
   const { role } = useAuth();
   const location = useLocation();
 
+  console.log("getting role="+role);
+
   const toggleSidebar = () => setIsOpen((prev) => !prev);
   const toggleDropdown = (item) =>
     setActiveDropdown((prev) => (prev === item ? "" : item));
@@ -128,7 +130,7 @@ const Sidebar = ({styles}) => {
             {activeDropdown === "Home" && isOpen && (
               <ul className="nav flex-column ms-3">
                 <li className="nav-item">
-                  {role === "ROLE_ADMIN" && (
+                  {role === "DMSAdmin" && (
                     <Link
                       to="/home/dashboard"
                       className={`nav-link px-2 text-light sidebar-hover ${
@@ -164,7 +166,7 @@ const Sidebar = ({styles}) => {
           </li>
 
           {/* Transaction Dropdown */}
-          {role === "ROLE_ADMIN" && (
+          {role === "DMSAdmin" && (
             <li className="nav-item">
               <div className="nav-link d-flex justify-content-between fw-bold align-items-center text-light sidebar-hover">
                 <div
@@ -195,7 +197,7 @@ const Sidebar = ({styles}) => {
                       Upload Document
                     </Link>
                   </li>
-                  {role === "ROLE_ADMIN" && (
+                  {role === "DMSAdmin" && (
                     <li className="nav-item">
                       <Link
                         to="/home/admindashboard"

@@ -22,7 +22,7 @@ export const API_PATHS = {
 
 // Role-related API paths
 export const ROLE_API_PATHS = {
-  ROLES: "/role/",
+  ROLES: "/role/all",
   GET_ROLE: (roleId) => `/role/${roleId}`,
   CREATE_ROLE: "/role/",
   UPDATE_ROLE: (roleId) => `/role/${roleId}/update`,
@@ -62,7 +62,7 @@ export const CASE_FILE_API_PATHS = {
 
 // Role-based routing paths
 export const ROLE_PATHS = {
-  ROLE_ADMIN: "/home/admindashboard",
+  DMSAdmin: "/home/admindashboard",
   ROLE_USER: "/home/userdashboard",
   ROLE_ECOURT: "/home/ecourtdashboard",
 };

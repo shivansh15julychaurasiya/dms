@@ -8,6 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface OtpLogRepository extends JpaRepository<OtpLog, Long> {
+	
+//	  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
+	
     Optional<OtpLog> findByUsernameAndOtpType(String username, String otpType);
     Optional<OtpLog> findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(String username, String otpTypeLogin, String otp);
 }

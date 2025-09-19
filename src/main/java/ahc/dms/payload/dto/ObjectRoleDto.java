@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ObjectRoleDto {
 
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
     @JsonIgnore
     private Long version;
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderReportRepository extends JpaRepository<OrderReport, Long> {
 
-    @Query("SELECT o FROM OrderReport o JOIN FETCH User u ON u.userId = o.ord_created_by WHERE o.ordFdMid = :fdId AND o.ord_rec_status = 1")
+    @Query("SELECT o FROM OrderReport o JOIN FETCH User u ON u.umId = o.ord_created_by WHERE o.ordFdMid = :fdId AND o.ord_rec_status = 1")
     List<OrderReport> findActiveOrderReportsByFdId(@Param("fdId") Long fdId);
     
 //    @Query("SELECT o FROM OrderReport o  WHERE o.ordFdMid = :fdId AND o.ord_rec_status = 1")

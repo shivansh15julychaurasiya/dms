@@ -1,77 +1,79 @@
 package ahc.dms.dao.dms.entities;
 
-import jakarta.persistence.*;
+import java.util.Date;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 
-@Entity
-@Table(
-        name = "user_role",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"})
-)
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "USER_ROLE")
 public class UserRole {
+	
+	@Id
+	@GeneratedValue (strategy = GenerationType.SEQUENCE, generator="user_role_seq")
+	@SequenceGenerator(name="user_role_seq", sequenceName="user_role_seq", allocationSize=1)
+	@Column(name = "ur_id")
+	private Long ur_id;
+	
+	@Column(name = "ur_role_id")
+	private Long ur_role_id;
+	
+	@Column(name = "ur_um_mid")
+	private Long ur_um_mid;
+	
+	@Column(name = "ur_cr_by")
+	private Long ur_cr_by;
 
-    @Version  // ← Optimistic lock column
-    private Long version = 0L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_seq")
-    @SequenceGenerator(
-            name = "user_role_seq",
-            sequenceName = "user_role_sequence", // This is the name of the DB sequence
-            allocationSize = 1 // Optional: 1 means no batch caching
-    )
-    @Column(name = "ur_id")
-    private Long urId;
-
-    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
-    private Boolean status = true;
-
-    @ManyToOne(
-            optional = false,
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne(
-            optional = false,
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    // Audit Fields
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private String createdBy;
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updatedBy;
+	@Column(name = "ur_cr_date")
+	private Date ur_cr_date;
+	
+	@Column(name = "ur_mod_by")
+	private Long ur_mod_by;
+	
+	@Column(name = "ur_mod_date")
+	private Date ur_mod_date;
+	
+	@Column(name = "ur_rec_status")
+	private Integer ur_rec_status;
+	
+	
+	
 
 
-    public UserRole(User user, Role role, boolean status) {
-        this.user = user;
-        this.role = role;
-        this.status = status;
-    }
-    
+//	@OneToOne(cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "ur_um_mid",insertable = false, updatable = false)
+//	private User user;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ur_um_mid", referencedColumnName = "um_id", insertable = false, updatable = false)
+	private User user;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ur_role_id", referencedColumnName = "lk_id", insertable = false, updatable = false)
+	private Lookup role;  // this replaces the old Role entity
+
+	
+	
+	
 }

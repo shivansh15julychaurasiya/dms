@@ -13,6 +13,8 @@ import java.util.Optional;
 
 @Service
 public class OtpLogService {
+	
+//	  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 
     @Autowired
     private OtpLogRepository otpLogRepository;
@@ -31,6 +33,7 @@ public class OtpLogService {
     }
 
     public boolean verifyLoginOtp(String username, String otp) {
+    	System.out.println("**************************************************username and otp"+username+otp);
         return otpLogRepository.findByUsernameAndOtpTypeAndOtpValueAndOtpStatusTrue(username, AppConstants.LOGIN_TOKEN, otp).isPresent();
     }
 

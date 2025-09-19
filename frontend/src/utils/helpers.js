@@ -7,9 +7,10 @@ import axios from "axios";
 // };
 
 // Define role priority (highest first)
-const ROLE_PRIORITY = ["ROLE_ADMIN", "ROLE_USER", "ROLE_ECOURT"];
+const ROLE_PRIORITY = ["DMSAdmin", "ROLE_USER", "ROLE_ECOURT"];
 
 export const getRoleRedirectPath = (roleNames) => {
+  console.log("redirect role="+roleNames)
   for (let role of ROLE_PRIORITY) {
     if (roleNames.includes(role)) {
       return ROLE_PATHS[role];  // return path for the first matched role

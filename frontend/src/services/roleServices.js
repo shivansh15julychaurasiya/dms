@@ -14,8 +14,8 @@ export const fetchRoles = async ( setRoles, token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    setRoles(res.data.data.content);
+console.log(res.data.data)
+    setRoles(res.data.data);
     // console.log(res.data.data.content)
   
   } catch (error) {

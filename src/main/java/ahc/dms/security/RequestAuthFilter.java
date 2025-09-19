@@ -27,7 +27,7 @@ import java.util.Set;
 @Component
 public class RequestAuthFilter extends OncePerRequestFilter {
 
-//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 
 	
     @Autowired
@@ -75,17 +75,22 @@ public class RequestAuthFilter extends OncePerRequestFilter {
         if (objectMaster.isPresent()) {
             logger.info("Object master entity found in database : {}", objectMaster.get().getRequestUri());
             Set<ObjectRole> objectRoles = objectMaster.get().getObjectRoles();
+            objectRoles.forEach(or -> 
+            System.out.println("********************* incoming role=" + or.getRole().getLongname())
+        );
+
             boolean roleMatched = objectRoles
                     .stream()
                     .anyMatch(objectRole -> {
-                        String roleName = objectRole.getRole().getRoleName();
-                        Boolean roleStatus = objectRole.getRole().getStatus();
+                        String roleName = objectRole.getRole().getLongname();
+                        Integer roleStatus = objectRole.getRole().getRecStatus();
                         Boolean objectRoleStatus = objectRole.getStatus();
 
-                        return Boolean.TRUE.equals(roleStatus) &&
-                                Boolean.TRUE.equals(objectRoleStatus) &&
-                                roleName.equalsIgnoreCase(authRole);
+                        return roleStatus != null && roleStatus == 1 &&
+                               Boolean.TRUE.equals(objectRoleStatus) &&
+                               roleName.equalsIgnoreCase(authRole);
                     });
+
 
             if (roleMatched) {
                 logger.info("Auth Role matched");

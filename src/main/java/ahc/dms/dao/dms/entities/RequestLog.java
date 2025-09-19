@@ -19,15 +19,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class RequestLog {
-    @Id
-    @Column(name = "rlog_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rlog_seq")
-    @SequenceGenerator(
-            name = "rlog_seq",
-            sequenceName = "rlog_sequence", // DB sequence name
-            allocationSize = 1
-    )
-    private Long rlogId;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "rlog_id")
+	private Long rlogId;
+
 
     @Column(name = "ip_address")
     private String ipAddress;

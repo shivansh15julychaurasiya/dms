@@ -26,8 +26,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
 
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 	
     @Autowired
     private UserDetailsService userDetailsService;
@@ -82,6 +82,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtHelper.validateToken(token, tokenType, userDetails)) {
+            	
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );

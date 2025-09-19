@@ -13,6 +13,22 @@
  * limitations under the License.
  */
 
+/* CUSTOM CSS IS WRITTEN VIJAY CHAURASIYA */
+
+/* Hide draw, add/edit image, and other annotation tools */
+#editorInk,
+#editorImage,
+/* #editorFreeText, */
+#printButton,
+#downloadButton,
+#editorStamp {
+  display: none !important;
+}
+
+/* CUSTOM CSS ENDS HERE*/
+
+
+
 .messageBar{
   --closing-button-icon:url(images/messageBar_closingButton.svg);
   --message-bar-close-button-color:var(--text-primary-color);
@@ -6150,6 +6166,7 @@ body.wait::before{
 #printButton::before{
   -webkit-mask-image:var(--toolbarButton-print-icon);
           mask-image:var(--toolbarButton-print-icon);
+
 }
 
 #downloadButton::before{

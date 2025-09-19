@@ -1,8 +1,41 @@
 package ahc.dms.controller;
 
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import ahc.dms.config.AppConstants;
-import ahc.dms.dao.dms.services.*;
-import ahc.dms.payload.dto.*;
+import ahc.dms.dao.dms.entities.User;
+import ahc.dms.dao.dms.services.OtpLogService;
+import ahc.dms.dao.dms.services.RequestLogService;
+import ahc.dms.dao.dms.services.RoleService;
+import ahc.dms.dao.dms.services.TokenLogService;
+import ahc.dms.dao.dms.services.UserService;
+import ahc.dms.payload.dto.LookupDto;
+import ahc.dms.payload.dto.OtpLogDto;
+import ahc.dms.payload.dto.ResetPasswordDto;
+import ahc.dms.payload.dto.TokenLogDto;
+import ahc.dms.payload.dto.UserDto;
 import ahc.dms.payload.request.JwtAuthRequest;
 import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.payload.response.JwtAuthResponse;
@@ -10,28 +43,12 @@ import ahc.dms.security.JwtHelper;
 import ahc.dms.utils.OtpHelper;
 import ahc.dms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.Random;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/dms/auth")
 public class AuthController {
 	
-//  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
+//  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 
     @Autowired
     private JwtHelper jwtHelper;
@@ -61,48 +78,52 @@ public class AuthController {
             @RequestBody JwtAuthRequest jwtAuthRequest
     ) {
         requestLogService.logRequest(httpRequest);
+
+        Authentication authentication;
         try {
-            // 1. Authenticate and get the full Authentication object
-            Authentication authentication = this.authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
                             jwtAuthRequest.getUsername(),
                             jwtAuthRequest.getPassword()
-                    ));
-            // 2. MANUALLY set the security context (critical for stateless apps)
+                    )
+            );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (UsernameNotFoundException ex) {
+            return ResponseEntity.ok(ResponseUtil.error("User not found"));
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
         } catch (Exception ex) {
-            if (ex instanceof UsernameNotFoundException) {
-                return ResponseEntity.ok(ResponseUtil.error("User not found"));
-            }
-            else if (ex instanceof BadCredentialsException) {
-                return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
-            }
-            else {
-                return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
-            }
+            return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
         }
-        //returns anonymousUser since session creation policy is stateless
+
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
-        //get only active roles, which are set in user entity
-        Set<RoleDto> activeRoleSet = roleService.getActiveRoles(userDetails);
-        UserDto authUserDto = modelMapper.map(userDetails, UserDto.class);
-        authUserDto.setUserRoles(null);
-        authUserDto.setRoles(activeRoleSet);
 
+        //  Map entity → DTO
+        User userEntity = (User) userDetails;
+        UserDto authUserDto = modelMapper.map(userEntity, UserDto.class);
 
-        String token = this.jwtHelper.generateToken(userDetails, AppConstants.LOGIN_TOKEN);
+        //  Extract active roles manually
+        Set<LookupDto> activeRoles = userEntity.getUserRoles().stream()
+                .filter(ur -> ur.getUr_rec_status() != null && ur.getUr_rec_status() == 1)
+                .map(ur -> {
+                    LookupDto dto = new LookupDto();
+                    dto.setLkId(ur.getRole().getLkId());
+                    dto.setLkLongname(ur.getRole().getSetname());
+                    dto.setLkLongname(ur.getRole().getLongname());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
 
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setToken(token);
-        jwtAuthResponse.setMessage(AppConstants.JWT_CREATED);
-        jwtAuthResponse.setUser(authUserDto);
+        authUserDto.setRoles(activeRoles); // 🔑 now roles won't be null/empty
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        logger.info("Auth Authorities : {}", auth.getAuthorities());
-        logger.info("User Authorities : {}", userDetails.getAuthorities());
-        return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse,AppConstants.JWT_CREATED));
+        //  Generate JWT token
+        String token = jwtHelper.generateToken(userDetails, AppConstants.LOGIN_TOKEN);
 
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse(token, AppConstants.JWT_CREATED, authUserDto);
+
+        return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, AppConstants.JWT_CREATED));
     }
+
 
     @PostMapping("/login-otp")
     public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingOtp(
@@ -153,13 +174,14 @@ public class AuthController {
         logger.info("otpDto : {}", requestOtp);
         String otp = String.valueOf(new Random().nextInt(9000) + 1000);
         UserDto savedUser = userService.getUserByUsername(requestOtp.getUsername());
+        System.out.println("8*****************user phone no="+savedUser);
         logger.info("savedUser : {}", savedUser);
         OtpLogDto otpLog = otpLogService.getOtpLogByUsernameAndOtpType(requestOtp.getUsername(), requestOtp.getOtpType());
         logger.info("otpLog : {}", otpLog);
         otpHelper.sendLoginOtp(savedUser.getPhone(), otp);
         otpLog.setOtpValue(otp);
         otpLog.setUsername(requestOtp.getUsername());
-        otpLog.setPhone(savedUser.getPhone());
+//        otpLog.setPhone(savedUser.);
         otpLog.setOtpType(requestOtp.getOtpType());
         otpLog.setOtpStatus(true);
         otpLog.setOtpExpiry(LocalDateTime.now());
@@ -187,7 +209,7 @@ public class AuthController {
         }
         return ResponseEntity.ok(ResponseUtil.error("Invalid otp"));
     }
-
+//
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/change-password/reset")
     public ResponseEntity<ApiResponse<?>> resetPassword(

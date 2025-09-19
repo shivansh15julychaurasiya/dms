@@ -1,21 +1,23 @@
 package ahc.dms.dao.dms.entities;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "user_master")
@@ -25,122 +27,166 @@ import java.util.stream.Collectors;
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
 
-    @Version  // ← Optimistic lock column
-    private Long version = 0L;
+//	  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
+	
+	
+	@Version
+	private Long version;
 
-    @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(
-            name = "user_seq",
-            sequenceName = "user_sequence", // This is the name of the DB sequence
-            allocationSize = 1 // Optional: 1 means no batch caching
-    )
-    private Long userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_master_seq")
+	@SequenceGenerator(name = "user_master_seq", sequenceName = "user_master_seq", allocationSize = 1)
+	@Column(name = "um_id")
+	private Long umId;
 
-    @Column(name = "username", nullable = false, length=100, unique = true)
-    private String username;
-    @Column(name = "name", nullable = false, length=100)
-    private String name;
-    @Column(name = "email", nullable = false, length=100, unique = true)
-    private String email;
-    @Column(name = "phone", nullable = false, length=100, unique = true)
-    private String phone;
-    @Column(name = "password", nullable = false, length=100)
-    private String password;
-    private String about;
-    @Column(name = "status", nullable = false, columnDefinition = "boolean default true")
-    private Boolean status = true;
+	@Column(name = "um_username", nullable = false, unique = true)
+	private String username;
 
-    // Audit Fields
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private String createdBy;
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updatedBy;
+	@Column(name = "um_password", nullable = false)
+	private String password;
 
-    @OneToMany(
-            mappedBy = "user",
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
-    private Set<UserRole> userRoles = new HashSet<>();
+	@Column(name = "um_last_login")
+	private Date last_login;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+	@CreatedBy
+	@Column(name = "um_cr_by", nullable = false, updatable = false)
+	private Long cr_by;
 
-        // find the active role in user-role as well as in role (master) entities
-        return this.getUserRoles().stream()
-                .filter(userRole -> userRole.getStatus() && userRole.getRole().getStatus())
-                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
-                .collect(Collectors.toList());
-    }
+	@CreatedDate
+	@Column(name = "um_cr_date", nullable = false, updatable = false)
+	private Date cr_date;
 
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
+	@Column(name = "um_mod_by")
+	private Long mod_by;
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
+	@Column(name = "um_mod_date")
+	private Date mod_date;
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
+	@Column(name = "um_fullname")
+	private String um_fullname;
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
+	@Column(name = "um_mobile")
+	private String umMobile;
+	
+	@Column(name = "um_ipaddress")
+	private String um_ipaddress;
 
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
+	@Column(name = "um_pass_validity_date")
+	private Date um_pass_validity_date;
 
+	@Column(name = "um_rec_status", nullable = false)
+	private Integer rec_status = 1;
 
-    /*
-    public void assignNewActiveRole (Role role) {
-        //deactivate all userroles first
-        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
-        //check if user already has given role (just inactive)
-        Optional<UserRole> existingUserRole = this.getUserRoles()
-                .stream()
-                .filter(userRole -> userRole.getRole().equals(role))
-                .findFirst();
+	@Column(name = "um_department_id")
+	private Long um_department_id;
 
-        if (existingUserRole.isPresent()) {
-            //reactivate role mapping
-            existingUserRole.get().setStatus(true);
-        } else {
-            //create new active role
-            UserRole newUserRole = new UserRole(this, role, true);
-            this.getUserRoles().add(newUserRole);
-        }
-    }
+	// Transient / DTO fields
+	@Transient
+	private List<Long> um_ct_id;
 
-    */
+	@Transient
+	private String old_password;
 
-    public void deactivateAllUserRoles(){
-        this.getUserRoles().forEach(userRole -> userRole.setStatus(false));
-    }
+	@Transient
+	private Long um_role_id;
 
-    public Optional<Role> getActiveUserRole() {
-        return this.getUserRoles()
-                .stream()
-                .filter(userRole -> userRole.getStatus())
-                .map(userRole -> userRole.getRole())
-                .findFirst();
-    }
+	@Transient
+	private Integer court_id;
 
+	@Transient
+	private String confirmpassword;
+
+	@Transient
+	private CourtMaster courtMaster;
+
+	// New fields
+	@Column(name = "name", length = 100)
+	private String name;
+
+	@Column(name = "email", length = 100, unique = true)
+	private String email;
+
+	@Column(name = "phone", length = 100, unique = true)
+	private String phone;
+
+	@Column(name = "about")
+	private String about;
+
+	@Column(name = "status", nullable = false, columnDefinition = "boolean default true")
+	private Boolean status = true;
+
+	// Audit fields
+	@CreationTimestamp
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
+
+	@CreatedBy
+	@Column(name = "created_by", updatable = false)
+	private String createdBy;
+
+	@LastModifiedBy
+	@Column(name = "updated_by")
+	private String updatedBy;
+
+	// === Relationships ===
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	private List<UserRole> userRoles = new ArrayList<>();
+
+	// === Security (Spring UserDetails) ===
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		if (this.userRoles == null || this.userRoles.isEmpty()) {
+			System.out.println("********* No roles for user=" + this.username);
+			return Collections.emptyList();
+		}
+
+		return this.userRoles.stream().filter(userRole -> userRole.getUr_rec_status() != null
+				&& userRole.getUr_rec_status() == 1 && userRole.getRole() != null).map(userRole -> {
+					String roleName = userRole.getRole().getLongname();
+					System.out.println(">>> Mapping role to authority=" + roleName);
+					return new SimpleGrantedAuthority(roleName);
+				}).collect(Collectors.toList());
+	}
+
+	@Override
+	public String getUsername() {
+		return this.username;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return Boolean.TRUE.equals(this.status);
+	}
+
+	// === Helper Methods ===
+//    public void deactivateAllUserRoles() {
+//        this.userRoles.forEach(ur -> ur.setStatus(false));
+//    }
+//
+//    public Optional<Role> getActiveUserRole() {
+//        return this.userRoles.stream()
+//                .filter(UserRole::getStatus)
+//                .map(UserRole::getRole)
+//                .findFirst();
+//    }
 }

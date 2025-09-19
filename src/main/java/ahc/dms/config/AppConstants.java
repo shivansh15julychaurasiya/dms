@@ -4,6 +4,9 @@ import java.util.Set;
 
 public class AppConstants {
 
+	
+//	  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
+	
     // Ignore urls which are accessible to public
     public static final String[] PUBLIC_URLS = {
             "/dms/auth/login-password",
@@ -66,15 +69,17 @@ public class AppConstants {
             "/dms/api/casesfiles/getOrderFromElegalix/**",
             "/dms/api/casesfiles/getPdf/**",
             "/dms/api/casesfiles/downloadfile/**",
+            "/dms/users/activate/**",
+            "/dms/users/deactivate/**",
             "/dms/object/**",
             "/actuator/**"
     );
 
     public static final String PAGE_NUMBER = "0";
-    public static final String PAGE_SIZE = "5";
+    public static final String PAGE_SIZE = "10";
     public static final String SORT_DIR = "asc";
-    public static final String SORT_ROLE_BY = "roleId";
-    public static final String SORT_USER_BY = "userId";
+    public static final String SORT_ROLE_BY = "lkId";
+    public static final String SORT_USER_BY = "umId";
     public static final String SORT_OBJECT_BY = "omId";
 
     public static final String JWT_SECRET = "7c2700653ec7ecf51345e95f2f0f2d8322e2cc2147b6f9442e9a5823e0e263eab27bfb8f0e99e83a1b8f19f0";

@@ -23,9 +23,7 @@ import { useAuth } from "../../context/AuthContext";
 import { showAlert } from "../../utils/helpers";
 
 const RoleManagement = ({ onRolesUpdate }) => {
-
-
-//    Fullstack Java Developer Vijay Chaurasiya
+  //    Fullstack Java Developer Vijay Chaurasiya
 
   const [roles, setRoles] = useState([]);
   const [newRole, setNewRole] = useState("");
@@ -60,55 +58,62 @@ const RoleManagement = ({ onRolesUpdate }) => {
     }
   }, [roles, onRolesUpdate]);
 
-const handleCreateRole = async () => {
-  if (newRole.trim()) {
-    try {
-      const response = await createRole(newRole, token);
-      console.log(response)
-      
+  const handleCreateRole = async () => {
+    if (newRole.trim()) {
+      try {
+        const response = await createRole(newRole, token);
+        console.log(response);
+
         showAlert(response.message, "success");
         setNewRole("");
         await loadRoles(); // reload roles after creation
-      
+      } catch (error) {
+        console.log(error);
+        console.log(error);
+        showAlert(
+          error.response.data.message || "Failed to create role.",
+          "error"
+        );
       }
-    catch(error) {
-console.log(error)
-console.log(error)
-        showAlert(error.response.data.message || "Failed to create role.", "error");
-
     }
-  }
-};
-
+  };
 
   //  Deassign role
- const handleDeassignRole = async () => {
-  console.log(userId + deassignRoleId);
-  if (!userId || !deassignRoleId) {
-    showAlert("Please provide both User ID and Role ID.");
-    return;
-  }
+  const handleDeassignRole = async () => {
+    console.log(userId + deassignRoleId);
+    if (!userId || !deassignRoleId) {
+      showAlert("Please provide both User ID and Role ID.");
+      return;
+    }
 
-  try {
-    const response = await deassignRoleFromUser(userId, deassignRoleId, token);
-    // Use API response message on success
-    showAlert(response.data.message || "Role deassigned successfully.", "success");
-    setUserId("");
-    setDeassignRoleId("");
-  } catch (error) {
-    console.error("Error deassigning role:", error);
-    // Use backend error message if available
-    const apiErrorMessage = error?.response?.data?.message || "Failed to deassign role.";
-    showAlert(apiErrorMessage, "error");
-  }
-};
+    try {
+      const response = await deassignRoleFromUser(
+        userId,
+        deassignRoleId,
+        token
+      );
+      // Use API response message on success
+      showAlert(
+        response.data.message || "Role deassigned successfully.",
+        "success"
+      );
+      setUserId("");
+      setDeassignRoleId("");
+    } catch (error) {
+      console.error("Error deassigning role:", error);
+      // Use backend error message if available
+      const apiErrorMessage =
+        error?.response?.data?.message || "Failed to deassign role.";
+      showAlert(apiErrorMessage, "error");
+    }
+  };
 
-// ASSIGN ROLE TO USER
+  // ASSIGN ROLE TO USER
   const handleAssignRole = async () => {
     if (assignUserId && assignRoleId) {
       try {
-       var res= await assignRoleToUser(assignUserId, assignRoleId, token); // <- pass token here
-        showAlert(res.message,"success");
+        var res = await assignRoleToUser(assignUserId, assignRoleId, token); // <- pass token here
+        showAlert(res.message, "success");
         setAssignUserId("");
         setAssignRoleId("");
       } catch (error) {
@@ -189,12 +194,19 @@ console.log(error)
                   >
                     <option value="">Select a Role</option>
                     {roles.map((role) => (
-                      <option key={role.role_id} value={role.role_id}>
-                        {role.role_name.replace("ROLE_", "")}
+                      <option
+                        key={role.lk_id || role.roleId}
+                        value={role.lk_id || role.roleId}
+                      >
+                        {(role.lk_longname || role.roleName || "").replace(
+                          "ROLE_",
+                          ""
+                        )}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
+
                 <Button color="success" type="submit" className="w-100">
                   Assign Role
                 </Button>
@@ -237,12 +249,19 @@ console.log(error)
                   >
                     <option value="">Select a Role</option>
                     {roles.map((role) => (
-                      <option key={role.role_id} value={role.role_id}>
-                        {role.role_name.replace("ROLE_", "")}
+                      <option
+                        key={role.lk_id || role.roleId}
+                        value={role.lk_id || role.roleId}
+                      >
+                        {(role.lk_longname || role.roleName || "").replace(
+                          "ROLE_",
+                          ""
+                        )}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
+
                 <Button color="danger" type="submit" className="w-100">
                   De-assign Role
                 </Button>

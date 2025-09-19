@@ -194,6 +194,7 @@ export const getOrderFromElegalix = async (id, token) => {
 
 // Download file Pdf 
 export const downloadCaseFile = async (id, token) => {
+  console.log("download file with id="+id);
   const response = await axiosInstance.get(
     CASE_FILE_API_PATHS.DOWNLOAD_FILE(id),
     {

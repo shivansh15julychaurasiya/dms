@@ -1,9 +1,7 @@
 package ahc.dms.config;
 
-import ahc.dms.security.CustomUserDetailsService;
-import ahc.dms.security.JwtAuthEntryPoint;
-import ahc.dms.security.JwtAuthFilter;
-import ahc.dms.security.RequestAuthFilter;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,24 +15,29 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.List;
+import ahc.dms.security.CustomUserDetailsService;
+import ahc.dms.security.JwtAuthEntryPoint;
+import ahc.dms.security.JwtAuthFilter;
+import ahc.dms.security.RequestAuthFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
 @EnableMethodSecurity
 public class SecurityConfig {
+	
+//	  ********************** JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -144,5 +147,11 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
     }
+    
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // removes default ROLE_ prefix
+    }
+
 
 }

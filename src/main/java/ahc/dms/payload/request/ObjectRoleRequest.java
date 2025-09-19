@@ -1,6 +1,7 @@
 package ahc.dms.payload.request;
 
 
+import ahc.dms.payload.dto.LookupDto;
 import ahc.dms.payload.dto.ObjectMasterDto;
 import ahc.dms.payload.dto.RoleDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,6 +28,6 @@ public class ObjectRoleRequest {
     private ObjectMasterDto objectMasterDto;
     @NotNull
     @JsonProperty("roles")
-    private Set<RoleDto> roleDtos;
+    private Set<LookupDto> lookupDto;
 
 }

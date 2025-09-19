@@ -22,8 +22,7 @@ import { useAuth } from "../../context/AuthContext";
 // import { fetchDocumentFileById } from "../../services/PdfFileService";
 
 const CaseFileView = () => {
-
-//    Fullstack Java Developer Vijay Chaurasiya
+  //    Fullstack Java Developer Vijay Chaurasiya
 
   // const { setSearchResult } = useSearchResult();
 
@@ -62,7 +61,6 @@ const CaseFileView = () => {
 
   const handleSearch = async () => {
     if (!search.caseType || !search.caseNo || !search.caseYear) {
-      
       alert("All fields are required");
       return;
     }
@@ -75,7 +73,7 @@ const CaseFileView = () => {
         search.caseNo,
         search.caseYear
       );
-      console.log(search.caseType+" "+ search.caseNo+search.caseYear)
+      console.log(search.caseType + " " + search.caseNo + search.caseYear);
       setSearchResults(results);
       setShowStatus(true);
     } catch (err) {
@@ -152,7 +150,15 @@ const CaseFileView = () => {
                     </Table>
 
                     {/*  Results Table */}
-             <Table striped bo  rdered responsive size="sm" className="table-sm" style={{ fontSize: "0.8rem" }}>
+                    <Table
+                      striped
+                      bo
+                      rdered
+                      responsive
+                      size="sm"
+                      className="table-sm"
+                      style={{ fontSize: "0.8rem" }}
+                    >
                       <thead>
                         <tr>
                           <th>Sr.No.</th>
@@ -180,9 +186,12 @@ const CaseFileView = () => {
                                   <Button
                                     color="success"
                                     size="sm"
-                                     className="me-1"
+                                    className="me-1"
                                     onClick={() =>
-                                      window.open(`/dms/view?id=1`, "_blank")
+                                      window.open(
+                                        `/dms/view?id=${row.subDocument?.[0]?.sd_id}`,
+                                        "_blank"
+                                      )
                                     }
                                   >
                                     View

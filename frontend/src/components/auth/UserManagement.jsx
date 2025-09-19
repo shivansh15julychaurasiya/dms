@@ -40,7 +40,7 @@ const UserManagement = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingToggleUser, setPendingToggleUser] = useState(null);
 
-  const usersPerPage = 5;
+  const usersPerPage = 10;
 
   const refreshUsers = useCallback(() => {
     setLoading(true);
@@ -73,9 +73,12 @@ const UserManagement = () => {
       const isActive = user.status;
 
       if (isActive) {
+        console.log(user.username)
         await deactivateUser(user.username, token);
         toast.info(`${user.name} deactivated successfully`);
       } else {
+        console.log(user.username)
+
         await activateUser(user.username, token);
         toast.success(`${user.name} activated successfully`);
       }
@@ -112,11 +115,8 @@ const UserManagement = () => {
             <thead className="table-dark">
               <tr>
                 <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Employee ID</th>
-                <th>Phone</th>
-                <th>About</th>
+                <th>Username</th>
+                <th>FullName</th>
                 <th>Role</th>
                 <th>Enable/Disable</th>
               </tr>
@@ -135,16 +135,14 @@ const UserManagement = () => {
                   return (
                     <tr key={user.user_id}>
                       <td>{user.user_id}</td>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
                       <td>{user.username}</td>
-                      <td>{user.phone}</td>
-                      <td>{user.about}</td>
+                      <td>{user.fullName}</td>
                       <td>
-                        {user.roles
+                        {/* {user.roles
                           .filter((role) => role.status)
                           .map((role) => role.role_name.replace("ROLE_", ""))
-                          .join(", ") || "No Active Role"}
+                          .join(", ") || "No Active Role"} */}
+                          {user.roles.map(role=>role.lk_longname)}
                       </td>
                       <td>
                         <Button
@@ -177,31 +175,52 @@ const UserManagement = () => {
             </tbody>
           </Table>
 
-          {pageData.totalPages > 1 && (
-            <Pagination className="justify-content-center mt-4">
-              <PaginationItem disabled={currentPage === 1}>
-                <PaginationLink
-                  previous
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                />
-              </PaginationItem>
-              {[...Array(pageData.totalPages)].map((_, i) => (
-                <PaginationItem key={i} active={currentPage === i + 1}>
-                  <PaginationLink onClick={() => setCurrentPage(i + 1)}>
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem disabled={currentPage === pageData.totalPages}>
-                <PaginationLink
-                  next
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(p + 1, pageData.totalPages))
-                  }
-                />
-              </PaginationItem>
-            </Pagination>
-          )}
+         {pageData.totalPages > 1 && (
+  <Pagination className="justify-content-center mt-4">
+    {/* Previous button */}
+    <PaginationItem disabled={currentPage === 1}>
+      <PaginationLink
+        previous
+        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+      />
+    </PaginationItem>
+
+    {(() => {
+      const maxVisible = 5; // show 5 page links max
+      let start = Math.max(currentPage - Math.floor(maxVisible / 2), 1);
+      let end = start + maxVisible - 1;
+
+      if (end > pageData.totalPages) {
+        end = pageData.totalPages;
+        start = Math.max(end - maxVisible + 1, 1);
+      }
+
+      const pages = [];
+      for (let i = start; i <= end; i++) {
+        pages.push(
+          <PaginationItem key={i} active={currentPage === i}>
+            <PaginationLink onClick={() => setCurrentPage(i)}>
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      return pages;
+    })()}
+
+    {/* Next button */}
+    <PaginationItem disabled={currentPage === pageData.totalPages}>
+      <PaginationLink
+        next
+        onClick={() =>
+          setCurrentPage((p) => Math.min(p + 1, pageData.totalPages))
+        }
+      />
+    </PaginationItem>
+  </Pagination>
+)}
+
         </>
       ) : (
         <Card className="mt-4">

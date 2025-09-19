@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "object_master")
+@Table(name = "object_master1")
 @Getter
 @Setter
 @NoArgsConstructor

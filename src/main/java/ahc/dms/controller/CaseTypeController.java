@@ -23,7 +23,7 @@ public class CaseTypeController {
     @Autowired
     private CaseTypeService caseTypeService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER','DMSAdmin')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<CaseType>>> getAll() {
         List<CaseType> caseTypes = caseTypeService.getAllCaseTypes();

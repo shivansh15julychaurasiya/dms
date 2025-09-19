@@ -26,12 +26,9 @@ import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { PDFDocument } from "pdf-lib";
 
-const TreeView = ({
-  setPdfUrl,
-  setAllOrderPdf,
-  setActiveDoc,
-}) => {
+const TreeView = ({ setPdfUrl, setAllOrderPdf, setActiveDoc }) => {
   const [searchParams] = useSearchParams();
+
   const fdId = searchParams.get("id");
 
   const { token } = useAuth();
@@ -56,6 +53,8 @@ const TreeView = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("param Id=" + fdId);
+
         const detailsResponse = await fetchPdfDetailsFileById(fdId, token);
         const textData = await detailsResponse.data.text();
         const jsonData = JSON.parse(textData);
@@ -181,7 +180,16 @@ const TreeView = ({
       </Row>
 
       {/* Accordion Section */}
-      <div className="mt-2" style={{ width: "100%", maxWidth: "1000px" }}>
+      <div
+        className="mt-2"
+        style={{
+          width: "100%",
+          maxWidth: "1000px",
+          maxHeight: "65vh", // limit height (adjust as needed)
+          overflowY: "auto", // scroll vertically
+          overflowX: "hidden", // prevent horizontal scroll
+        }}
+      >
         <Accordion
           open={openItems}
           toggle={toggle}
@@ -193,152 +201,176 @@ const TreeView = ({
             <AccordionHeader targetId="0">
               Order / Office Report
             </AccordionHeader>
-            <AccordionBody accordionId="0">
-              {/* Scrollable wrapper */}
-              <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-                <Table responsive hover bordered>
-                  <thead>
+            <AccordionBody
+              accordionId="0"
+              className="mb-0"
+              style={{ width: "100%", tableLayout: "auto" }}
+            >
+              <Table
+                responsive
+                hover
+                bordered
+                style={{
+                  width: "100%",
+                  marginBottom: 0,
+                }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0 }}
+                >
+                  <tr style={{ fontSize: "12px" }}>
+                    <th style={{ width: "5%" }}>Sr No.</th>
+                    <th style={{ width: "15%" }}>Type</th>
+                    <th style={{ width: "80%" }}>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Stamp Report (OrderReport API) */}
+                  {orderReport?.length > 0 &&
+                    orderReport.map((item, index) => {
+                      let rowClass = "table-warning"; // default
+                      if (item.ord_type?.toLowerCase().includes("stamp")) {
+                        rowClass = "table-danger"; // red
+                      } else if (
+                        item.ord_type?.toLowerCase().includes("office")
+                      ) {
+                        rowClass = "table-warning"; // yellow
+                      } else if (
+                        item.ord_type?.toLowerCase().includes("order")
+                      ) {
+                        rowClass = "table-success"; // green
+                      }
+
+                      return (
+                        <tr key={`stamp-${index}`} className={rowClass}>
+                          <td>{index + 1}</td>
+                          <td>
+                            <span
+                              style={{
+                                color: "blue",
+                                fontWeight: "bold",
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                fontSize: "12px",
+                              }}
+                              onClick={async () => {
+                                try {
+                                  console.log(item.ordSdMid);
+                                  const blob = await showStampReportPdfFile(
+                                    item.ordSdMid,
+                                    token
+                                  );
+                                  const url = URL.createObjectURL(blob);
+                                  setPdfUrl(url); // ⬅ single setter now
+                                  setActiveDoc("pdfUrl");
+                                } catch (err) {
+                                  console.error("Failed to open PDF", err);
+                                }
+                              }}
+                            >
+                              {item.ord_type || "St. Rep."}{" "}
+                              {item.ord_created
+                                ? new Date(item.ord_created).toLocaleDateString(
+                                    "en-GB"
+                                  )
+                                : ""}
+                            </span>
+                            <br />
+                            <i className="bi bi-folder-fill me-2"></i>
+                            <i className="bi bi-pencil-square"></i>
+                          </td>
+                          <td style={{ fontSize: "12px" }}>
+                            Lorem ipsum dolor sit, amet consectetur adipisicing
+                            elit. Eum nisi debitis iusto quis consequuntur
+                            voluptate officia saepe doloribus vitae voluptatem.z
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                  {/* Order Report (Elegalix API) */}
+                  {elegalixReport?.length > 0 &&
+                    elegalixReport.map((item, index) => {
+                      console.log("Rendering row:", index, item);
+                      let rowClass = "table-warning"; // default
+                      if (
+                        item.documentType?.description
+                          ?.toLowerCase()
+                          .includes("ord")
+                      ) {
+                        rowClass = "table-success"; // green
+                      } else if (
+                        item.documentType?.description
+                          ?.toLowerCase()
+                          .includes("office")
+                      ) {
+                        rowClass = "table-warning"; // yellow
+                      } else {
+                        rowClass = "table-info"; // blue
+                      }
+
+                      return (
+                        <tr key={`ord-${index}`} className={rowClass}>
+                          <td>{index + 1}</td>
+                          <td>
+                            <span
+                              style={{
+                                color: "blue",
+                                fontWeight: "bold",
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                fontSize: "12px",
+                              }}
+                              onClick={async () => {
+                                try {
+                                  const response = await getOrderFromElegalix(
+                                    item.judgmentID,
+                                    token
+                                  );
+                                  const res1 = await fetchPdfFileByName(
+                                    response.data.document_name,
+                                    token
+                                  );
+                                  const fileURL = URL.createObjectURL(res1);
+                                  setPdfUrl(fileURL); // ⬅ single setter now
+                                  setActiveDoc("pdfUrl");
+                                } catch (err) {
+                                  console.error("Failed to open PDF", err);
+                                }
+                              }}
+                            >
+                              {item.documentType?.description || "ORD"}{" "}
+                              {item.sd_submitted_date
+                                ? new Date(
+                                    item.sd_submitted_date
+                                  ).toLocaleDateString("en-GB")
+                                : ""}
+                            </span>
+                            <br />
+                            <i className="bi bi-folder-fill me-2"></i>
+                            <i className="bi bi-pencil-square"></i>
+                          </td>
+                          {/* <td>{item.docName || item.title || "N/A"}</td> */}
+                          <td style={{ fontSize: "12px" }}>
+                            Lorem ipsum dolor sit, amet consectetur adipisicing
+                            elit. Eum nisi debitis iusto quis consequuntur
+                            voluptate officia saepe doloribus vitae voluptatem.z
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                  {/* If no data in both */}
+                  {!orderReport?.length && !elegalixReport?.length && (
                     <tr>
-                      <th>Sr No.</th>
-                      <th>Type</th>
-                      <th>Description</th>
+                      <td colSpan="3" className="text-center">
+                        No data available
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {/* Stamp Report (OrderReport API) */}
-                    {orderReport?.length > 0 &&
-                      orderReport.map((item, index) => {
-                        let rowClass = "table-warning"; // default
-                        if (item.ord_type?.toLowerCase().includes("stamp")) {
-                          rowClass = "table-danger"; // red
-                        } else if (
-                          item.ord_type?.toLowerCase().includes("office")
-                        ) {
-                          rowClass = "table-warning"; // yellow
-                        } else if (
-                          item.ord_type?.toLowerCase().includes("order")
-                        ) {
-                          rowClass = "table-success"; // green
-                        }
-
-                        return (
-                          <tr key={`stamp-${index}`} className={rowClass}>
-                            <td>{index + 1}</td>
-                            <td>
-                              <span
-                                style={{
-                                  color: "blue",
-                                  fontWeight: "bold",
-                                  textDecoration: "underline",
-                                  cursor: "pointer",
-                                }}
-                                onClick={async () => {
-                                  try {
-                                    const blob = await showStampReportPdfFile(
-                                      item.ordSdMid,
-                                      token
-                                    );
-                                    const url = URL.createObjectURL(blob);
-                                    setPdfUrl(url); // ⬅ single setter now
-                                    setActiveDoc("pdfUrl");
-                                  } catch (err) {
-                                    console.error("Failed to open PDF", err);
-                                  }
-                                }}
-                              >
-                                {item.ord_type || "St. Rep."}{" "}
-                                {item.ord_created
-                                  ? new Date(
-                                      item.ord_created
-                                    ).toLocaleDateString("en-GB")
-                                  : ""}
-                              </span>
-                              <br />
-                              <i className="bi bi-folder-fill me-2"></i>
-                              <i className="bi bi-pencil-square"></i>
-                            </td>
-                            {/* <td>{item.ord_remark || "N/A"}</td> */}
-                          </tr>
-                        );
-                      })}
-
-                    {/* Order Report (Elegalix API) */}
-                    {elegalixReport?.length > 0 &&
-                      elegalixReport.map((item, index) => {
-                        console.log("Rendering row:", index, item);
-                        let rowClass = "table-warning"; // default
-                        if (
-                          item.documentType?.description
-                            ?.toLowerCase()
-                            .includes("ord")
-                        ) {
-                          rowClass = "table-success"; // green
-                        } else if (
-                          item.documentType?.description
-                            ?.toLowerCase()
-                            .includes("office")
-                        ) {
-                          rowClass = "table-warning"; // yellow
-                        } else {
-                          rowClass = "table-info"; // blue
-                        }
-
-                        return (
-                          <tr key={`ord-${index}`} className={rowClass}>
-                            <td>{index + 1}</td>
-                            <td>
-                              <span
-                                style={{
-                                  color: "blue",
-                                  fontWeight: "bold",
-                                  textDecoration: "underline",
-                                  cursor: "pointer",
-                                }}
-                                onClick={async () => {
-                                  try {
-                                    const response = await getOrderFromElegalix(
-                                      item.judgmentID,
-                                      token
-                                    );
-                                    const res1 = await fetchPdfFileByName(
-                                      response.data.document_name,
-                                      token
-                                    );
-                                    const fileURL = URL.createObjectURL(res1);
-                                    setPdfUrl(fileURL); // ⬅ single setter now
-                                    setActiveDoc("pdfUrl");
-                                  } catch (err) {
-                                    console.error("Failed to open PDF", err);
-                                  }
-                                }}
-                              >
-                                {item.documentType?.description || "ORD"}{" "}
-                                {item.sd_submitted_date
-                                  ? new Date(
-                                      item.sd_submitted_date
-                                    ).toLocaleDateString("en-GB")
-                                  : ""}
-                              </span>
-                              <br />
-                              <i className="bi bi-folder-fill me-2"></i>
-                              <i className="bi bi-pencil-square"></i>
-                            </td>
-                            {/* <td>{item.docName || item.title || "N/A"}</td> */}
-                          </tr>
-                        );
-                      })}
-
-                    {/* If no data in both */}
-                    {!orderReport?.length && !elegalixReport?.length && (
-                      <tr>
-                        <td colSpan="3" className="text-center">
-                          No data available
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </div>
+                  )}
+                </tbody>
+              </Table>
             </AccordionBody>
           </AccordionItem>
 

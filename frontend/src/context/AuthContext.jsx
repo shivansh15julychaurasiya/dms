@@ -31,9 +31,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // Check if the roles array exists and has at least one role before accessing it
-      if (user.roles && user.roles[0] && user.roles[0].role_name) {
-        setRole(user.roles[0].role_name.trim());
-        localStorage.setItem("role", user.roles[0].role_name.trim()); //  Corrected here
+      if (user.roles && user.roles[0] && user.roles[0].lk_longname) {
+        setRole(user.roles[0].lk_longname.trim());
+        localStorage.setItem("role", user.roles[0].lk_longname.trim()); //  Corrected here
       } else {
         setRole(""); // Clear role if no valid role found
       }
@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
     setUser(user);
 
     // Check if the roles array exists and has at least one role
-    if (user.roles && user.roles[0] && user.roles[0].role_name) {
-      setRole(user.roles[0].role_name.trim());
+    if (user.roles && user.roles[0] && user.roles[0].lk_longname) {
+      setRole(user.roles[0].lk_longname.trim());
     } else {
       setRole(""); // Clear role if no valid role found
     }

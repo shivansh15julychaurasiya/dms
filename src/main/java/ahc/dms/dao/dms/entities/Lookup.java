@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Lookup {
     @Id
     @Column(name = "lk_id")
-    private Long id;
+    private Long lkId;
 
     @Column(name = "lk_longname")
     private String longname;

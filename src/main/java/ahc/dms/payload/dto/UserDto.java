@@ -1,15 +1,22 @@
 package ahc.dms.payload.dto;
 
-import com.fasterxml.jackson.annotation.*;
-import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -21,53 +28,60 @@ public class UserDto {
 
     @JsonIgnore
     private Long version;
+
     @JsonProperty("user_id")
     private Long userId;
 
     @NotBlank
-    @Size(min=4, message = "Must be greater than 4 characters.")
+    @Size(min = 4, message = "Must be greater than 4 characters.")
     private String name;
 
     @NotBlank
-    @Size(min=4, message = "Must be greater than 4 characters.")
+    @Size(min = 4, message = "Must be greater than 4 characters.")
     private String username;
+    
+    @NotBlank
+    @Size(min = 4, message = "Must be greater than 4 characters.")
+    private String fullName;
+
     @Email(message = "Email address not valid")
     private String email;
-    //@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
+
     @NotBlank
-    @Size(min=4, message = "Must be greater than 4 characters.")
+    @Size(min = 4, message = "Must be greater than 4 characters.")
     private String password;
+
     @NotBlank
     private String phone;
+
     @NotBlank
     private String about;
+
     private Boolean status;
 
-    @JsonProperty("user_roles")
-    private Set<UserRoleDto> userRoles = new HashSet<>();
+ 
 
+    // Convenience field for frontend: roles extracted from UserRole
     @JsonProperty("roles")
-    private Set<RoleDto> roles = new HashSet<>();
+    private Set<LookupDto> roles = new HashSet<>();
 
-    // audit fields
+    // Audit fields
     @JsonProperty("created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+
     @JsonProperty("updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    // CUSTOM GETTERS AND SETTERS
-
-    // HIDING PASSWORD
+    // --- Custom getters/setters ---
     @JsonIgnore
-    public String getPassword(){
+    public String getPassword() {
         return this.password;
     }
 
     @JsonProperty
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
-
 }

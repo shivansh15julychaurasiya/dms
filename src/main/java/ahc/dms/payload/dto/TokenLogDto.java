@@ -16,7 +16,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenLogDto {
-
+//	  *****************************JAVA FULLSTACK DEVELOPER VIJAY DEVELOPER *******************************
     @JsonIgnore
     private Long version;
     private Long tokenId;

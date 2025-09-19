@@ -95,6 +95,7 @@ public class ObjectController {
     }
 
     // GET ALL OBJECT URI
+    @PreAuthorize("hasRole('DMSAdmin')")
     @GetMapping("/")
     public ResponseEntity<ApiResponse<PageResponse<ObjectMasterDto>>> getAllUriObject(
             HttpServletRequest httpServletRequest,
