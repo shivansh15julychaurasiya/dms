@@ -52,6 +52,12 @@ const UriManagement = () => {
     deassign: { uri: "", method: "GET", selectedRoles: [] },
   });
 
+
+  const uriOptions = objects.map((obj) => ({
+  value: obj.request_uri,
+  label: obj.request_uri,
+}));
+
   useEffect(() => {
     fetchRoles(setRoles, token);
     loadObjects(currentPage);
@@ -154,16 +160,33 @@ const UriManagement = () => {
           {buttonText} URI
         </h6>
         <Form onSubmit={onSubmitHandler}>
-          <FormGroup>
-            <Label>URI</Label>
-            <Input
-              value={formState[section].uri}
-              onChange={(e) =>
-                handleInputChange(section, "uri", e.target.value)
-              }
-              placeholder="/dms/example"
-            />
-          </FormGroup>
+         <FormGroup>
+  <Label>URI</Label>
+  {section === "create" ? (
+    // CREATE: Text input
+    <Input
+      value={formState[section].uri}
+      onChange={(e) => handleInputChange(section, "uri", e.target.value)}
+      placeholder="/dms/example"
+    />
+  ) : (
+    // ASSIGN / DEASSIGN: Dropdown
+    <Select
+      options={uriOptions}
+      value={
+        formState[section].uri
+          ? { value: formState[section].uri, label: formState[section].uri }
+          : null
+      }
+      onChange={(selected) => {
+        handleInputChange(section, "uri", selected ? selected.value : "");
+      }}
+      placeholder="Select URI..."
+      classNamePrefix="react-select"
+    />
+  )}
+</FormGroup>
+
           <FormGroup>
             <Label>Method</Label>
             <Input
