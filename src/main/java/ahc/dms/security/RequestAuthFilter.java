@@ -68,9 +68,11 @@ public class RequestAuthFilter extends OncePerRequestFilter {
                 .findFirst()
                 .orElse(null);
         logger.info("Auth Role : {}", authRole);
-
-        Optional<ObjectMaster> objectMaster = objectMasterRepository
-                .findBestMatchingPrefix(uri, method);
+        
+       System.out.println("********************* URI AND METHOD="+uri+method);
+       
+        Optional<ObjectMaster> objectMaster = objectMasterRepository.findBestMatchingPrefix(uri, method);
+//        System.out.println("###################################################"+objectMaster.isPresent());
 
         if (objectMaster.isPresent()) {
             logger.info("Object master entity found in database : {}", objectMaster.get().getRequestUri());

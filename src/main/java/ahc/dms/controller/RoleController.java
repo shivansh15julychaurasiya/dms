@@ -3,18 +3,24 @@ package ahc.dms.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import ahc.dms.config.AppConstants;
+import ahc.dms.dao.dms.services.LookupService;
 import ahc.dms.dao.dms.services.RoleService;
 import ahc.dms.payload.dto.LookupDto;
 import ahc.dms.payload.response.ApiResponse;
 import ahc.dms.payload.response.PageResponse;
 import ahc.dms.utils.ResponseUtil;
+
 
 @RestController
 @RequestMapping("/dms/role")
@@ -26,23 +32,24 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+  
     
+    @Autowired
+    private LookupService lookupService;
   
 //    @Autowired
 //    private UserRoleService userRoleService;
 //    @Autowired
 //    private RequestLogService requestLogService;
 //
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @PostMapping("/")
-//    public ResponseEntity<ApiResponse<RoleDto>> createRole(
-//            HttpServletRequest request,
-//            @Valid @RequestBody RoleDto roleDto
-//    ){
-//        requestLogService.logRequest(request);
-//        RoleDto createdRoleDto = roleService.createRole(roleDto);
-//        return ResponseEntity.ok(ResponseUtil.success(createdRoleDto, "role created"));
-//    }
+  
+    @PostMapping("/create")
+    public ResponseEntity<LookupDto> createRole( @RequestBody LookupDto dto ) {
+    	System.out.println("------------------------------------------------"+dto);
+    	
+        LookupDto created = lookupService.createRole(dto);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
 //
 //    @PreAuthorize("hasRole('ADMIN')")
 //    @PutMapping("/{roleId}")

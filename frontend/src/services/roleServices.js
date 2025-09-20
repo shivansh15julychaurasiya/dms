@@ -94,10 +94,13 @@ export const removeRoleFromUser = (userId, roleId, token) => {
 
 // Create a new role
 export const createRole = async (newRole, token) => {
+  console.log("************************************** New role="+newRole)
   try {
     const response = await axiosInstance.post(
       ROLE_API_PATHS.CREATE_ROLE,
-      { role_name: newRole },
+      { lk_longname: newRole ,
+        lk_setname:"DMS_ROLE"
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,

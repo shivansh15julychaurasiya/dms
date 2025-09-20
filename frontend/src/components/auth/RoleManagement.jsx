@@ -63,8 +63,10 @@ const RoleManagement = ({ onRolesUpdate }) => {
       try {
         const response = await createRole(newRole, token);
         console.log(response);
+         console.log(response)
+      {response.status === 1 ? showAlert("Role created successfully", "success") : null}
 
-        showAlert(response.message, "success");
+       
         setNewRole("");
         await loadRoles(); // reload roles after creation
       } catch (error) {
@@ -149,7 +151,7 @@ const RoleManagement = ({ onRolesUpdate }) => {
                     id="roleName"
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
-                    placeholder="e.g., role_admin"
+                    placeholder="enter role"
                   />
                 </FormGroup>
                 <Button color="success" type="submit" className="w-100">

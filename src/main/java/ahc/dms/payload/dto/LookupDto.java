@@ -33,6 +33,9 @@ public class LookupDto {
 
     @JsonProperty("lk_longname")
     private String lkLongname;
+    
+    @JsonProperty("lk_setname")
+    private String setname;
 
     @JsonProperty("status")
     private Integer status;
@@ -45,4 +48,7 @@ public class LookupDto {
     @JsonProperty("updated_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
+    
+    
+   
 }

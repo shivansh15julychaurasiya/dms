@@ -37,4 +37,7 @@ public interface LookupRepository extends JpaRepository<Lookup, Long> {
     
     // Optional lookup by setname and longname
     List<Lookup> findBySetnameAndLongname(String setname, String longname);
+    
+    // check if role already exists (by longname & setname)
+    boolean existsByLongnameAndSetname(String longname, String setname);
 }

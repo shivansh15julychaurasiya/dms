@@ -24,7 +24,7 @@ export const API_PATHS = {
 export const ROLE_API_PATHS = {
   ROLES: "/role/all",
   GET_ROLE: (roleId) => `/role/${roleId}`,
-  CREATE_ROLE: "/role/",
+  CREATE_ROLE: "/role/create",
   UPDATE_ROLE: (roleId) => `/role/${roleId}/update`,
   DELETE_ROLE: (roleId) => `/role/${roleId}/delete`,
   ASSIGN_ROLE: "/role/assign",
