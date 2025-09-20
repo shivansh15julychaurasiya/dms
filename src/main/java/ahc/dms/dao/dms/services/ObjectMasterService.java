@@ -39,6 +39,8 @@ public class ObjectMasterService {
     @Transactional(transactionManager = "dmsTransactionManager")
     public ObjectMasterDto createObjectMaster(@Valid ObjectMasterDto omDto) {
 
+    	
+    	logger.info("object Master dto="+omDto);
 
         ObjectMaster om = omRepository
                 .findByRequestUriAndRequestMethod(omDto.getRequestUri(), omDto.getRequestMethod())

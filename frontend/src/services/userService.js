@@ -227,7 +227,7 @@ export const deactivateUser = async (userId, token) => {
 
 //  Resgister uri with roles
 export const registerUriWithRoles = async (payload, token) => {
-  console.log(token)
+  console.log("******************************************* registerUriWithroles="+payload);
   try {
     const response = await axiosInstance.post(
       "/object/register",

@@ -44,6 +44,7 @@ public class ObjectRoleService {
     @Transactional(transactionManager = "dmsTransactionManager")
     public ObjectRoleResponse createObjectRole(@Valid ObjectRoleRequest orRequest) {
         ObjectMasterDto omDto = orRequest.getObjectMasterDto();
+        System.out.println("Object master dto **************"+omDto+"\n"+"lookup roles="+orRequest.getLookupDto());
         Set<Lookup> roles = new HashSet<>();
         Set<LookupDto> roleDtos = new HashSet<>();
 

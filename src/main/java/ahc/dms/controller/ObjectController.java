@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/dms/object")
-@PreAuthorize("hasRole('ADMIN')")
 public class ObjectController {
 	
 //  ********************** Fullstack Java Developer Vijay Chaurasiya *******************************
@@ -32,12 +31,14 @@ public class ObjectController {
     private RequestLogService requestLogService;
 
     // Actions without Roles
+    @PreAuthorize("hasAuthority('DMSAdmin')")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<ObjectMasterDto>> createObjectMaster(
             HttpServletRequest request,
             @Valid @RequestBody ObjectMasterDto omDto
     ){
         requestLogService.logRequest(request);
+        System.out.println("*****************************************object master from controller="+omDto);
         ObjectMasterDto createdDto = omService.createObjectMaster(omDto);
         return ResponseEntity.ok(ResponseUtil.success(createdDto, "object (url) created"));
     }

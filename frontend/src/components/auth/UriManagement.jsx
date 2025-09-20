@@ -91,7 +91,7 @@ const UriManagement = () => {
       request_method: formState[section].method,
     },
     roles: formState[section].selectedRoles.map((role) => ({
-      role_id: role.value,
+      lk_id: role.value,
     })),
   });
 
@@ -100,6 +100,7 @@ const UriManagement = () => {
     try {
       var res=null;
       const payload = buildPayload(section);
+      console.log("Payload"+section)
      res= await serviceMethod(payload, token);
      console.log(res)
       showAlert(res.message, "success");
@@ -141,8 +142,8 @@ const UriManagement = () => {
   };
 
   const roleOptions = roles.map((role) => ({
-    value: role.role_id,
-    label: role.role_name,
+    value: role.lk_id,
+    label: role.lk_longname,
   }));
 
   const renderForm = (section, onSubmitHandler, buttonText, buttonColor) => (
