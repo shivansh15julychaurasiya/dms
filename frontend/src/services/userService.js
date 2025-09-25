@@ -37,12 +37,25 @@ export const loginUser = async (loginId, password) => {
       username: loginId,
       password,
     });
-    return response.data.data;
+
+    //  Backend wraps success in { status, data }
+    if (response.data?.status === true) {
+      return response.data.data; // contains { token, user }
+    } else {
+      throw new Error(response.data?.message || "Login failed.");
+    }
   } catch (error) {
     console.error("Login failed:", error.response || error.message);
-    throw new Error("Login failed");
+
+    //  Extract backend error
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+
+    throw new Error(error.message);
   }
 };
+
 
 // Fetch user by ID
 export const getUserById = async (userId, token) => {
@@ -77,6 +90,16 @@ export const fetchUsers = async (pageNumber, pageSize, setUsers, setPageData, to
     // console.error("Error fetching users");
   }
 };
+// User unlock service method:
+// Unlock user
+export const unlockUser = async (username, token) => {
+  return axiosInstance.post(
+    `/admin/unlock/${username}`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
 
 
 // Register/save user

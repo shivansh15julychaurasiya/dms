@@ -21,13 +21,12 @@ import {
   fetchUsers,
   activateUser,
   deactivateUser,
+  unlockUser
 } from "../../services/userService";
 import Register from "./Register";
 
 const UserManagement = () => {
-
-
-//    Fullstack Java Developer Vijay Chaurasiya
+  //    Fullstack Java Developer Vijay Chaurasiya
 
   const { token, logout } = useAuth();
   const navigate = useNavigate();
@@ -42,11 +41,33 @@ const UserManagement = () => {
 
   const usersPerPage = 10;
 
+  // state for unlock modal
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [unlockUsername, setUnlockUsername] = useState("");
+
+  // handle unlock API call
+  const handleUnlockUser = async () => {
+    try {
+      //  you need an API like unlockUser(username, token)
+      await unlockUser(unlockUsername, token);
+      toast.success(`User ${unlockUsername} unlocked successfully`);
+      setShowUnlockModal(false);
+      setUnlockUsername("");
+      refreshUsers();
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to unlock user");
+    }
+  };
+
   const refreshUsers = useCallback(() => {
     setLoading(true);
-    fetchUsers(currentPage - 1, usersPerPage, setUsers, setPageData, token).finally(() =>
-      setLoading(false)
-    );
+    fetchUsers(
+      currentPage - 1,
+      usersPerPage,
+      setUsers,
+      setPageData,
+      token
+    ).finally(() => setLoading(false));
   }, [currentPage, token]);
 
   useEffect(() => {
@@ -73,11 +94,11 @@ const UserManagement = () => {
       const isActive = user.status;
 
       if (isActive) {
-        console.log(user.username)
+        console.log(user.username);
         await deactivateUser(user.username, token);
         toast.info(`${user.name} deactivated successfully`);
       } else {
-        console.log(user.username)
+        console.log(user.username);
 
         await activateUser(user.username, token);
         toast.success(`${user.name} activated successfully`);
@@ -108,6 +129,13 @@ const UserManagement = () => {
             >
               <FaPlus className="me-2" />
               Create User
+            </Button>
+            <Button
+              color="primary"
+              className="rounded-pill"
+              onClick={() => setShowUnlockModal(true)}
+            >
+              Unlock User
             </Button>
           </div>
 
@@ -142,7 +170,7 @@ const UserManagement = () => {
                           .filter((role) => role.status)
                           .map((role) => role.role_name.replace("ROLE_", ""))
                           .join(", ") || "No Active Role"} */}
-                          {user.roles.map(role=>role.lk_longname)}
+                        {user.roles.map((role) => role.lk_longname)}
                       </td>
                       <td>
                         <Button
@@ -175,52 +203,54 @@ const UserManagement = () => {
             </tbody>
           </Table>
 
-         {pageData.totalPages > 1 && (
-  <Pagination className="justify-content-center mt-4">
-    {/* Previous button */}
-    <PaginationItem disabled={currentPage === 1}>
-      <PaginationLink
-        previous
-        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-      />
-    </PaginationItem>
+          {pageData.totalPages > 1 && (
+            <Pagination className="justify-content-center mt-4">
+              {/* Previous button */}
+              <PaginationItem disabled={currentPage === 1}>
+                <PaginationLink
+                  previous
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                />
+              </PaginationItem>
 
-    {(() => {
-      const maxVisible = 5; // show 5 page links max
-      let start = Math.max(currentPage - Math.floor(maxVisible / 2), 1);
-      let end = start + maxVisible - 1;
+              {(() => {
+                const maxVisible = 5; // show 5 page links max
+                let start = Math.max(
+                  currentPage - Math.floor(maxVisible / 2),
+                  1
+                );
+                let end = start + maxVisible - 1;
 
-      if (end > pageData.totalPages) {
-        end = pageData.totalPages;
-        start = Math.max(end - maxVisible + 1, 1);
-      }
+                if (end > pageData.totalPages) {
+                  end = pageData.totalPages;
+                  start = Math.max(end - maxVisible + 1, 1);
+                }
 
-      const pages = [];
-      for (let i = start; i <= end; i++) {
-        pages.push(
-          <PaginationItem key={i} active={currentPage === i}>
-            <PaginationLink onClick={() => setCurrentPage(i)}>
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
+                const pages = [];
+                for (let i = start; i <= end; i++) {
+                  pages.push(
+                    <PaginationItem key={i} active={currentPage === i}>
+                      <PaginationLink onClick={() => setCurrentPage(i)}>
+                        {i}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                }
 
-      return pages;
-    })()}
+                return pages;
+              })()}
 
-    {/* Next button */}
-    <PaginationItem disabled={currentPage === pageData.totalPages}>
-      <PaginationLink
-        next
-        onClick={() =>
-          setCurrentPage((p) => Math.min(p + 1, pageData.totalPages))
-        }
-      />
-    </PaginationItem>
-  </Pagination>
-)}
-
+              {/* Next button */}
+              <PaginationItem disabled={currentPage === pageData.totalPages}>
+                <PaginationLink
+                  next
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, pageData.totalPages))
+                  }
+                />
+              </PaginationItem>
+            </Pagination>
+          )}
         </>
       ) : (
         <Card className="mt-4">
@@ -235,7 +265,10 @@ const UserManagement = () => {
       )}
 
       {/* Modal for Activation/Deactivation Confirmation */}
-      <Modal isOpen={showConfirmModal} toggle={() => setShowConfirmModal(false)}>
+      <Modal
+        isOpen={showConfirmModal}
+        toggle={() => setShowConfirmModal(false)}
+      >
         <div className="modal-header">
           <h5 className="modal-title">
             {pendingToggleUser?.status ? "Deactivate User" : "Activate User"}
@@ -247,7 +280,8 @@ const UserManagement = () => {
           ></button>
         </div>
         <div className="modal-body">
-          Are you sure you want to {pendingToggleUser?.status ? "deactivate" : "activate"}{" "}
+          Are you sure you want to{" "}
+          {pendingToggleUser?.status ? "deactivate" : "activate"}{" "}
           <strong>{pendingToggleUser?.name}</strong>?
         </div>
         <div className="modal-footer">
@@ -266,6 +300,41 @@ const UserManagement = () => {
           </Button>
         </div>
       </Modal>
+
+      {/* MODEL FOR UNLOCK USER */}
+     <Modal isOpen={showUnlockModal} toggle={() => setShowUnlockModal(false)}>
+  <div className="modal-header">
+    <h5 className="modal-title">Unlock User</h5>
+    <button
+      type="button"
+      className="btn-close"
+      onClick={() => setShowUnlockModal(false)}
+    ></button>
+  </div>
+  <div className="modal-body">
+    <p className="mb-2">Enter the username of the user you want to unlock:</p>
+    <input
+      type="text"
+      className="form-control"
+      value={unlockUsername}
+      onChange={(e) => setUnlockUsername(e.target.value)}
+      placeholder="Enter username"
+    />
+  </div>
+  <div className="modal-footer">
+    <Button color="secondary" onClick={() => setShowUnlockModal(false)}>
+      Cancel
+    </Button>
+    <Button
+      color="success"
+      disabled={!unlockUsername.trim()}
+      onClick={handleUnlockUser}
+    >
+      Unlock
+    </Button>
+  </div>
+</Modal>
+
     </>
   );
 };

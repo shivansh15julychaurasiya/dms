@@ -27,7 +27,6 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Formik validation schema
 // Formik validation schema
 const validationSchema = Yup.object({
   loginId: Yup.string()
@@ -43,21 +42,24 @@ const validationSchema = Yup.object({
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      try {
-        const { token, user } = await loginUser(
-          values.loginId,
-          values.password
-        );
-        login({ token, user });
-console.log(user)
-        const roleNames = user.roles.map((role) => role.lk_longname);
-        showAlert("Login successful", "success");
-        navigate(getRoleRedirectPath(roleNames));
-      } catch {
-        showAlert("Invalid User ID or Password", "error");
-      }
-    },
+   onSubmit: async (values) => {
+  try {
+    const result = await loginUser(values.loginId, values.password);
+
+    // Only destructure if result exists
+    const { token, user } = result;
+
+    login({ token, user });
+    const roleNames = user.roles.map((role) => role.lk_longname);
+
+    showAlert("Login successful", "success");
+    navigate(getRoleRedirectPath(roleNames));
+  } catch (error) {
+    //  Show backend message
+    showAlert(error.message, "error");
+  }
+},
+
   });
 
   return (

@@ -32,8 +32,7 @@ import {
 import { Switch } from "@mui/material";
 
 const UriManagement = () => {
-
-//    Fullstack Java Developer Vijay Chaurasiya
+  //    Fullstack Java Developer Vijay Chaurasiya
 
   const { token } = useAuth();
 
@@ -52,11 +51,10 @@ const UriManagement = () => {
     deassign: { uri: "", method: "GET", selectedRoles: [] },
   });
 
-
   const uriOptions = objects.map((obj) => ({
-  value: obj.request_uri,
-  label: obj.request_uri,
-}));
+    value: obj.request_uri,
+    label: obj.request_uri,
+  }));
 
   useEffect(() => {
     fetchRoles(setRoles, token);
@@ -104,11 +102,11 @@ const UriManagement = () => {
   const handleSubmit = async (e, section, serviceMethod, successMsg) => {
     e.preventDefault();
     try {
-      var res=null;
+      var res = null;
       const payload = buildPayload(section);
-      console.log("Payload"+section)
-     res= await serviceMethod(payload, token);
-     console.log(res)
+      console.log("Payload" + section);
+      res = await serviceMethod(payload, token);
+      console.log(res);
       showAlert(res.message, "success");
       setFormState((prev) => ({
         ...prev,
@@ -117,15 +115,15 @@ const UriManagement = () => {
       await loadObjects(currentPage);
     } catch (error) {
       console.error(error);
-      console.log(error.response.data.message)
-      showAlert(error.response.data.message,"error");
+      console.log(error.response.data.message);
+      showAlert(error.response.data.message, "error");
     }
   };
 
   const toggleUriStatus = async (object) => {
     try {
-      const isActive=object.status
-      console.log(object.status)
+      const isActive = object.status;
+      console.log(object.status);
       if (isActive) {
         await disableObjectUri(object.om_id, token);
         toast.info(`${object.request_uri} disabled successfully`);
@@ -160,32 +158,41 @@ const UriManagement = () => {
           {buttonText} URI
         </h6>
         <Form onSubmit={onSubmitHandler}>
-         <FormGroup>
-  <Label>URI</Label>
-  {section === "create" ? (
-    // CREATE: Text input
-    <Input
-      value={formState[section].uri}
-      onChange={(e) => handleInputChange(section, "uri", e.target.value)}
-      placeholder="/dms/example"
-    />
-  ) : (
-    // ASSIGN / DEASSIGN: Dropdown
-    <Select
-      options={uriOptions}
-      value={
-        formState[section].uri
-          ? { value: formState[section].uri, label: formState[section].uri }
-          : null
-      }
-      onChange={(selected) => {
-        handleInputChange(section, "uri", selected ? selected.value : "");
-      }}
-      placeholder="Select URI..."
-      classNamePrefix="react-select"
-    />
-  )}
-</FormGroup>
+          <FormGroup>
+            <Label>URI</Label>
+            {section === "create" ? (
+              // CREATE: Text input
+              <Input
+                value={formState[section].uri}
+                onChange={(e) =>
+                  handleInputChange(section, "uri", e.target.value)
+                }
+                placeholder="/dms/example"
+              />
+            ) : (
+              // ASSIGN / DEASSIGN: Dropdown
+              <Select
+                options={uriOptions}
+                value={
+                  formState[section].uri
+                    ? {
+                        value: formState[section].uri,
+                        label: formState[section].uri,
+                      }
+                    : null
+                }
+                onChange={(selected) => {
+                  handleInputChange(
+                    section,
+                    "uri",
+                    selected ? selected.value : ""
+                  );
+                }}
+                placeholder="Select URI..."
+                classNamePrefix="react-select"
+              />
+            )}
+          </FormGroup>
 
           <FormGroup>
             <Label>Method</Label>

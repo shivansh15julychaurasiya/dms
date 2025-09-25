@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ahc.dms.config.AppConstants;
 import ahc.dms.dao.dms.entities.User;
+import ahc.dms.dao.dms.services.LoginAttemptService;
 import ahc.dms.dao.dms.services.OtpLogService;
 import ahc.dms.dao.dms.services.RequestLogService;
 import ahc.dms.dao.dms.services.RoleService;
@@ -70,6 +71,10 @@ public class AuthController {
     private ModelMapper modelMapper;
     @Autowired
     private RequestLogService requestLogService;
+    
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+    
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login-password")
@@ -78,6 +83,15 @@ public class AuthController {
             @RequestBody JwtAuthRequest jwtAuthRequest
     ) {
         requestLogService.logRequest(httpRequest);
+        String username = jwtAuthRequest.getUsername();
+
+        // 1) Check if blocked
+        if (loginAttemptService.isBlocked(username)) {
+            long secs = loginAttemptService.remainingLockSeconds(username);
+            return ResponseEntity.ok(
+                    ResponseUtil.error("Account locked. Try again in " + secs + " seconds.")
+            );
+        }
 
         Authentication authentication;
         try {
@@ -88,21 +102,29 @@ public class AuthController {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // 2) Success → reset attempts
+            loginAttemptService.loginSucceeded(username);
+
         } catch (UsernameNotFoundException ex) {
+            loginAttemptService.loginFailed(username);
             return ResponseEntity.ok(ResponseUtil.error("User not found"));
         } catch (BadCredentialsException ex) {
+            loginAttemptService.loginFailed(username);
             return ResponseEntity.ok(ResponseUtil.error("Incorrect password"));
         } catch (Exception ex) {
+            loginAttemptService.loginFailed(username);
             return ResponseEntity.ok(ResponseUtil.error("Authentication failed"));
         }
 
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
+        // 3) Load user details
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        //  Map entity → DTO
+        // Map entity → DTO
         User userEntity = (User) userDetails;
         UserDto authUserDto = modelMapper.map(userEntity, UserDto.class);
 
-        //  Extract active roles manually
+        // Extract active roles
         Set<LookupDto> activeRoles = userEntity.getUserRoles().stream()
                 .filter(ur -> ur.getUr_rec_status() != null && ur.getUr_rec_status() == 1)
                 .map(ur -> {
@@ -114,16 +136,16 @@ public class AuthController {
                 })
                 .collect(Collectors.toSet());
 
-        authUserDto.setRoles(activeRoles); // 🔑 now roles won't be null/empty
+        authUserDto.setRoles(activeRoles);
 
-        //  Generate JWT token
+        // Generate JWT
         String token = jwtHelper.generateToken(userDetails, AppConstants.LOGIN_TOKEN);
 
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse(token, AppConstants.JWT_CREATED, authUserDto);
+        JwtAuthResponse jwtAuthResponse =
+                new JwtAuthResponse(token, AppConstants.JWT_CREATED, authUserDto);
 
         return ResponseEntity.ok(ResponseUtil.success(jwtAuthResponse, AppConstants.JWT_CREATED));
     }
-
 
     @PostMapping("/login-otp")
     public ResponseEntity<ApiResponse<JwtAuthResponse>> loginUsingOtp(
