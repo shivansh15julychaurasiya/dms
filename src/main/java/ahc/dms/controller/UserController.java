@@ -47,6 +47,8 @@ public class UserController {
         UserDto updatedUser = userService.updateUser(userDto, userId);
         return ResponseEntity.ok(ResponseUtil.success(updatedUser, "user updated"));
     }
+    
+    
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deactivate/{username}")
@@ -58,6 +60,7 @@ public class UserController {
         userService.deactivateUser(username);
         return ResponseEntity.ok(ResponseUtil.success(null, "user deactivated"));
     }
+       
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/activate/{username}")

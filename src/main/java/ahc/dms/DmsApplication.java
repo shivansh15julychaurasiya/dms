@@ -31,8 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
         DataSourceTransactionManagerAutoConfiguration.class // Avoids auto-creation of a default transaction manager
 })
 @EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
-public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
-//public class DmsApplication implements CommandLineRunner {
+//public class DmsApplication extends SpringBootServletInitializer implements CommandLineRunner{
+public class DmsApplication implements CommandLineRunner {
 
     
     @Autowired
@@ -126,8 +126,12 @@ public class DmsApplication extends SpringBootServletInitializer implements Comm
 
         } catch (Exception e) {
             e.printStackTrace();
+            
+            
         }
     }
+
+    
 
     @Bean
     public ApplicationListener<ApplicationReadyEvent> filterChainInspector() {

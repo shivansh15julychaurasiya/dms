@@ -1,73 +1,54 @@
-import React, { createContext, useState, useEffect } from "react";
-import { isTokenExpired } from "../services/userService";
+// src/context/AuthContext.jsx
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user")) || null;
-    } catch (e) {
-      console.error("Error parsing user data:", e);
-      return null;
-    }
-  });
-  const [role, setRole] = useState(localStorage.getItem("role") || "");
-
-  // Check for token expiration when token is available
   useEffect(() => {
-    if (token && isTokenExpired(token)) {
-      logout();
-    }
-  }, [token]);
-
-  // Syncing state with localStorage
-  // Syncing state with localStorage
-  useEffect(() => {
-    if (token && user) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // Check if the roles array exists and has at least one role before accessing it
-      if (user.roles && user.roles[0] && user.roles[0].role_name) {
-        setRole(user.roles[0].role_name.trim());
-        localStorage.setItem("role", user.roles[0].role_name.trim()); //  Corrected here
-      } else {
-        setRole(""); // Clear role if no valid role found
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        setUser(decoded);
+        setToken(storedToken);
+      } catch (err) {
+        console.error("Invalid token on load");
+        localStorage.removeItem("accessToken");
       }
     }
-  }, [token, user]);
+    setLoading(false);
+  }, []);
 
-  const login = ({ token, user }) => {
+  const login = (token, userData) => {
+    localStorage.setItem("accessToken", token);
     setToken(token);
-    setUser(user);
-
-    // Check if the roles array exists and has at least one role
-    if (user.roles && user.roles[0] && user.roles[0].role_name) {
-      setRole(user.roles[0].role_name.trim());
-    } else {
-      setRole(""); // Clear role if no valid role found
+    try {
+      const decoded = jwtDecode(token);
+      setUser({ ...decoded, profile: userData });
+    } catch (err) {
+      console.error("Token decode error");
     }
   };
 
-  
   const logout = () => {
-    setToken("");
+    localStorage.removeItem("accessToken");
     setUser(null);
-    setRole("");
-    localStorage.clear();
-    localStorage.setItem("logout", Date.now()); // Trigger cross-tab logout
+    setToken(null);
   };
 
-
   return (
-    <AuthContext.Provider value={{ token, user, role, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-// Custom hook to access Auth context
-export const useAuth = () => React.useContext(AuthContext);
+// ⬇ THIS MUST BE PRESENT
+export function useAuth() {
+  return useContext(AuthContext);
+}

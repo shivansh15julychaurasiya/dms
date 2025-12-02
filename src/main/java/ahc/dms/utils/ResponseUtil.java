@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class ResponseUtil {
 
+	
     public static <T> ApiResponse<T> success(T data, String message) {
         ApiResponse<T> response = new ApiResponse<>();
         response.setStatus(true);
@@ -23,6 +24,7 @@ public class ResponseUtil {
         response.setTimestamp(System.currentTimeMillis());
         return response;
     }
+    
 
     public static <T> ApiResponse<T> error(Map<String, String> messages) {
         ApiResponse<T> response = new ApiResponse<>();
